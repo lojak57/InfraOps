@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import MetricCard from '$lib/components/ui/MetricCard.svelte';
-	import { activeJobs, trucks, drivers, scadaStatus } from '$lib/stores/jobStore';
+	import { activeJobs, vehicles, drivers, systemStatus } from '$lib/stores/jobStore';
 
 	// Fleet-level metrics
 	let totalActiveVolume = 0;
@@ -30,7 +30,7 @@
 
 	// Get truck and driver info for each job
 	function getTruckInfo(truckId: string) {
-		return $trucks.find(truck => truck.id === truckId);
+		return $vehicles.find(truck => truck.id === truckId);
 	}
 
 	function getDriverInfo(driverId: string) {
@@ -220,7 +220,7 @@
 		<div class="text-center p-4 bg-white/30 rounded-xl">
 			<div class="w-3 h-3 bg-emerald-400 rounded-full mx-auto mb-2"></div>
 			<div class="text-sm font-medium text-oil-black">Network</div>
-			<div class="text-xs text-oil-gray">{$scadaStatus.networkHealth.toFixed(1)}%</div>
+			<div class="text-xs text-oil-gray">{$systemStatus.networkHealth.toFixed(1)}%</div>
 		</div>
 	</div>
 </div> 

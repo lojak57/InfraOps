@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { completedJobs, drivers, trucks, type Job } from '$lib/stores/jobStore';
+	import { completedJobs, drivers, vehicles, type Job } from '$lib/stores/jobStore';
 	import JobCard from '$lib/components/dashboard/JobCard.svelte';
 	import JobDetailView from '$lib/components/dashboard/JobDetailView.svelte';
 
@@ -19,7 +19,7 @@
 
 	// Get truck and driver info
 	function getTruckInfo(truckId: string) {
-		return $trucks.find(truck => truck.id === truckId);
+		return $vehicles.find(truck => truck.id === truckId);
 	}
 
 	function getDriverInfo(driverId: string) {

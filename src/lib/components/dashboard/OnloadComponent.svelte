@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sites, drivers, trucks, type Site } from '$lib/stores/jobStore';
+	import { sites, drivers, vehicles, type Site } from '$lib/stores/jobStore';
 	
 	interface Props {
 		selectedSite: Site | null;
@@ -60,7 +60,7 @@
 			class="w-full p-3 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
 		>
 			<option value="">Select truck...</option>
-			{#each $trucks as truck}
+			{#each $vehicles as truck}
 				<option value={truck.id}>{truck.plateNumber} - {truck.model}</option>
 			{/each}
 		</select>

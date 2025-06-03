@@ -3,7 +3,7 @@
 	import MetricCard from '$lib/components/ui/MetricCard.svelte';
 	import PerformanceChart from '$lib/components/analytics/PerformanceChart.svelte';
 	import AnalyticsCard from '$lib/components/analytics/AnalyticsCard.svelte';
-	import { completedJobs, drivers, trucks } from '$lib/stores/jobStore';
+	import { completedJobs, drivers, vehicles } from '$lib/stores/jobStore';
 
 	// Analytics metrics
 	let totalVolume = 0;
@@ -22,7 +22,7 @@
 			// Calculate efficiency based on volume loss
 			averageEfficiency = completed.length > 0 
 				? completed.reduce((sum, job) => {
-					const actualLoss = job.actualLoss || 0;
+					const actualLoss = job.actualVariance || 0;
 					const efficiency = job.initialVolume > 0 ? ((job.initialVolume - actualLoss) / job.initialVolume * 100) : 0;
 					return sum + efficiency;
 				}, 0) / completed.length 
@@ -185,7 +185,7 @@
 		<div class="space-y-3">
 			<div class="flex justify-between items-center">
 				<span class="text-oil-gray text-sm">Total Trucks</span>
-				<span class="font-semibold text-oil-black">{$trucks.length}</span>
+				<span class="font-semibold text-oil-black">{$vehicles.length}</span>
 			</div>
 			<div class="flex justify-between items-center">
 				<span class="text-oil-gray text-sm">Active Drivers</span>

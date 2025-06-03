@@ -8,6 +8,7 @@ export default {
         'oil-gray': '#6b7280',
         'oil-orange': '#FF6B35',
         'oil-blue': '#004E89',
+        'primary-orange': '#FF6B35',
       },
       fontFamily: {
         'sf-pro': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],

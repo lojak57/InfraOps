@@ -52,11 +52,12 @@
 
 <style>
 	.active {
-		@apply bg-primary-orange/20 text-primary-orange;
+		background-color: rgb(255 107 53 / 0.2);
+		color: rgb(255 107 53);
 	}
 	
 	.active span {
-		@apply text-primary-orange;
+		color: rgb(255 107 53);
 	}
 	
 	/* Mobile optimization */

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { activeJobs, drivers, trucks, scadaStatus, currentJob, type Job, type Driver, type Truck } from '$lib/stores/jobStore';
+	import { activeJobs, drivers, vehicles, systemStatus, currentJob, type Job, type Driver, type Vehicle } from '$lib/stores/jobStore';
 	import { useInterval } from '$lib/utils/useInterval';
 	import JobCard from '$lib/components/dashboard/JobCard.svelte';
 	import JobDetailView from '$lib/components/dashboard/JobDetailView.svelte';
@@ -17,7 +17,7 @@
 	const dataUpdateInterval = useInterval(
 		() => {
 			// Update SCADA system status
-			scadaStatus.update(status => ({
+			systemStatus.update(status => ({
 				...status,
 				lastUpdate: new Date(),
 				dataLatency: 0.8 + Math.random() * 0.8, // 0.8-1.6 seconds
@@ -99,14 +99,14 @@
 
 	// Get driver and truck info with proper null checks
 	$: driver = selectedJob ? $drivers.find(d => d.id === selectedJob!.driverId) : null;
-	$: truck = selectedJob ? $trucks.find(t => t.id === selectedJob!.truckId) : null;
+	$: truck = selectedJob ? $vehicles.find(t => t.id === selectedJob!.truckId) : null;
 
 	$: driverMap = $drivers.reduce((map: Record<string, Driver>, driver) => {
 		map[driver.id] = driver;
 		return map;
 	}, {});
 
-	$: truckMap = $trucks.reduce((map: Record<string, Truck>, truck) => {
+	$: truckMap = $vehicles.reduce((map: Record<string, Vehicle>, truck) => {
 		map[truck.id] = truck;
 		return map;
 	}, {});
@@ -141,7 +141,7 @@
 			<div class="w-3 h-3 bg-oil-blue rounded-full shadow-sm"></div>
 			<h3 class="font-semibold text-oil-black">Fleet Status</h3>
 		</div>
-		<div class="metric-display text-oil-blue">{$trucks.length}</div>
+		<div class="metric-display text-oil-blue">{$vehicles.length}</div>
 		<p class="text-sm text-oil-gray mt-2">Trucks operational</p>
 	</div>
 </div>
