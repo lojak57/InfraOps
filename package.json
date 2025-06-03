@@ -20,8 +20,10 @@
 		"test:coverage": "vitest run --coverage",
 		"deploy": "npm run build && echo 'Ready for Vercel deployment'",
 		"component:size": "node scripts/component-size-report.js",
-		"refactor:check": "npm run component:size && npm run lint",
-		"pre-commit": "npm run lint && npm run test && npm run component:size"
+		"refactor:check": "npm run lint && npm run refactor:progress",
+		"refactor:progress": "node scripts/refactor-progress.js",
+		"refactor:enforce": "npm run refactor:check && npm run test",
+		"pre-commit": "npm run refactor:enforce"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.52.0",
@@ -34,6 +36,7 @@
 		"@testing-library/svelte": "^5.2.8",
 		"autoprefixer": "^10.4.21",
 		"eslint": "^9.28.0",
+		"glob": "^11.0.2",
 		"jsdom": "^26.1.0",
 		"postcss": "^8.5.4",
 		"prettier": "^3.5.3",
