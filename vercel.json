@@ -56,10 +56,5 @@
       "ENABLE_VC_BUILD": "1"
     }
   },
-  "functions": {
-    "src/routes/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "regions": ["iad1"]
 } 
