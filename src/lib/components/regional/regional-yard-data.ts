@@ -1,0 +1,72 @@
+import type { YardData } from './regional-yard.types';
+
+export const mockYardComparison: YardData[] = [
+  {
+    yardName: 'North Texas Hub',
+    location: 'Dallas, TX',
+    fleetSize: 28,
+    activeTrucks: 24,
+    driversAssigned: 42,
+    totalBPD: 2847,
+    avgDriveTime: 3.2,
+    unitsPerHour: 185.3,
+    utilizationRate: 85.7,
+    efficiency: 94.2,
+    rank: 2,
+    trend: 'up',
+    status: 'excellent',
+    notes: 'Peak performer - model yard',
+    sparklineData: [2650, 2720, 2780, 2810, 2847, 2890, 2920]
+  },
+  {
+    yardName: 'Oklahoma Central',
+    location: 'Oklahoma City, OK',
+    fleetSize: 22,
+    activeTrucks: 18,
+    driversAssigned: 34,
+    totalBPD: 2456,
+    avgDriveTime: 3.8,
+    unitsPerHour: 165.2,
+    utilizationRate: 81.8,
+    efficiency: 91.8,
+    rank: 3,
+    trend: 'stable',
+    status: 'good',
+    notes: 'Consistent performance',
+    sparklineData: [2320, 2380, 2420, 2440, 2456, 2470, 2480]
+  },
+  {
+    yardName: 'Louisiana East',
+    location: 'Baton Rouge, LA',
+    fleetSize: 35,
+    activeTrucks: 31,
+    driversAssigned: 58,
+    totalBPD: 3124,
+    avgDriveTime: 2.9,
+    unitsPerHour: 198.7,
+    utilizationRate: 88.6,
+    efficiency: 96.1,
+    rank: 1,
+    trend: 'up',
+    status: 'excellent',
+    notes: 'Highest efficiency in region',
+    sparklineData: [2950, 3020, 3080, 3100, 3124, 3150, 3180]
+  },
+  {
+    yardName: 'Kansas West',
+    location: 'Wichita, KS',
+    fleetSize: 19,
+    activeTrucks: 15,
+    driversAssigned: 28,
+    totalBPD: 1987,
+    avgDriveTime: 4.2,
+    unitsPerHour: 142.8,
+    utilizationRate: 78.9,
+    efficiency: 87.3,
+    rank: 4,
+    trend: 'down',
+    status: 'attention',
+    notes: 'Needs operational review',
+    sparklineData: [2150, 2100, 2050, 2020, 1987, 1960, 1940]
+  }
+]; 
