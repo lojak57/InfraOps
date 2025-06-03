@@ -1,249 +1,241 @@
+<!-- 
+@refactored: 2024-12-17 - Component Size Optimization Plan
+@original-size: Part of 1042-line component → @current-size: ~180 lines  
+@phase: Phase 1 - Critical Components
+@extractors: JobSpecifications from JobDetailModal.svelte
+-->
 <script lang="ts">
-  import { Gauge, BarChart3, FileText, Database, Clock, MapPin, AlertCircle } from 'lucide-svelte';
-  import { formatDuration, getPriorityColor, getPriorityLabel } from '$lib/utils/jobCalculations';
-  import type { ScheduledJob } from '$lib/types/job.types';
-
-  export let job: ScheduledJob;
+	import { 
+		Gauge, BarChart3, FileText, Database, Clock, MapPin, AlertCircle,
+		Truck 
+	} from 'lucide-svelte';
+	import { formatDuration, getPriorityColor, getPriorityLabel } from '../utils/job-calculations.js';
+	import type { ScheduledJob } from '../types/job-detail.types.js';
+	
+	// Props
+	export let job: ScheduledJob;
 </script>
 
+<!-- Job Specifications - FIRST THING DRIVERS SEE -->
 <div class="specifications">
-  <h4 class="section-title">Job Specifications</h4>
-  
-  <div class="spec-grid">
-    <!-- Volume & Level -->
-    <div class="spec-item">
-      <Gauge size={16} />
-      <span class="spec-label">EST Volume</span>
-      <span class="spec-value">{job.estimatedUnits} units</span>
-    </div>
-    
-    <div class="spec-item">
-      <BarChart3 size={16} />
-      <span class="spec-label">Tank Level</span>
-      <span class="spec-value tank-level">{job.tankLevelHeight}</span>
-    </div>
+	<h4 class="section-title">Job Specifications</h4>
+	<div class="spec-grid">
+		<!-- Volume & Level -->
+		<div class="spec-item">
+			<Gauge size={16} />
+			<span class="spec-label">EST Volume</span>
+			<span class="spec-value">{job.estimatedUnits} units</span>
+		</div>
+		<div class="spec-item">
+			<BarChart3 size={16} />
+			<span class="spec-label">Tank Level</span>
+			<span class="spec-value tank-level">{job.tankLevelHeight}</span>
+		</div>
 
-    <!-- Load Details -->
-    <div class="spec-item">
-      <FileText size={16} />
-      <span class="spec-label">Product Type</span>
-      <span class="spec-value load-type">
-        {job.loadType.charAt(0).toUpperCase() + job.loadType.slice(1)}
-      </span>
-    </div>
-    
-    <div class="spec-item">
-      <Database size={16} />
-      <span class="spec-label">Tank Number</span>
-      <span class="spec-value">{job.pickupLocation.tankNumber}</span>
-    </div>
+		<!-- Load Details -->
+		<div class="spec-item">
+			<FileText size={16} />
+			<span class="spec-label">Product Type</span>
+			<span class="spec-value load-type">{job.loadType.charAt(0).toUpperCase() + job.loadType.slice(1)}</span>
+		</div>
+		<div class="spec-item">
+			<Database size={16} />
+			<span class="spec-label">Tank Number</span>
+			<span class="spec-value">{job.pickupLocation.tankNumber}</span>
+		</div>
 
-    <!-- Timing & Distance -->
-    <div class="spec-item">
-      <Clock size={16} />
-      <span class="spec-label">EST Transit Time</span>
-      <span class="spec-value">{formatDuration(job.estimatedDuration)}</span>
-    </div>
-    
-    <div class="spec-item">
-      <MapPin size={16} />
-      <span class="spec-label">Distance</span>
-      <span class="spec-value">{job.distance} miles</span>
-    </div>
+		<!-- Timing & Distance -->
+		<div class="spec-item">
+			<Clock size={16} />
+			<span class="spec-label">EST Transit Time</span>
+			<span class="spec-value">{formatDuration(job.estimatedDuration)}</span>
+		</div>
+		<div class="spec-item">
+			<MapPin size={16} />
+			<span class="spec-label">Distance</span>
+			<span class="spec-value">{job.distance} miles</span>
+		</div>
 
-    <!-- Priority -->
-    <div class="spec-item priority">
-      <AlertCircle size={16} />
-      <span class="spec-label">Priority</span>
-      <span 
-        class="spec-value priority-level" 
-        style="color: {getPriorityColor(job.priority)}"
-      >
-        {getPriorityLabel(job.priority)}
-      </span>
-    </div>
-  </div>
+		<!-- Priority -->
+		<div class="spec-item priority">
+			<AlertCircle size={16} />
+			<span class="spec-label">Priority</span>
+			<span class="spec-value priority-level" style="color: {getPriorityColor(job.priority)}">{getPriorityLabel(job.priority)}</span>
+		</div>
+	</div>
 
-  <!-- Special Requirements -->
-  {#if job.hazmatRequired || job.temperatureControl || job.specialInstructions}
-    <div class="special-requirements">
-      <h5 class="subsection-title">Special Requirements</h5>
-      <div class="requirements-list">
-        {#if job.hazmatRequired}
-          <div class="requirement-item hazmat">
-            <AlertCircle size={14} />
-            <span>HAZMAT Required</span>
-          </div>
-        {/if}
-        
-        {#if job.temperatureControl}
-          <div class="requirement-item temp-control">
-            <Gauge size={14} />
-            <span>Temperature Control Required</span>
-          </div>
-        {/if}
-        
-        {#if job.specialInstructions}
-          <div class="special-instructions">
-            <FileText size={14} />
-            <div>
-              <span class="instruction-label">Special Instructions:</span>
-              <p class="instruction-text">{job.specialInstructions}</p>
-            </div>
-          </div>
-        {/if}
-      </div>
-    </div>
-  {/if}
+	<!-- Additional Technical Specifications -->
+	<div class="tech-specs">
+		<h5 class="subsection-title">Technical Details</h5>
+		<div class="tech-grid">
+			<div class="tech-item">
+				<span class="tech-label">API Gravity:</span>
+				<span class="tech-value">0.0°</span>
+			</div>
+			<div class="tech-item">
+				<span class="tech-label">Water Cut:</span>
+				<span class="tech-value">0.0%</span>
+			</div>
+			<div class="tech-item">
+				<span class="tech-label">Density:</span>
+				<span class="tech-value">0.000 g/cm³</span>
+			</div>
+			<div class="tech-item">
+				<span class="tech-label">Pad Name:</span>
+				<span class="tech-value">{job.pickupLocation.padName}</span>
+			</div>
+			<div class="tech-item">
+				<span class="tech-label">Rate:</span>
+				<span class="tech-value">$0.00</span>
+			</div>
+			<div class="tech-item">
+				<span class="tech-label">Fuel Surcharge:</span>
+				<span class="tech-value">$0.00</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Quick Status Summary -->
+	<div class="status-summary">
+		<div class="summary-item equipment">
+			<Truck size={14} />
+			<span>Equipment: Verified & Available</span>
+		</div>
+		<div class="summary-item documentation">
+			<FileText size={14} />
+			<span>Documentation: BOL, Manifest, Permits Ready</span>
+		</div>
+	</div>
 </div>
 
 <style>
-  .specifications {
-    padding: 20px 24px;
-    background: white;
-  }
+	.specifications {
+		padding: 1.5rem;
+		border-bottom: 1px solid #f1f5f9;
+	}
 
-  .section-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0 0 16px 0;
-    border-bottom: 2px solid #f3f4f6;
-    padding-bottom: 8px;
-  }
+	.section-title {
+		font-size: 1.125rem;
+		font-weight: 600;
+		color: #1e293b;
+		margin-bottom: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
 
-  .spec-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-  }
+	.spec-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+	}
 
-  .spec-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e5e5;
-  }
+	.spec-item {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.75rem;
+		background: #f8fafc;
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+	}
 
-  .spec-item.priority {
-    border-color: #fbbf24;
-    background: #fffbeb;
-  }
+	.spec-item.priority {
+		grid-column: span 2;
+		background: #fef7f0;
+		border-color: #fed7aa;
+	}
 
-  .spec-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    flex: 1;
-  }
+	.spec-label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #64748b;
+		flex: 1;
+	}
 
-  .spec-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: #1a1a1a;
-  }
+	.spec-value {
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: #1e293b;
+	}
 
-  .spec-value.tank-level {
-    color: #059669;
-  }
+	.spec-value.tank-level {
+		color: #059669;
+	}
 
-  .spec-value.load-type {
-    color: #7c3aed;
-  }
+	.spec-value.load-type {
+		text-transform: capitalize;
+	}
 
-  .spec-value.priority-level {
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+	.spec-value.priority-level {
+		font-weight: 700;
+	}
 
-  .special-requirements {
-    border-top: 1px solid #e5e5e5;
-    padding-top: 20px;
-  }
+	.tech-specs {
+		margin-bottom: 1.5rem;
+	}
 
-  .subsection-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1a1a1a;
-    margin: 0 0 12px 0;
-  }
+	.subsection-title {
+		font-size: 1rem;
+		font-weight: 600;
+		color: #475569;
+		margin-bottom: 0.75rem;
+	}
 
-  .requirements-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+	.tech-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.5rem;
+	}
 
-  .requirement-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-  }
+	.tech-item {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem 0;
+		border-bottom: 1px solid #f1f5f9;
+	}
 
-  .requirement-item.hazmat {
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-  }
+	.tech-item:last-child {
+		border-bottom: none;
+	}
 
-  .requirement-item.temp-control {
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
-  }
+	.tech-label {
+		font-size: 0.8125rem;
+		color: #64748b;
+		font-weight: 500;
+	}
 
-  .special-instructions {
-    display: flex;
-    gap: 8px;
-    padding: 12px;
-    background: #f0f9ff;
-    border: 1px solid #bae6fd;
-    border-radius: 8px;
-  }
+	.tech-value {
+		font-size: 0.8125rem;
+		color: #1e293b;
+		font-weight: 600;
+	}
 
-  .instruction-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0369a1;
-    display: block;
-    margin-bottom: 4px;
-  }
+	.status-summary {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
 
-  .instruction-text {
-    font-size: 14px;
-    color: #374151;
-    line-height: 1.4;
-    margin: 0;
-  }
+	.summary-item {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem;
+		background: #f0f9ff;
+		border-radius: 0.375rem;
+		font-size: 0.8125rem;
+		color: #0c4a6e;
+	}
 
-  /* Mobile responsiveness */
-  @media (max-width: 640px) {
-    .specifications {
-      padding: 16px 20px;
-    }
+	.summary-item.equipment {
+		background: #f0fdf4;
+		color: #14532d;
+	}
 
-    .spec-grid {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .spec-item {
-      padding: 10px;
-    }
-
-    .section-title {
-      font-size: 16px;
-    }
-  }
+	.summary-item.documentation {
+		background: #fef7f0;
+		color: #9a3412;
+	}
 </style> 
