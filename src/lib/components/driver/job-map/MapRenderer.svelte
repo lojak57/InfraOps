@@ -214,15 +214,12 @@
 <div class="map-gl-container" bind:this={mapContainer}></div>
 
 <style>
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-	
 	.map-gl-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: #f5f5f5;
+		width: 100%;
+		height: 100%;
+		border-radius: 12px;
+		overflow: hidden;
+		position: relative;
 	}
 
 	.map-gl-container :global(.maplibregl-popup) {

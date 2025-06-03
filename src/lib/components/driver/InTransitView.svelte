@@ -238,200 +238,204 @@
 </div>
 
 <style>
-	@import 'maplibre-gl/dist/maplibre-gl.css';
+.in-transit-view {
+	padding: 16px;
+	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	min-height: 100vh;
+}
 
+.transit-view-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #0f172a;
+	display: flex;
+	flex-direction: column;
+	z-index: 2000;
+	font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+	color: white;
+	padding: 8px;
+	box-sizing: border-box;
+	gap: 6px;
+}
+
+/* Map Section */
+.map-section {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	background: rgba(15, 23, 42, 0.8);
+	border: 1px solid rgba(59, 130, 246, 0.1);
+	border-radius: 10px;
+	overflow: hidden;
+	position: relative;
+}
+
+.map-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 16px;
+	background: rgba(15, 23, 42, 0.95);
+	border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+	z-index: 10;
+}
+
+.destination-info {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #60a5fa;
+}
+
+.destination-name {
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.distance-remaining {
+	font-size: 12px;
+	color: #94a3b8;
+	font-family: 'JetBrains Mono', monospace;
+}
+
+.map-controls {
+	display: flex;
+	gap: 8px;
+}
+
+.nav-btn {
+	background: rgba(59, 130, 246, 0.1);
+	border: 1px solid rgba(59, 130, 246, 0.3);
+	border-radius: 6px;
+	color: #60a5fa;
+	padding: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-height: 36px;
+	min-width: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.nav-btn:hover {
+	background: rgba(59, 130, 246, 0.2);
+}
+
+.map-container {
+	flex: 1;
+	width: 100%;
+	position: relative;
+}
+
+.next-step-banner {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+	color: white;
+	padding: 12px 16px;
+	z-index: 10;
+}
+
+.next-step-content {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.next-step-icon {
+	font-size: 16px;
+}
+
+/* Tap targets for better mobile usability */
+.tap-target {
+	min-height: 44px;
+	min-width: 44px;
+}
+
+/* End Transit Section */
+.end-transit-section {
+	padding: 16px;
+	background: rgba(15, 23, 42, 0.95);
+	border-radius: 12px;
+	border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.end-transit-btn {
+	width: 100%;
+	background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+	color: white;
+	border: none;
+	padding: 20px 32px;
+	border-radius: 12px;
+	font-size: 18px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+	min-height: 64px;
+}
+
+.end-transit-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 30px rgba(34, 197, 94, 0.4);
+	background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.end-transit-btn:active {
+	transform: translateY(0px);
+	box-shadow: 0 6px 15px rgba(34, 197, 94, 0.3);
+}
+
+/* Tablet and desktop adjustments */
+@media (min-width: 768px) {
 	.transit-view-container {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: #0f172a;
-		display: flex;
-		flex-direction: column;
-		z-index: 2000;
-		font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-		color: white;
-		padding: 8px;
-		box-sizing: border-box;
-		gap: 6px;
+		padding: 12px;
+		gap: 8px;
 	}
 
-	/* Map Section */
 	.map-section {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		background: rgba(15, 23, 42, 0.8);
-		border: 1px solid rgba(59, 130, 246, 0.1);
-		border-radius: 10px;
-		overflow: hidden;
-		position: relative;
+		border-radius: 12px;
 	}
 
 	.map-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 12px 16px;
-		background: rgba(15, 23, 42, 0.95);
-		border-bottom: 1px solid rgba(59, 130, 246, 0.1);
-		z-index: 10;
-	}
-
-	.destination-info {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		color: #60a5fa;
+		padding: 16px 20px;
 	}
 
 	.destination-name {
-		font-weight: 600;
-		font-size: 14px;
+		font-size: 15px;
 	}
 
 	.distance-remaining {
-		font-size: 12px;
-		color: #94a3b8;
-		font-family: 'JetBrains Mono', monospace;
-	}
-
-	.map-controls {
-		display: flex;
-		gap: 8px;
-	}
-
-	.nav-btn {
-		background: rgba(59, 130, 246, 0.1);
-		border: 1px solid rgba(59, 130, 246, 0.3);
-		border-radius: 6px;
-		color: #60a5fa;
-		padding: 8px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		min-height: 36px;
-		min-width: 36px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.nav-btn:hover {
-		background: rgba(59, 130, 246, 0.2);
-	}
-
-	.map-container {
-		flex: 1;
-		width: 100%;
-		position: relative;
+		font-size: 13px;
 	}
 
 	.next-step-banner {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-		color: white;
-		padding: 12px 16px;
-		z-index: 10;
+		padding: 16px 20px;
 	}
 
 	.next-step-content {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		font-size: 14px;
-		font-weight: 600;
+		font-size: 15px;
 	}
+}
 
-	.next-step-icon {
-		font-size: 16px;
-	}
-
-	/* Tap targets for better mobile usability */
-	.tap-target {
-		min-height: 44px;
-		min-width: 44px;
-	}
-
-	/* End Transit Section */
-	.end-transit-section {
+@media (min-width: 1024px) {
+	.transit-view-container {
 		padding: 16px;
-		background: rgba(15, 23, 42, 0.95);
-		border-radius: 12px;
-		border: 1px solid rgba(34, 197, 94, 0.2);
+		gap: 12px;
 	}
 
-	.end-transit-btn {
-		width: 100%;
-		background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-		color: white;
-		border: none;
-		padding: 20px 32px;
-		border-radius: 12px;
-		font-size: 18px;
-		font-weight: 700;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		text-transform: uppercase;
-		letter-spacing: 1px;
-		box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
-		min-height: 64px;
+	.map-header {
+		padding: 20px 24px;
 	}
-
-	.end-transit-btn:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 12px 30px rgba(34, 197, 94, 0.4);
-		background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-	}
-
-	.end-transit-btn:active {
-		transform: translateY(0px);
-		box-shadow: 0 6px 15px rgba(34, 197, 94, 0.3);
-	}
-
-	/* Tablet and desktop adjustments */
-	@media (min-width: 768px) {
-		.transit-view-container {
-			padding: 12px;
-			gap: 8px;
-		}
-
-		.map-section {
-			border-radius: 12px;
-		}
-
-		.map-header {
-			padding: 16px 20px;
-		}
-
-		.destination-name {
-			font-size: 15px;
-		}
-
-		.distance-remaining {
-			font-size: 13px;
-		}
-
-		.next-step-banner {
-			padding: 16px 20px;
-		}
-
-		.next-step-content {
-			font-size: 15px;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.transit-view-container {
-			padding: 16px;
-			gap: 12px;
-		}
-
-		.map-header {
-			padding: 20px 24px;
-		}
-	}
+}
 </style> 

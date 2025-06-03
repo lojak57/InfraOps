@@ -82,7 +82,7 @@
 			driver: 'Tony Valdez',
 			lat: 30.2672,
 			lng: -97.7431,
-			status: 'unloading',
+			status: 'delivery',
 			currentJob: 'Delivery to Cushing Hub',
 			eta: '12:15',
 			route: {
@@ -141,7 +141,7 @@
 	function getFilteredAssets(assets: FleetAsset[], mode: string): FleetAsset[] {
 		switch (mode) {
 			case 'active':
-				return assets.filter(asset => ['pickup', 'transit', 'delivery'].includes(asset.status));
+				return assets.filter(asset => ['loading', 'transit', 'delivery'].includes(asset.status));
 			case 'all':
 				return assets;
 			default:
@@ -152,7 +152,7 @@
 	// Status color mapping
 	function getStatusColor(status: string): string {
 		switch (status) {
-			case 'pickup': return '#f59e0b';      // amber
+			case 'loading': return '#f59e0b';      // amber
 			case 'transit': return '#3b82f6';      // blue  
 			case 'delivery': return '#10b981';     // emerald
 			case 'available': return '#6b7280';    // gray
@@ -164,7 +164,7 @@
 	// Status icon mapping
 	function getStatusIcon(status: string): string {
 		switch (status) {
-			case 'pickup': return '⏳';
+			case 'loading': return '⏳';
 			case 'transit': return '🚛';
 			case 'delivery': return '📦';
 			case 'available': return '✅';
@@ -475,7 +475,7 @@
 				title="Track Active Assets"
 			>
 				<Truck size={16} />
-				Active ({filteredAssets.filter(a => ['pickup', 'transit', 'delivery'].includes(a.status)).length})
+				Active ({filteredAssets.filter(a => ['loading', 'transit', 'delivery'].includes(a.status)).length})
 			</button>
 			<button 
 				class="control-btn" 
@@ -533,7 +533,7 @@
 				<span class="stat-label">En Route</span>
 			</div>
 			<div class="stat-item">
-				<span class="stat-value">{filteredAssets.filter(a => a.status === 'pickup').length}</span>
+				<span class="stat-value">{filteredAssets.filter(a => a.status === 'loading').length}</span>
 				<span class="stat-label">Loading</span>
 			</div>
 			<div class="stat-item">
@@ -549,16 +549,14 @@
 </div>
 
 <style>
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-
 	.fleet-map-container {
-		position: relative;
 		width: 100%;
-		height: 400px;
-		background: #1e293b;
+		height: 100%;
+		position: relative;
+		min-height: 400px;
 		border-radius: 12px;
 		overflow: hidden;
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: #f8fafc;
 	}
 
 	.fleet-map-container.fullscreen {

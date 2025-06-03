@@ -2,6 +2,8 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import '@fontsource/fira-mono';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 /* =================================
    ThermaHaul Design System 

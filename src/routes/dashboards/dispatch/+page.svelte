@@ -490,8 +490,6 @@
 </div>
 
 <style>
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-
 	.dispatch-center {
 		min-height: 100vh;
 		background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
