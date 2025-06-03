@@ -2,7 +2,7 @@
 	import { Gauge, Navigation, Clock, Truck } from 'lucide-svelte';
 
 	// Props from parent
-	export let totalBarrels: number;
+	export let totalUnits: number;
 	export let totalDistance: number; 
 	export let totalHours: number;
 	export let trailerNumber: string;
@@ -18,12 +18,12 @@
 <div class="summary-section">
 	<div class="summary-cards mobile-grid">
 		<div class="summary-card">
-			<div class="card-icon barrels">
+			<div class="card-icon units">
 				<Gauge size={20} />
 			</div>
 			<div class="card-details">
-				<span class="card-value">{totalBarrels.toLocaleString()}</span>
-				<span class="card-label">EST. Total Barrels</span>
+				<span class="card-value">{totalUnits.toLocaleString()}</span>
+				<span class="card-label">EST. Total Units</span>
 			</div>
 		</div>
 		<div class="summary-card">

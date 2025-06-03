@@ -10,14 +10,14 @@
   });
 </script>
 
-<div class="workflow-view loading">
-  <div class="loading-content">
-    <div class="loading-header">
+<div class="workflow-view pickup">
+  <div class="pickup-content">
+    <div class="pickup-header">
       <h2>Loading Operations</h2>
-      <p>Monitor and manage the loading process at pickup site</p>
+      <p>Monitor and manage the pickup process at pickup site</p>
     </div>
     
-    <div class="loading-workflow">
+    <div class="pickup-workflow">
       <div class="site-info">
         <div class="site-card">
           <h3>📍 Pickup Site Information</h3>
@@ -25,23 +25,23 @@
             <p><strong>Location:</strong> Johnson Tank Battery #3</p>
             <p><strong>Tank:</strong> #A-15</p>
             <p><strong>Current Level:</strong> 17' 4"</p>
-            <p><strong>Product:</strong> Crude Oil</p>
+            <p><strong>Product:</strong> Product Oil</p>
             <p><strong>API Gravity:</strong> 42.5°</p>
           </div>
         </div>
       </div>
       
-      <div class="loading-progress">
+      <div class="pickup-progress">
         <div class="progress-header">
           <h3>Loading Progress</h3>
-          <div class="loading-status active">ACTIVE LOADING</div>
+          <div class="pickup-status active">ACTIVE LOADING</div>
         </div>
         
         <div class="volume-tracking">
           <div class="volume-display">
             <div class="volume-circle">
               <div class="volume-fill" style="height: 72%;">
-                <span class="volume-text">87 BBL</span>
+                <span class="volume-text">87 units</span>
               </div>
             </div>
           </div>
@@ -49,19 +49,19 @@
           <div class="volume-details">
             <div class="volume-row">
               <span class="label">Target Volume:</span>
-              <span class="value target">120 BBL</span>
+              <span class="value target">120 units</span>
             </div>
             <div class="volume-row">
               <span class="label">Current Volume:</span>
-              <span class="value current">87 BBL</span>
+              <span class="value current">87 units</span>
             </div>
             <div class="volume-row">
               <span class="label">Remaining:</span>
-              <span class="value remaining">33 BBL</span>
+              <span class="value remaining">33 units</span>
             </div>
             <div class="volume-row">
               <span class="label">Loading Rate:</span>
-              <span class="value rate">5.2 BBL/min</span>
+              <span class="value rate">5.2 units/min</span>
             </div>
           </div>
         </div>
@@ -83,9 +83,9 @@
         </div>
       </div>
       
-      <div class="loading-controls">
+      <div class="pickup-controls">
         <button class="control-btn emergency">🛑 Emergency Stop</button>
-        <button class="control-btn complete" on:click={() => dispatch('loading-complete')}>
+        <button class="control-btn complete" on:click={() => dispatch('pickup-complete')}>
           ✅ Loading Complete
         </button>
       </div>
@@ -94,7 +94,7 @@
         <button class="workflow-nav-btn secondary" on:click={() => dispatch('back-to-pickup')}>
           ← Back to Pickup
         </button>
-        <button class="workflow-nav-btn primary" on:click={() => dispatch('loading-complete')}>
+        <button class="workflow-nav-btn primary" on:click={() => dispatch('pickup-complete')}>
           🚛 Begin Transit to Delivery →
         </button>
       </div>
@@ -109,23 +109,23 @@
     height: 100%;
   }
   
-  .loading-content {
+  .pickup-content {
     max-width: 1200px;
     margin: 0 auto;
   }
   
-  .loading-header {
+  .pickup-header {
     text-align: center;
     margin-bottom: 32px;
   }
   
-  .loading-header h2 {
+  .pickup-header h2 {
     font-size: 2rem;
     color: #1f2937;
     margin-bottom: 8px;
   }
   
-  .loading-header p {
+  .pickup-header p {
     color: #6b7280;
     font-size: 1.1rem;
   }
@@ -148,7 +148,7 @@
     margin: 8px 0;
   }
   
-  .loading-progress {
+  .pickup-progress {
     background: white;
     border-radius: 12px;
     padding: 24px;
@@ -168,14 +168,14 @@
     margin: 0;
   }
   
-  .loading-status {
+  .pickup-status {
     padding: 8px 16px;
     border-radius: 20px;
     font-weight: 600;
     font-size: 0.875rem;
   }
   
-  .loading-status.active {
+  .pickup-status.active {
     background: #dcfce7;
     color: #166534;
   }
@@ -302,7 +302,7 @@
     font-size: 0.875rem;
   }
   
-  .loading-controls {
+  .pickup-controls {
     display: flex;
     gap: 16px;
     justify-content: center;

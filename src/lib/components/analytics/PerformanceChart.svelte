@@ -26,12 +26,12 @@
 				day: 'numeric' 
 			}));
 			
-			// Generate realistic oil field performance metrics
+			// Generate realistic logistics performance metrics
 			const baseEfficiency = 92 + Math.sin(i * 0.1) * 3; // 89-95% efficiency
 			const efficiency = baseEfficiency + (Math.random() - 0.5) * 4;
 			efficiencyData.push(Math.round(efficiency * 100) / 100);
 			
-			const baseVolume = 2500 + Math.sin(i * 0.15) * 300; // 2200-2800 barrels
+			const baseVolume = 2500 + Math.sin(i * 0.15) * 300; // 2200-2800 units
 			const volume = baseVolume + (Math.random() - 0.5) * 200;
 			volumeData.push(Math.round(volume));
 			

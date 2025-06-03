@@ -5,7 +5,7 @@
   import DocumentViewer from './DocumentViewer.svelte';
   
   export let customerId: string | undefined = undefined;
-  export let haulId: string | undefined = undefined;
+  export let jobId: string | undefined = undefined;
   export let showActions = true;
   export let compact = false;
   
@@ -26,8 +26,8 @@
       // Filter by customer if specified
       if (customerId && doc.customerId !== customerId) return false;
       
-      // Filter by haul if specified
-      if (haulId && doc.haulId !== haulId) return false;
+      // Filter by job if specified
+      if (jobId && doc.jobId !== jobId) return false;
       
       // Filter by search query
       if (searchQuery) {
@@ -183,7 +183,7 @@
   };
   
   const downloadDocument = (document: CustomerDocument) => {
-    console.log('Downloading document:', document);
+    console.log('Downpickup document:', document);
   };
   
   // Document viewer handlers

@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export type JobStep = 'driving-to-pickup' | 'at-pickup' | 'loading' | 'driving-to-delivery' | 'at-delivery' | 'unloading' | 'completed';
+export type JobStep = 'driving-to-pickup' | 'at-pickup' | 'pickup' | 'driving-to-delivery' | 'at-delivery' | 'unpickup' | 'completed';
 
 export interface JobStepInfo {
 	id: JobStep;
@@ -20,10 +20,10 @@ export interface JobTrackingState {
 const initialJobSteps: JobStepInfo[] = [
 	{ id: 'driving-to-pickup', label: 'Drive to Pickup', status: 'active', eta: '6:45 AM' },
 	{ id: 'at-pickup', label: 'Arrive at Pickup', status: 'pending', eta: '6:45 AM' },
-	{ id: 'loading', label: 'Load Tank', status: 'pending', eta: '7:15 AM' },
+	{ id: 'pickup', label: 'Load Tank', status: 'pending', eta: '7:15 AM' },
 	{ id: 'driving-to-delivery', label: 'Drive to Delivery', status: 'pending', eta: '7:30 AM' },
 	{ id: 'at-delivery', label: 'Arrive at Delivery', status: 'pending', eta: '11:00 AM' },
-	{ id: 'unloading', label: 'Unload Tank', status: 'pending', eta: '11:30 AM' },
+	{ id: 'unpickup', label: 'Unload Tank', status: 'pending', eta: '11:30 AM' },
 	{ id: 'completed', label: 'Job Complete', status: 'pending', eta: '12:00 PM' }
 ];
 

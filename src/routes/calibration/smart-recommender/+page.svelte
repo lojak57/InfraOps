@@ -4,7 +4,7 @@
 
 	onMount(() => {
 		// Set page title
-		document.title = 'Smart Calibration Recommender - DryDrive Oil Field Temp Tracker';
+		document.title = 'Smart Calibration Recommender - FlowOps Logistics Operations';
 	});
 
 	function handleScheduleCalibration(event: CustomEvent) {
@@ -23,7 +23,7 @@
 </script>
 
 <svelte:head>
-	<title>Smart Calibration Recommender - DryDrive Oil Field Temp Tracker</title>
+	<title>Smart Calibration Recommender - FlowOps Logistics Operations</title>
 	<meta name="description" content="AI-powered fleet monitoring and data-driven calibration recommendations for optimal Coriolis meter accuracy.">
 </svelte:head>
 

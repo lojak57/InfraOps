@@ -5,12 +5,12 @@
   export let sharedState: any;
   
   onMount(() => {
-    console.log('📦 UnloadingStep mounted');
+    console.log('📦 UnpickupStep mounted');
     window.scrollTo(0, 0);
   });
 </script>
 
-<div class="workflow-view unloading">
+<div class="workflow-view unpickup">
   <div class="offload-content">
     <div class="offload-header">
       <h2>Offload Operations</h2>
@@ -22,7 +22,7 @@
         <div class="site-card">
           <h3>🏭 Delivery Site Information</h3>
           <div class="site-details">
-            <p><strong>Facility:</strong> Permian Basin Refinery</p>
+            <p><strong>Facility:</strong> Permian Basin Processing Facility</p>
             <p><strong>Bay:</strong> #7</p>
             <p><strong>Contact:</strong> Mike Rodriguez</p>
             <p><strong>Phone:</strong> (432) 555-0199</p>
@@ -40,23 +40,23 @@
           </div>
           <div class="recon-row">
             <span>Loaded Volume</span>
-            <span>120.0 BBL</span>
+            <span>120.0 units</span>
             <span class="baseline">Baseline</span>
           </div>
           <div class="recon-row">
             <span>Delivery Meter</span>
-            <span>119.8 BBL</span>
-            <span class="variance loss">-0.2 BBL</span>
+            <span>119.8 units</span>
+            <span class="variance loss">-0.2 units</span>
           </div>
           <div class="recon-row">
             <span>Customer Tank</span>
-            <span>119.6 BBL</span>
-            <span class="variance loss">-0.4 BBL</span>
+            <span>119.6 units</span>
+            <span class="variance loss">-0.4 units</span>
           </div>
           <div class="recon-row total">
             <span><strong>Net Delivered</strong></span>
-            <span><strong>119.6 BBL</strong></span>
-            <span class="variance loss"><strong>-0.4 BBL (-0.33%)</strong></span>
+            <span><strong>119.6 units</strong></span>
+            <span class="variance loss"><strong>-0.4 units (-0.33%)</strong></span>
           </div>
         </div>
       </div>

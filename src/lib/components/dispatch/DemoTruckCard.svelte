@@ -13,7 +13,7 @@
 	function getStatusColor(status: string) {
 		switch (status) {
 			case 'active': return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20';
-			case 'loading': return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20';
+			case 'pickup': return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20';
 			case 'transit': return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/20';
 			case 'maintenance': return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20';
 			case 'available': return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-900/20';
@@ -31,7 +31,7 @@
 	$: efficiencyTrend = truck.efficiency >= 90 ? 'up' : 'down';
 	$: hasAlerts = truck.alerts.length > 0;
 	$: efficiencyColor = getEfficiencyColor(truck.efficiency);
-	$: lastHaulText = truck.lastHaulTime ? formatDistanceToNow(truck.lastHaulTime, { addSuffix: true }) : 'No recent hauls';
+	$: lastJobText = truck.lastJobTime ? formatDistanceToNow(truck.lastJobTime, { addSuffix: true }) : 'No recent jobs';
 	$: nextScheduledText = truck.nextScheduled ? formatDistanceToNow(truck.nextScheduled, { addSuffix: true }) : 'Not scheduled';
 </script>
 
@@ -60,13 +60,13 @@
 	<div class="card-metrics">
 		<div class="metric-row">
 			<div class="metric">
-				<div class="metric-label">Today's Hauls</div>
-				<div class="metric-value">{truck.todayHauls}</div>
+				<div class="metric-label">Today's Jobs</div>
+				<div class="metric-value">{truck.todayJobs}</div>
 			</div>
 			
 			<div class="metric">
 				<div class="metric-label">Week Total</div>
-				<div class="metric-value">{truck.weekHauls}</div>
+				<div class="metric-value">{truck.weekJobs}</div>
 			</div>
 		</div>
 
@@ -110,14 +110,14 @@
 		<div class="timing-info">
 			<div class="timing-item">
 				<Clock class="w-4 h-4" />
-				<span class="timing-label">Last haul:</span>
-				<span class="timing-value">{lastHaulText}</span>
+				<span class="timing-label">Last job:</span>
+				<span class="timing-value">{lastJobText}</span>
 			</div>
 			
 			{#if truck.nextScheduled}
 				<div class="timing-item">
 					<Clock class="w-4 h-4" />
-					<span class="timing-label">Next haul:</span>
+					<span class="timing-label">Next job:</span>
 					<span class="timing-value">{nextScheduledText}</span>
 				</div>
 			{/if}

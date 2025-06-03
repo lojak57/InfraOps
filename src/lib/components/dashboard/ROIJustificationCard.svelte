@@ -31,11 +31,11 @@
 	}
 </script>
 
-<div class="roi-card bg-gradient-to-br from-white via-oil-gray/5 to-oil-orange/5 backdrop-blur-sm border border-white/20 rounded-xl p-6 shadow-lg">
+<div class="roi-card bg-gradient-to-br from-white via-oil-gray/5 to-primary-orange/5 backdrop-blur-sm border border-white/20 rounded-xl p-6 shadow-lg">
 	<!-- Header -->
 	<div class="flex items-center gap-3 mb-6">
-		<div class="w-10 h-10 bg-oil-orange/20 rounded-lg flex items-center justify-center">
-			<TrendingUp class="w-5 h-5 text-oil-orange" />
+		<div class="w-10 h-10 bg-primary-orange/20 rounded-lg flex items-center justify-center">
+			<TrendingUp class="w-5 h-5 text-primary-orange" />
 		</div>
 		<div>
 			<h3 class="text-lg font-semibold text-oil-black">{title}</h3>
@@ -92,10 +92,10 @@
 	</div>
 
 	<!-- Summary -->
-	<div class="p-4 bg-oil-orange/10 rounded-lg border border-oil-orange/20">
+	<div class="p-4 bg-primary-orange/10 rounded-lg border border-primary-orange/20">
 		<div class="text-center">
 			<div class="text-sm font-medium text-oil-black mb-2">Investment Justification</div>
-			<div class="text-lg font-bold text-oil-orange">{formatCurrency(downpayment)} investment</div>
+			<div class="text-lg font-bold text-primary-orange">{formatCurrency(downpayment)} investment</div>
 			<div class="text-sm text-oil-gray">justified by {addedLoadsPerWeek} additional loads per week</div>
 			<div class="text-xs text-oil-gray mt-1">
 				Pays for itself in {breakEvenWeeks} weeks ({(breakEvenWeeks / 52).toFixed(1)} years)

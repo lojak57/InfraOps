@@ -9,7 +9,7 @@ export interface DemoAlert {
 	timestamp: Date;
 }
 
-export interface DemoHaulData {
+export interface DemoJobData {
 	id: string;
 	truckId: string;
 	driverId: string;
@@ -49,13 +49,13 @@ export interface DemoTruckData {
 	driverId: string;
 	driverName: string;
 	yardId: string;
-	currentStatus: 'active' | 'loading' | 'transit' | 'maintenance' | 'available';
-	todayHauls: number;
-	weekHauls: number;
+	currentStatus: 'active' | 'pickup' | 'transit' | 'maintenance' | 'available';
+	todayJobs: number;
+	weekJobs: number;
 	efficiency: number;
 	avgVolumeLoss: number;
 	safetyScore: number;
-	lastHaulTime: Date | null;
+	lastJobTime: Date | null;
 	nextScheduled: Date | null;
 	alerts: DemoAlert[];
 	mileage: number;
@@ -71,13 +71,13 @@ export interface DemoYardData {
 	region: string;
 	totalTrucks: number;
 	activeTrucks: number;
-	todayHauls: number;
-	weekHauls: number;
+	todayJobs: number;
+	weekJobs: number;
 	efficiency: number;
 	revenue: number;
 	avgVolumeLoss: number;
 	status: 'excellent' | 'good' | 'attention' | 'critical';
-	loadingBays: number;
+	pickupBays: number;
 	activeBays: number;
 	alerts: DemoAlert[];
 }
@@ -86,10 +86,10 @@ export interface DemoFleetData {
 	totalTrucks: number;
 	totalDrivers: number;
 	totalYards: number;
-	totalHauls: number;
-	todayHauls: number;
-	weekHauls: number;
-	monthHauls: number;
+	totalJobs: number;
+	todayJobs: number;
+	weekJobs: number;
+	monthJobs: number;
 	efficiency: number;
 	totalRevenue: number;
 	monthlyRevenue: number;
@@ -98,7 +98,7 @@ export interface DemoFleetData {
 	alerts: DemoAlert[];
 }
 
-export type DrillDownLevel = 'fleet' | 'yard' | 'truck' | 'haul';
+export type DrillDownLevel = 'fleet' | 'yard' | 'truck' | 'job';
 export type ViewMode = 'analytics' | 'cards' | 'raw';
 
 interface DispatchAnalyticsState {
@@ -106,7 +106,7 @@ interface DispatchAnalyticsState {
 	currentLevel: DrillDownLevel;
 	selectedYard: string | null;
 	selectedTruck: string | null;
-	selectedHaul: string | null;
+	selectedJob: string | null;
 	
 	// View preferences
 	viewMode: ViewMode;
@@ -122,7 +122,7 @@ interface DispatchAnalyticsState {
 	demoFleet: DemoFleetData;
 	demoYards: DemoYardData[];
 	demoTrucks: DemoTruckData[];
-	demoHauls: DemoHaulData[];
+	demoJobs: DemoJobData[];
 }
 
 // Demo Seed Data
@@ -130,10 +130,10 @@ const DEMO_FLEET: DemoFleetData = {
 	totalTrucks: 247,
 	totalDrivers: 312,
 	totalYards: 6,
-	totalHauls: 1247,
-	todayHauls: 89,
-	weekHauls: 634,
-	monthHauls: 2847,
+	totalJobs: 1247,
+	todayJobs: 89,
+	weekJobs: 634,
+	monthJobs: 2847,
 	efficiency: 89.3,
 	totalRevenue: 28470000,
 	monthlyRevenue: 4200000,
@@ -157,13 +157,13 @@ const DEMO_YARDS: DemoYardData[] = [
 		region: 'South Texas',
 		totalTrucks: 41,
 		activeTrucks: 38,
-		todayHauls: 23,
-		weekHauls: 167,
+		todayJobs: 23,
+		weekJobs: 167,
 		efficiency: 91.2,
 		revenue: 847000,
 		avgVolumeLoss: 1.8,
 		status: 'attention',
-		loadingBays: 6,
+		pickupBays: 6,
 		activeBays: 4,
 		alerts: [
 			{
@@ -181,13 +181,13 @@ const DEMO_YARDS: DemoYardData[] = [
 		region: 'South Texas',
 		totalTrucks: 38,
 		activeTrucks: 35,
-		todayHauls: 21,
-		weekHauls: 152,
+		todayJobs: 21,
+		weekJobs: 152,
 		efficiency: 94.7,
 		revenue: 723000,
 		avgVolumeLoss: 1.6,
 		status: 'excellent',
-		loadingBays: 5,
+		pickupBays: 5,
 		activeBays: 3,
 		alerts: []
 	}
@@ -204,18 +204,18 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Mike Johnson',
 		yardId: 'qrvwx',
 		currentStatus: 'active',
-		todayHauls: 2,
-		weekHauls: 12,
+		todayJobs: 2,
+		weekJobs: 12,
 		efficiency: 76.2, // Problem truck
 		avgVolumeLoss: 4.1,
 		safetyScore: 89.3,
-		lastHaulTime: new Date(Date.now() - 7200000),
+		lastJobTime: new Date(Date.now() - 7200000),
 		nextScheduled: new Date(Date.now() + 3600000),
 		alerts: [
 			{
 				type: 'volume_loss',
 				severity: 'high',
-				summary: '4.8% loss on last haul - above threshold',
+				summary: '4.8% loss on last job - above threshold',
 				timestamp: new Date(Date.now() - 7200000)
 			},
 			{
@@ -239,12 +239,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Sarah Davis',
 		yardId: 'qrvwx',
 		currentStatus: 'transit',
-		todayHauls: 3,
-		weekHauls: 18,
+		todayJobs: 3,
+		weekJobs: 18,
 		efficiency: 98.7, // Top performer
 		avgVolumeLoss: 1.2,
 		safetyScore: 99.1,
-		lastHaulTime: new Date(Date.now() - 1800000),
+		lastJobTime: new Date(Date.now() - 1800000),
 		nextScheduled: new Date(Date.now() + 5400000),
 		alerts: [],
 		mileage: 45231,
@@ -260,13 +260,13 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverId: 'D-203',
 		driverName: 'Tom Wilson',
 		yardId: 'qrvwx',
-		currentStatus: 'loading',
-		todayHauls: 2,
-		weekHauls: 15,
+		currentStatus: 'pickup',
+		todayJobs: 2,
+		weekJobs: 15,
 		efficiency: 92.4,
 		avgVolumeLoss: 2.0,
 		safetyScore: 95.7,
-		lastHaulTime: new Date(Date.now() - 14400000),
+		lastJobTime: new Date(Date.now() - 14400000),
 		nextScheduled: new Date(Date.now() + 900000),
 		alerts: [],
 		mileage: 112847,
@@ -283,12 +283,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Jake Martinez',
 		yardId: 'qrvwx',
 		currentStatus: 'active',
-		todayHauls: 2,
-		weekHauls: 14,
+		todayJobs: 2,
+		weekJobs: 14,
 		efficiency: 94.1,
 		avgVolumeLoss: 1.7,
 		safetyScore: 97.2,
-		lastHaulTime: new Date(Date.now() - 10800000),
+		lastJobTime: new Date(Date.now() - 10800000),
 		nextScheduled: new Date(Date.now() + 7200000),
 		alerts: [],
 		mileage: 28734,
@@ -305,12 +305,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Robert Lee',
 		yardId: 'qrvwx',
 		currentStatus: 'available',
-		todayHauls: 1,
-		weekHauls: 11,
+		todayJobs: 1,
+		weekJobs: 11,
 		efficiency: 88.9,
 		avgVolumeLoss: 2.4,
 		safetyScore: 94.8,
-		lastHaulTime: new Date(Date.now() - 25200000),
+		lastJobTime: new Date(Date.now() - 25200000),
 		nextScheduled: new Date(Date.now() + 1800000),
 		alerts: [],
 		mileage: 63421,
@@ -328,12 +328,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Carlos Rodriguez',
 		yardId: 'eagle-ford',
 		currentStatus: 'active',
-		todayHauls: 3,
-		weekHauls: 19,
+		todayJobs: 3,
+		weekJobs: 19,
 		efficiency: 96.8,
 		avgVolumeLoss: 1.4,
 		safetyScore: 98.2,
-		lastHaulTime: new Date(Date.now() - 3600000),
+		lastJobTime: new Date(Date.now() - 3600000),
 		nextScheduled: new Date(Date.now() + 7200000),
 		alerts: [],
 		mileage: 23451,
@@ -350,12 +350,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Jennifer Kim',
 		yardId: 'eagle-ford',
 		currentStatus: 'available',
-		todayHauls: 2,
-		weekHauls: 16,
+		todayJobs: 2,
+		weekJobs: 16,
 		efficiency: 95.3,
 		avgVolumeLoss: 1.6,
 		safetyScore: 97.9,
-		lastHaulTime: new Date(Date.now() - 10800000),
+		lastJobTime: new Date(Date.now() - 10800000),
 		nextScheduled: new Date(Date.now() + 1800000),
 		alerts: [],
 		mileage: 18732,
@@ -372,12 +372,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'David Chen',
 		yardId: 'eagle-ford',
 		currentStatus: 'maintenance',
-		todayHauls: 0,
-		weekHauls: 14,
+		todayJobs: 0,
+		weekJobs: 14,
 		efficiency: 93.1,
 		avgVolumeLoss: 1.9,
 		safetyScore: 96.4,
-		lastHaulTime: new Date(Date.now() - 86400000),
+		lastJobTime: new Date(Date.now() - 86400000),
 		nextScheduled: new Date(Date.now() + 21600000),
 		alerts: [
 			{
@@ -401,12 +401,12 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverName: 'Maria Gonzalez',
 		yardId: 'eagle-ford',
 		currentStatus: 'transit',
-		todayHauls: 2,
-		weekHauls: 17,
+		todayJobs: 2,
+		weekJobs: 17,
 		efficiency: 97.1,
 		avgVolumeLoss: 1.3,
 		safetyScore: 98.5,
-		lastHaulTime: new Date(Date.now() - 5400000),
+		lastJobTime: new Date(Date.now() - 5400000),
 		nextScheduled: new Date(Date.now() + 9000000),
 		alerts: [],
 		mileage: 15632,
@@ -422,13 +422,13 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 		driverId: 'D-352',
 		driverName: 'Tony Rivera',
 		yardId: 'eagle-ford',
-		currentStatus: 'loading',
-		todayHauls: 1,
-		weekHauls: 13,
+		currentStatus: 'pickup',
+		todayJobs: 1,
+		weekJobs: 13,
 		efficiency: 91.7,
 		avgVolumeLoss: 2.1,
 		safetyScore: 95.9,
-		lastHaulTime: new Date(Date.now() - 18000000),
+		lastJobTime: new Date(Date.now() - 18000000),
 		nextScheduled: new Date(Date.now() + 3600000),
 		alerts: [],
 		mileage: 78924,
@@ -438,8 +438,8 @@ const DEMO_TRUCKS: DemoTruckData[] = [
 	}
 ];
 
-const DEMO_HAULS: DemoHaulData[] = [
-	// The "Problem Haul" - T-205's smoking gun
+const DEMO_HAULS: DemoJobData[] = [
+	// The "Problem Job" - T-205's smoking gun
 	{
 		id: 'HL-001547',
 		truckId: 'T-205',
@@ -488,7 +488,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 28.99683, lng: -98.03021, timestamp: new Date(Date.now() - 1800000) }
 		]
 	},
-	// Perfect haul - T-212's excellence
+	// Perfect job - T-212's excellence
 	{
 		id: 'HL-001612',
 		truckId: 'T-212',
@@ -524,7 +524,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 28.84889, lng: -97.99120, timestamp: new Date(Date.now() - 14400000) }
 		]
 	},
-	// More demo hauls for context...
+	// More demo jobs for context...
 	{
 		id: 'HL-001634',
 		truckId: 'T-198',
@@ -560,7 +560,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 28.93972, lng: -97.86080, timestamp: new Date(Date.now() - 7200000) }
 		]
 	},
-	// Carmody hauls - excellent performance
+	// Carmody jobs - excellent performance
 	{
 		id: 'HL-001645',
 		truckId: 'T-301',
@@ -666,14 +666,14 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 28.99683, lng: -98.03021, timestamp: new Date(Date.now() - 25200000) }
 		]
 	},
-	// More Permian Basin hauls
+	// More Permian Basin jobs
 	{
 		id: 'HL-001678',
 		truckId: 'T-156',
 		driverId: 'D-224',
 		driverName: 'Jake Martinez',
 		origin: 'Permian Basin Site D',
-		destination: 'Baytown Refinery',
+		destination: 'Baytown Processing Facility',
 		customer: 'ExxonMobil',
 		onloadVolume: 27756.2,
 		offloadVolume: 27289.7,
@@ -744,7 +744,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 29.3738, lng: -94.9077, timestamp: new Date(Date.now() - 39600000) }
 		]
 	},
-	// More Eagle Ford hauls
+	// More Eagle Ford jobs
 	{
 		id: 'HL-001690',
 		truckId: 'T-358',
@@ -780,7 +780,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 28.9544, lng: -95.3593, timestamp: new Date(Date.now() - 46800000) }
 		]
 	},
-	// Additional recent hauls for more data
+	// Additional recent jobs for more data
 	{
 		id: 'HL-001701',
 		truckId: 'T-212',
@@ -822,7 +822,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 		driverId: 'D-267',
 		driverName: 'Carlos Rodriguez',
 		origin: 'Eagle Ford Site E',
-		destination: 'Deer Park Refinery',
+		destination: 'Deer Park Processing Facility',
 		customer: 'Shell',
 		onloadVolume: 28056.1,
 		offloadVolume: 27698.4,
@@ -851,7 +851,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 29.7030, lng: -95.1269, timestamp: new Date(Date.now() - 61200000) }
 		]
 	},
-	// More diverse hauls for testing
+	// More diverse jobs for testing
 	{
 		id: 'HL-001723',
 		truckId: 'T-198',
@@ -922,7 +922,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 			{ lat: 29.7752, lng: -95.1357, timestamp: new Date(Date.now() - 75600000) }
 		]
 	},
-	// Current day hauls (in progress and scheduled)
+	// Current day jobs (in progress and scheduled)
 	{
 		id: 'HL-001745',
 		truckId: 'T-156',
@@ -964,7 +964,7 @@ const DEMO_HAULS: DemoHaulData[] = [
 		driverId: 'D-331',
 		driverName: 'Maria Gonzalez',
 		origin: 'Falls City Harvest Pipeline',
-		destination: 'Sweeny Refinery',
+		destination: 'Sweeny Processing Facility',
 		customer: 'Phillips 66',
 		onloadVolume: 28234.1,
 		offloadVolume: 0,
@@ -997,7 +997,7 @@ function createDispatchAnalyticsStore() {
 		currentLevel: 'fleet',
 		selectedYard: null,
 		selectedTruck: null,
-		selectedHaul: null,
+		selectedJob: null,
 		viewMode: 'analytics',
 		timeframe: 'today',
 		demoMode: true,
@@ -1007,7 +1007,7 @@ function createDispatchAnalyticsStore() {
 		demoFleet: DEMO_FLEET,
 		demoYards: DEMO_YARDS,
 		demoTrucks: DEMO_TRUCKS,
-		demoHauls: DEMO_HAULS
+		demoJobs: DEMO_HAULS
 	};
 
 	const { subscribe, set, update } = writable(initialState);
@@ -1027,16 +1027,16 @@ function createDispatchAnalyticsStore() {
 						newState.currentLevel = 'yard';
 						newState.selectedYard = id;
 						newState.selectedTruck = null;
-						newState.selectedHaul = null;
+						newState.selectedJob = null;
 						break;
 					case 'truck':
 						newState.currentLevel = 'truck';
 						newState.selectedTruck = id;
-						newState.selectedHaul = null;
+						newState.selectedJob = null;
 						break;
-					case 'haul':
-						newState.currentLevel = 'haul';
-						newState.selectedHaul = id;
+					case 'job':
+						newState.currentLevel = 'job';
+						newState.selectedJob = id;
 						break;
 				}
 				
@@ -1049,20 +1049,20 @@ function createDispatchAnalyticsStore() {
 				const newState = { ...state };
 				
 				switch (state.currentLevel) {
-					case 'haul':
+					case 'job':
 						newState.currentLevel = 'truck';
-						newState.selectedHaul = null;
+						newState.selectedJob = null;
 						break;
 					case 'truck':
 						newState.currentLevel = 'yard';
 						newState.selectedTruck = null;
-						newState.selectedHaul = null;
+						newState.selectedJob = null;
 						break;
 					case 'yard':
 						newState.currentLevel = 'fleet';
 						newState.selectedYard = null;
 						newState.selectedTruck = null;
-						newState.selectedHaul = null;
+						newState.selectedJob = null;
 						break;
 				}
 				
@@ -1076,7 +1076,7 @@ function createDispatchAnalyticsStore() {
 				currentLevel: 'fleet',
 				selectedYard: null,
 				selectedTruck: null,
-				selectedHaul: null
+				selectedJob: null
 			}));
 		},
 		
@@ -1108,7 +1108,7 @@ export const dispatchAnalytics = createDispatchAnalyticsStore();
 export const currentLevel = derived(dispatchAnalytics, $state => $state.currentLevel);
 export const selectedYard = derived(dispatchAnalytics, $state => $state.selectedYard);
 export const selectedTruck = derived(dispatchAnalytics, $state => $state.selectedTruck);
-export const selectedHaul = derived(dispatchAnalytics, $state => $state.selectedHaul);
+export const selectedJob = derived(dispatchAnalytics, $state => $state.selectedJob);
 export const viewMode = derived(dispatchAnalytics, $state => $state.viewMode);
 export const demoMode = derived(dispatchAnalytics, $state => $state.demoMode);
 
@@ -1129,11 +1129,11 @@ export const currentTruckData = derived(
 	}
 );
 
-export const currentHaulData = derived(
-	[dispatchAnalytics, selectedHaul],
-	([$state, $selectedHaul]) => {
-		if (!$selectedHaul) return null;
-		return $state.demoHauls.find(haul => haul.id === $selectedHaul) || null;
+export const currentJobData = derived(
+	[dispatchAnalytics, selectedJob],
+	([$state, $selectedJob]) => {
+		if (!$selectedJob) return null;
+		return $state.demoJobs.find(job => job.id === $selectedJob) || null;
 	}
 );
 
@@ -1150,11 +1150,11 @@ export const trucksForCurrentYard = derived(
 	}
 );
 
-export const haulsForCurrentTruck = derived(
+export const jobsForCurrentTruck = derived(
 	[dispatchAnalytics, selectedTruck],
 	([$state, $selectedTruck]) => {
 		if (!$selectedTruck) return [];
-		return $state.demoHauls.filter(haul => haul.truckId === $selectedTruck);
+		return $state.demoJobs.filter(job => job.truckId === $selectedTruck);
 	}
 );
 

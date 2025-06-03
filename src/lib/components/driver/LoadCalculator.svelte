@@ -2,18 +2,18 @@
 	import { createEventDispatcher } from 'svelte';
 	import { Calculator, Truck, Weight, AlertTriangle } from 'lucide-svelte';
 
-	// Props with defaults for typical oil field truck
+	// Props with defaults for typical logistics truck
 	export let truckTare = 15000;
 	export let trailerTare = 8000;
 	export let driverWeight = 180;
 	export let equipment = 500;
-	export let materialDensity = 8.5; // lbs per gallon (typical for crude oil)
+	export let materialDensity = 8.5; // lbs per gallon (typical for liquid product)
 	export let weatherPenalty = 0;
 	export let roadConditions: 'Good' | 'Fair' | 'Poor' = 'Good';
 
 	const dispatch = createEventDispatcher<{
 		'calculation-complete': {
-			maxBarrels: number;
+			maxUnits: number;
 			totalVolume: number;
 			availableWeight: number;
 			weightUtilization: number;
@@ -25,15 +25,15 @@
 	$: grossVehicleWeightLimit = 80000; // Standard DOT limit
 	$: roadPenalty = roadConditions === 'Poor' ? 2000 : roadConditions === 'Fair' ? 1000 : 0;
 	$: availableWeight = grossVehicleWeightLimit - totalTare - weatherPenalty - roadPenalty;
-	$: maxBarrels = Math.floor(availableWeight / (materialDensity * 42)); // 42 gallons per barrel
-	$: totalVolume = maxBarrels * 42; // Convert to gallons
+	$: maxUnits = Math.floor(availableWeight / (materialDensity * 42)); // 42 gallons per unit
+	$: totalVolume = maxUnits * 42; // Convert to gallons
 	$: weightUtilization = (totalTare / grossVehicleWeightLimit) * 100;
 	$: loadCapacityPercent = (availableWeight / grossVehicleWeightLimit) * 100;
 
 	// Dispatch calculation results
 	$: {
 		dispatch('calculation-complete', {
-			maxBarrels,
+			maxUnits,
 			totalVolume,
 			availableWeight,
 			weightUtilization
@@ -160,8 +160,8 @@
 						<Truck size={20} />
 					</div>
 					<div class="result-content">
-						<div class="result-value">{formatNumber(maxBarrels)}</div>
-						<div class="result-label">Max Barrels</div>
+						<div class="result-value">{formatNumber(maxUnits)}</div>
+						<div class="result-label">Max Units</div>
 					</div>
 				</div>
 

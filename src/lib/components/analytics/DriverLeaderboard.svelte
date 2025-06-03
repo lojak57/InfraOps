@@ -5,9 +5,9 @@
 		id: string;
 		name: string;
 		experience: number;
-		totalHauls: number;
+		totalJobs: number;
 		averageEfficiency: number;
-		recentHauls: number;
+		recentJobs: number;
 		currentEfficiency: number;
 	}>;
 
@@ -58,15 +58,15 @@
 					<div class="min-w-0 flex-1">
 						<div class="font-semibold text-oil-black text-sm sm:text-base leading-tight truncate">{driver.name}</div>
 						<div class="text-xs text-oil-gray truncate">
-							{driver.experience}y exp • {driver.totalHauls.toLocaleString()} hauls
+							{driver.experience}y exp • {driver.totalJobs.toLocaleString()} jobs
 						</div>
 					</div>
 				</div>
 				
 				<!-- Recent Activity -->
 				<div class="text-right flex-shrink-0 hidden sm:block">
-					<div class="text-xs text-oil-gray mb-1">Recent Hauls</div>
-					<div class="font-semibold text-oil-black text-sm">{driver.recentHauls}</div>
+					<div class="text-xs text-oil-gray mb-1">Recent Jobs</div>
+					<div class="font-semibold text-oil-black text-sm">{driver.recentJobs}</div>
 				</div>
 				
 				<!-- Efficiency Badge -->
@@ -98,9 +98,9 @@
 		
 		<div class="text-center">
 			<div class="metric-display text-oil-black text-base sm:text-lg mb-1 leading-tight">
-				{drivers.reduce((sum, d) => sum + d.recentHauls, 0)}
+				{drivers.reduce((sum, d) => sum + d.recentJobs, 0)}
 			</div>
-			<div class="text-xs text-oil-gray">Recent Hauls</div>
+			<div class="text-xs text-oil-gray">Recent Jobs</div>
 		</div>
 	</div>
 </div> 

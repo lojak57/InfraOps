@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GasDetection } from '$lib/stores/haulStore';
+	import type { GasDetection } from '$lib/stores/jobStore';
 
 	export let gasReading: GasDetection;
 	export let compact: boolean = false;

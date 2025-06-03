@@ -20,7 +20,7 @@
 		{
 			date: '2024-01-15',
 			dailyThroughput: 2847,
-			barrelsPerDriveHour: 185.3,
+			unitsPerDriveHour: 185.3,
 			activeTrucksPercent: 75.3,
 			driversEnRoutePercent: 68.2,
 			loadEfficiencyIndex: 4.2,
@@ -31,7 +31,7 @@
 		{
 			date: '2024-01-14',
 			dailyThroughput: 2720,
-			barrelsPerDriveHour: 178.9,
+			unitsPerDriveHour: 178.9,
 			activeTrucksPercent: 71.8,
 			driversEnRoutePercent: 65.4,
 			loadEfficiencyIndex: 3.9,
@@ -42,7 +42,7 @@
 		{
 			date: '2024-01-13',
 			dailyThroughput: 2535,
-			barrelsPerDriveHour: 165.2,
+			unitsPerDriveHour: 165.2,
 			activeTrucksPercent: 67.4,
 			driversEnRoutePercent: 62.1,
 			loadEfficiencyIndex: 3.6,
@@ -53,7 +53,7 @@
 		{
 			date: '2024-01-12',
 			dailyThroughput: 2892,
-			barrelsPerDriveHour: 192.7,
+			unitsPerDriveHour: 192.7,
 			activeTrucksPercent: 82.1,
 			driversEnRoutePercent: 74.5,
 			loadEfficiencyIndex: 4.8,
@@ -64,7 +64,7 @@
 		{
 			date: '2024-01-11',
 			dailyThroughput: 2674,
-			barrelsPerDriveHour: 174.8,
+			unitsPerDriveHour: 174.8,
 			activeTrucksPercent: 73.6,
 			driversEnRoutePercent: 67.8,
 			loadEfficiencyIndex: 4.1,
@@ -75,7 +75,7 @@
 		{
 			date: '2024-01-10',
 			dailyThroughput: 2456,
-			barrelsPerDriveHour: 158.9,
+			unitsPerDriveHour: 158.9,
 			activeTrucksPercent: 65.2,
 			driversEnRoutePercent: 58.7,
 			loadEfficiencyIndex: 3.4,
@@ -86,7 +86,7 @@
 		{
 			date: '2024-01-09',
 			dailyThroughput: 2789,
-			barrelsPerDriveHour: 183.4,
+			unitsPerDriveHour: 183.4,
 			activeTrucksPercent: 76.8,
 			driversEnRoutePercent: 71.2,
 			loadEfficiencyIndex: 4.4,
@@ -156,7 +156,7 @@
 		switch (metric) {
 			case 'throughput':
 				return value >= 2800 ? 'text-emerald-600' : value >= 2600 ? 'text-yellow-600' : 'text-red-600';
-			case 'barrelsPerHour':
+			case 'unitsPerHour':
 				return value >= 180 ? 'text-emerald-600' : value >= 160 ? 'text-yellow-600' : 'text-red-600';
 			case 'activeTrucks':
 				return value >= 75 ? 'text-emerald-600' : value >= 65 ? 'text-yellow-600' : 'text-red-600';
@@ -218,7 +218,7 @@
 			<div class="key-insights">
 				<div class="insight-card">
 					<h4>Performance Summary</h4>
-					<p>Averaged <strong>2,701 BBL/day</strong> with <strong>92.3% operational efficiency</strong> despite planned maintenance affecting 3 trucks on Jan 13</p>
+					<p>Averaged <strong>2,701 units/day</strong> with <strong>92.3% operational efficiency</strong> despite planned maintenance affecting 3 trucks on Jan 13</p>
 				</div>
 				<div class="insight-card">
 					<h4>Context Matters</h4>
@@ -241,16 +241,16 @@
 							</th>
 							<th>
 								<button on:click={() => sortData('dailyThroughput')} class="sort-button">
-									Daily Throughput (BBL)
+									Daily Throughput (units)
 									{#if sortColumn === 'dailyThroughput'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
 							</th>
 							<th>
-								<button on:click={() => sortData('barrelsPerDriveHour')} class="sort-button">
-									BBL/Drive Hour
-									{#if sortColumn === 'barrelsPerDriveHour'}
+								<button on:click={() => sortData('unitsPerDriveHour')} class="sort-button">
+									units/Drive Hour
+									{#if sortColumn === 'unitsPerDriveHour'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
@@ -290,8 +290,8 @@
 								<td class="metric-cell {getPerformanceColor(row.dailyThroughput, 'throughput')}">
 									{row.dailyThroughput.toLocaleString()}
 								</td>
-								<td class="metric-cell {getPerformanceColor(row.barrelsPerDriveHour, 'barrelsPerHour')}">
-									{row.barrelsPerDriveHour}
+								<td class="metric-cell {getPerformanceColor(row.unitsPerDriveHour, 'unitsPerHour')}">
+									{row.unitsPerDriveHour}
 								</td>
 								<td class="metric-cell {getPerformanceColor(row.activeTrucksPercent, 'activeTrucks')}">
 									{row.activeTrucksPercent}%
@@ -322,7 +322,7 @@
 			<!-- Footer Insights -->
 			<div class="footer-insights">
 				<div class="insight-stat">
-					<strong>Average Performance:</strong> 2,701 BBL/day | 174.2 BBL/hr | 73.5% utilization
+					<strong>Average Performance:</strong> 2,701 units/day | 174.2 units/hr | 73.5% utilization
 				</div>
 				<div class="insight-stat">
 					<strong>External Factors:</strong> 2 days impacted by factors outside yard control (weather, customer maintenance)

@@ -3,7 +3,7 @@
 	import FleetAnalytics from './FleetAnalytics.svelte';
 	import YardAnalytics from './YardAnalytics.svelte';
 	import TruckAnalytics from './TruckAnalytics.svelte';
-	import HaulDetailView from './HaulDetailView.svelte';
+	import JobDetailView from './JobDetailView.svelte';
 	import RawDataTable from './RawDataTable.svelte';
 	import { 
 		Home, 
@@ -20,19 +20,19 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	// Active tab management
-	let activeTab: 'fleet' | 'yard' | 'truck' | 'haul' | 'raw' = 'fleet';
+	let activeTab: 'fleet' | 'yard' | 'truck' | 'job' | 'raw' = 'fleet';
 
 	// Reactive state
-	$: ({ currentLevel: level, selectedYard, selectedTruck, selectedHaul, lastUpdate } = $dispatchAnalytics);
+	$: ({ currentLevel: level, selectedYard, selectedTruck, selectedJob, lastUpdate } = $dispatchAnalytics);
 	$: fleetData = $dispatchAnalytics.demoFleet;
 	$: yardData = $dispatchAnalytics.demoYards;
 	$: truckData = $dispatchAnalytics.demoTrucks;
-	$: haulData = $dispatchAnalytics.demoHauls;
+	$: jobData = $dispatchAnalytics.demoJobs;
 
 	// Breadcrumb generation for current drill-down
-	$: breadcrumbs = getBreadcrumbs(level, selectedYard, selectedTruck, selectedHaul);
+	$: breadcrumbs = getBreadcrumbs(level, selectedYard, selectedTruck, selectedJob);
 	
-	function getBreadcrumbs(level: string, yardId: string | null, truckId: string | null, haulId: string | null) {
+	function getBreadcrumbs(level: string, yardId: string | null, truckId: string | null, jobId: string | null) {
 		const crumbs = [{ label: 'Fleet Overview', level: 'fleet', icon: Home }];
 		
 		if (level !== 'fleet' && yardId) {
@@ -44,8 +44,8 @@
 			crumbs.push({ label: `Truck ${truckId}`, level: 'truck', icon: Truck });
 		}
 		
-		if (level === 'haul' && haulId) {
-			crumbs.push({ label: `Haul ${haulId}`, level: 'haul', icon: FileText });
+		if (level === 'job' && jobId) {
+			crumbs.push({ label: `Job ${jobId}`, level: 'job', icon: FileText });
 		}
 		
 		return crumbs;
@@ -75,11 +75,11 @@
 				dispatchAnalytics.drillDown('truck', firstTruck.id);
 			}
 		}
-		// Auto-drill down to first haul when accessing haul tab directly
-		else if (tab === 'haul' && level === 'fleet') {
-			const firstHaul = $dispatchAnalytics.demoHauls[0];
-			if (firstHaul) {
-				dispatchAnalytics.drillDown('haul', firstHaul.id);
+		// Auto-drill down to first job when accessing job tab directly
+		else if (tab === 'job' && level === 'fleet') {
+			const firstJob = $dispatchAnalytics.demoJobs[0];
+			if (firstJob) {
+				dispatchAnalytics.drillDown('job', firstJob.id);
 			}
 		}
 	}
@@ -103,10 +103,10 @@
 					activeTab = 'truck';
 				}
 				break;
-			case 'haul':
+			case 'job':
 				if (id) {
-					dispatchAnalytics.drillDown('haul', id);
-					activeTab = 'haul';
+					dispatchAnalytics.drillDown('job', id);
+					activeTab = 'job';
 				}
 				break;
 		}
@@ -123,38 +123,38 @@
 			alerts: fleetData.alerts.length,
 			efficiency: fleetData.efficiency
 		},
-		yard: {
+		site: {
 			count: yardData.length,
 			alerts: yardData.reduce((sum, y) => sum + y.alerts.length, 0),
 			efficiency: yardData.reduce((sum, y) => sum + y.efficiency, 0) / yardData.length
 		},
-		truck: {
+		asset: {
 			count: truckData.length,
 			alerts: truckData.reduce((sum, t) => sum + t.alerts.length, 0),
 			efficiency: truckData.reduce((sum, t) => sum + t.efficiency, 0) / truckData.length
 		},
-		haul: {
-			count: haulData.length,
-			alerts: haulData.reduce((sum, h) => sum + h.alerts.length, 0),
-			efficiency: haulData.reduce((sum, h) => sum + h.efficiency, 0) / haulData.length
+		job: {
+			count: jobData.length,
+			alerts: jobData.reduce((sum, h) => sum + h.alerts.length, 0),
+			efficiency: jobData.reduce((sum, h) => sum + h.efficiency, 0) / jobData.length
 		}
 	};
 
-	// Handle haul detail requests from raw data table
-	let haulDetailEventListener: ((event: CustomEvent) => void) | null = null;
+	// Handle job detail requests from raw data table
+	let jobDetailEventListener: ((event: CustomEvent) => void) | null = null;
 
 	onMount(() => {
-		haulDetailEventListener = (event: CustomEvent) => {
-			const { haulId } = event.detail;
-			activeTab = 'haul';
+		jobDetailEventListener = (event: CustomEvent) => {
+			const { jobId } = event.detail;
+			activeTab = 'job';
 		};
 		
-		window.addEventListener('haul-detail-requested', haulDetailEventListener as EventListener);
+		window.addEventListener('job-detail-requested', jobDetailEventListener as EventListener);
 	});
 
 	onDestroy(() => {
-		if (haulDetailEventListener) {
-			window.removeEventListener('haul-detail-requested', haulDetailEventListener as EventListener);
+		if (jobDetailEventListener) {
+			window.removeEventListener('job-detail-requested', jobDetailEventListener as EventListener);
 		}
 	});
 </script>
@@ -166,10 +166,10 @@
 			<div class="title-section">
 				<h1 class="analytics-title">
 					<Activity class="w-6 h-6 text-orange-500" />
-					Fleet Intelligence Nexus
+					Asset Intelligence Hub
 				</h1>
 				<p class="analytics-subtitle">
-					Real-time fleet operations intelligence • Last updated {formatLastUpdate(lastUpdate)}
+					Real-time asset operations intelligence • Last updated {formatLastUpdate(lastUpdate)}
 				</p>
 			</div>
 			
@@ -177,7 +177,7 @@
 			<div class="quick-stats">
 				<div class="stat-item">
 					<span class="stat-value">{fleetData.totalTrucks}</span>
-					<span class="stat-label">Trucks</span>
+					<span class="stat-label">Assets</span>
 				</div>
 				<div class="stat-item">
 					<span class="stat-value">${(fleetData.monthlyRevenue / 1000000).toFixed(1)}M</span>
@@ -185,7 +185,7 @@
 				</div>
 				<div class="stat-item">
 					<span class="stat-value">{fleetData.efficiency}%</span>
-					<span class="stat-label">Fleet Efficiency</span>
+					<span class="stat-label">Asset Efficiency</span>
 				</div>
 			</div>
 		</div>
@@ -240,11 +240,11 @@
 			>
 				<Building2 class="w-5 h-5" />
 				<span class="tab-content">
-					<span class="tab-label">Yards ({tabStats.yard.count})</span>
+					<span class="tab-label">Yards ({tabStats.site.count})</span>
 					<span class="tab-meta">
-						{tabStats.yard.efficiency.toFixed(1)}% avg efficiency
-						{#if tabStats.yard.alerts > 0}
-							<span class="alert-indicator">{tabStats.yard.alerts}</span>
+						{tabStats.site.efficiency.toFixed(1)}% avg efficiency
+						{#if tabStats.site.alerts > 0}
+							<span class="alert-indicator">{tabStats.site.alerts}</span>
 						{/if}
 					</span>
 				</span>
@@ -257,11 +257,11 @@
 			>
 				<Truck class="w-5 h-5" />
 				<span class="tab-content">
-					<span class="tab-label">Trucks ({tabStats.truck.count})</span>
+					<span class="tab-label">Trucks ({tabStats.asset.count})</span>
 					<span class="tab-meta">
-						{tabStats.truck.efficiency.toFixed(1)}% avg efficiency
-						{#if tabStats.truck.alerts > 0}
-							<span class="alert-indicator">{tabStats.truck.alerts}</span>
+						{tabStats.asset.efficiency.toFixed(1)}% avg efficiency
+						{#if tabStats.asset.alerts > 0}
+							<span class="alert-indicator">{tabStats.asset.alerts}</span>
 						{/if}
 					</span>
 				</span>
@@ -269,16 +269,16 @@
 
 			<button 
 				class="main-tab"
-				class:active={activeTab === 'haul'}
-				on:click={() => handleTabChange('haul')}
+				class:active={activeTab === 'job'}
+				on:click={() => handleTabChange('job')}
 			>
 				<FileText class="w-5 h-5" />
 				<span class="tab-content">
-					<span class="tab-label">Haul Tickets ({tabStats.haul.count})</span>
+					<span class="tab-label">Job Tickets ({tabStats.job.count})</span>
 					<span class="tab-meta">
-						{tabStats.haul.efficiency.toFixed(1)}% avg efficiency
-						{#if tabStats.haul.alerts > 0}
-							<span class="alert-indicator">{tabStats.haul.alerts}</span>
+						{tabStats.job.efficiency.toFixed(1)}% avg efficiency
+						{#if tabStats.job.alerts > 0}
+							<span class="alert-indicator">{tabStats.job.alerts}</span>
 						{/if}
 					</span>
 				</span>
@@ -296,7 +296,7 @@
 				<Database class="w-5 h-5" />
 				<span class="tab-content">
 					<span class="tab-label">Raw Data</span>
-					<span class="tab-meta">Filterable haul tickets</span>
+					<span class="tab-meta">Filterable job tickets</span>
 				</span>
 			</button>
 		</div>
@@ -310,8 +310,8 @@
 			<YardAnalytics {handleDrillDown} />
 		{:else if activeTab === 'truck'}
 			<TruckAnalytics {handleDrillDown} />
-		{:else if activeTab === 'haul'}
-			<HaulDetailView {handleDrillDown} />
+		{:else if activeTab === 'job'}
+			<JobDetailView {handleDrillDown} />
 		{:else if activeTab === 'raw'}
 			<RawDataTable />
 		{/if}

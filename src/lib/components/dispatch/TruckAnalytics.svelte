@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { currentTruckData, haulsForCurrentTruck, viewMode, dispatchAnalytics } from '$lib/stores/dispatchAnalytics';
-	import DemoHaulCard from './DemoHaulCard.svelte';
+	import { currentTruckData, jobsForCurrentTruck, viewMode, dispatchAnalytics } from '$lib/stores/dispatchAnalytics';
+	import DemoJobCard from './DemoJobCard.svelte';
 	import DemoTruckCard from './DemoTruckCard.svelte';
 	import { 
 		Truck, 
@@ -20,9 +20,9 @@
 	export let handleDrillDown: (targetLevel: string, id?: string) => void;
 
 	$: truckData = $currentTruckData;
-	$: hauls = $haulsForCurrentTruck;
+	$: jobs = $jobsForCurrentTruck;
 	$: allTrucks = $dispatchAnalytics.demoTrucks;
-	$: allHauls = $dispatchAnalytics.demoHauls;
+	$: allJobs = $dispatchAnalytics.demoJobs;
 	$: allYards = $dispatchAnalytics.demoYards;
 
 	// Show all trucks when no specific truck is selected
@@ -42,7 +42,7 @@
 	function getTruckStatus(truck: any) {
 		switch (truck.currentStatus) {
 			case 'active': return { label: 'Active', class: 'success' };
-			case 'loading': return { label: 'Loading', class: 'warning' };
+			case 'pickup': return { label: 'Loading', class: 'warning' };
 			case 'transit': return { label: 'In Transit', class: 'info' };
 			case 'maintenance': return { label: 'Maintenance', class: 'error' };
 			case 'available': return { label: 'Available', class: 'neutral' };
@@ -71,7 +71,7 @@
 				<div class="kpi-content">
 					<div class="kpi-value">{allTrucks.length}</div>
 					<div class="kpi-label">Total Trucks</div>
-					<div class="kpi-sub">{allTrucks.filter(t => t.currentStatus === 'active' || t.currentStatus === 'loading' || t.currentStatus === 'transit').length} active</div>
+					<div class="kpi-sub">{allTrucks.filter(t => t.currentStatus === 'active' || t.currentStatus === 'pickup' || t.currentStatus === 'transit').length} active</div>
 				</div>
 			</div>
 
@@ -80,9 +80,9 @@
 					<Activity class="w-6 h-6" />
 				</div>
 				<div class="kpi-content">
-					<div class="kpi-value">{allHauls.length}</div>
-					<div class="kpi-label">Total Hauls</div>
-					<div class="kpi-sub">{allTrucks.reduce((sum, t) => sum + t.todayHauls, 0)} today</div>
+					<div class="kpi-value">{allJobs.length}</div>
+					<div class="kpi-label">Total Jobs</div>
+					<div class="kpi-sub">{allTrucks.reduce((sum, t) => sum + t.todayJobs, 0)} today</div>
 				</div>
 			</div>
 
@@ -151,8 +151,8 @@
 		<!-- Trucks by Yard -->
 		<div class="trucks-section">
 			<h2 class="section-title">
-				Trucks by Yard
-				<span class="section-subtitle">Click any truck to drill down</span>
+				Assets by Site
+				<span class="section-subtitle">Click any asset to drill down</span>
 			</h2>
 			
 			{#each trucksByYard as { yard, trucks } (yard.id)}
@@ -161,7 +161,7 @@
 						<h3 class="yard-header">
 							<MapPin class="w-4 h-4" />
 							{yard.name}
-							<span class="truck-count">({trucks.length} trucks)</span>
+							<span class="truck-count">({trucks.length} assets)</span>
 						</h3>
 						
 						<div class="trucks-grid">
@@ -178,10 +178,10 @@
 	<!-- Show specific truck data (existing code) -->
 	<div class="truck-analytics">
 		<div class="analytics-header">
-			<h1 class="page-title">Truck {truckData.id}</h1>
+			<h1 class="page-title">Asset {truckData.id}</h1>
 			<p class="page-subtitle">
 				<Truck class="w-4 h-4 inline" />
-				{truckData.model} ({truckData.year}) • Driver: {truckData.driverName}
+				{truckData.model} ({truckData.year}) • Operator: {truckData.driverName}
 			</p>
 		</div>
 
@@ -194,7 +194,7 @@
 				<div class="kpi-content">
 					<div class="kpi-value">{getTruckStatus(truckData).label}</div>
 					<div class="kpi-label">Current Status</div>
-					<div class="kpi-sub">Last seen {formatLastSeen(truckData.lastHaulTime)}</div>
+					<div class="kpi-sub">Last seen {formatLastSeen(truckData.lastJobTime)}</div>
 				</div>
 			</div>
 
@@ -218,9 +218,9 @@
 					<Activity class="w-6 h-6" />
 				</div>
 				<div class="kpi-content">
-					<div class="kpi-value">{truckData.todayHauls}</div>
-					<div class="kpi-label">Today's Hauls</div>
-					<div class="kpi-sub">{truckData.weekHauls} this week</div>
+					<div class="kpi-value">{truckData.todayJobs}</div>
+					<div class="kpi-label">Today's Jobs</div>
+					<div class="kpi-sub">{truckData.weekJobs} this week</div>
 				</div>
 			</div>
 
@@ -294,11 +294,11 @@
 					<div class="chart-placeholder">
 						<div class="chart-header">
 							<h3>Volume Loss Analysis</h3>
-							<span class="chart-period">Recent Hauls</span>
+							<span class="chart-period">Recent Jobs</span>
 						</div>
 						<div class="chart-body">
 							<div class="chart-mock">
-								🔍 Loss pattern: {hauls.map(h => h.volumeLossPercent.toFixed(1) + '%').join(' → ')}
+								🔍 Loss pattern: {jobs.map(h => h.volumeLossPercent.toFixed(1) + '%').join(' → ')}
 							</div>
 						</div>
 					</div>
@@ -306,17 +306,17 @@
 			</div>
 		{/if}
 
-		<!-- Haul History -->
+		<!-- Job History -->
 		{#if $viewMode === 'cards' || $viewMode === 'analytics'}
-			<div class="hauls-section">
+			<div class="jobs-section">
 				<h2 class="section-title">
-					Recent Hauls
-					<span class="section-subtitle">Click any haul to drill down</span>
+					Recent Jobs
+					<span class="section-subtitle">Click any job to drill down</span>
 				</h2>
 				
-				<div class="hauls-grid">
-					{#each hauls.slice(0, 6) as haul (haul.id)}
-						<DemoHaulCard {haul} />
+				<div class="jobs-grid">
+					{#each jobs.slice(0, 6) as job (job.id)}
+						<DemoJobCard {job} />
 					{/each}
 				</div>
 			</div>
@@ -469,7 +469,7 @@
 		@apply text-center text-gray-600 dark:text-gray-400 p-8 bg-gray-50 dark:bg-gray-700/50 rounded-lg;
 	}
 
-	.hauls-grid {
+	.jobs-grid {
 		@apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
 	}
 

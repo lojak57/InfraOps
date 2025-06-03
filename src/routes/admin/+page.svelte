@@ -3,32 +3,32 @@
 	import MetricCard from '$lib/components/ui/MetricCard.svelte';
 	import PerformanceChart from '$lib/components/analytics/PerformanceChart.svelte';
 	import AnalyticsCard from '$lib/components/analytics/AnalyticsCard.svelte';
-	import { completedHauls, drivers, trucks } from '$lib/stores/haulStore';
+	import { completedJobs, drivers, trucks } from '$lib/stores/jobStore';
 
 	// Analytics metrics
 	let totalVolume = 0;
 	let averageEfficiency = 0;
 	let totalRevenue = 0;
-	let costPerBarrel = 0;
+	let costPerUnit = 0;
 	
 	let updateInterval: number;
 
 	// Calculate analytics metrics
 	onMount(() => {
 		updateInterval = setInterval(() => {
-			// Calculate from completed hauls
-			const completed = $completedHauls;
-			totalVolume = completed.reduce((sum, haul) => sum + haul.initialVolume, 0);
+			// Calculate from completed jobs
+			const completed = $completedJobs;
+			totalVolume = completed.reduce((sum, job) => sum + job.initialVolume, 0);
 			// Calculate efficiency based on volume loss
 			averageEfficiency = completed.length > 0 
-				? completed.reduce((sum, haul) => {
-					const actualLoss = haul.actualLoss || 0;
-					const efficiency = haul.initialVolume > 0 ? ((haul.initialVolume - actualLoss) / haul.initialVolume * 100) : 0;
+				? completed.reduce((sum, job) => {
+					const actualLoss = job.actualLoss || 0;
+					const efficiency = job.initialVolume > 0 ? ((job.initialVolume - actualLoss) / job.initialVolume * 100) : 0;
 					return sum + efficiency;
 				}, 0) / completed.length 
 				: 0;
-			totalRevenue = totalVolume * 65.50; // $65.50 per barrel
-			costPerBarrel = 12.75 + Math.random() * 2.5; // $12.75-15.25 per barrel
+			totalRevenue = totalVolume * 65.50; // $65.50 per unit
+			costPerUnit = 12.75 + Math.random() * 2.5; // $12.75-15.25 per unit
 		}, 5000);
 	});
 
@@ -43,7 +43,7 @@
 		efficiency: averageEfficiency,
 		volume: totalVolume,
 		revenue: totalRevenue,
-		cost: costPerBarrel
+		cost: costPerUnit
 	};
 </script>
 
@@ -58,7 +58,7 @@
 	<MetricCard
 		title="Total Volume"
 		value={totalVolume}
-		unit="BBL"
+		unit="units"
 		icon="🛢️"
 		status="normal"
 		trend="up"
@@ -86,11 +86,11 @@
 	/>
 	
 	<MetricCard
-		title="Cost per Barrel"
-		value={costPerBarrel}
+		title="Cost per Unit"
+		value={costPerUnit}
 		unit="$"
 		icon="📊"
-		status={costPerBarrel < 14 ? 'normal' : 'warning'}
+		status={costPerUnit < 14 ? 'normal' : 'warning'}
 		trend="down"
 		trendValue="-$0.45"
 	/>
@@ -168,8 +168,8 @@
 	<!-- Cost Analysis -->
 	<AnalyticsCard
 		title="Cost Analysis"
-		subtitle="Cost per barrel transported"
-		value={costPerBarrel}
+		subtitle="Cost per unit transported"
+		value={costPerUnit}
 		trend="down"
 		trendValue="-$0.45"
 		color="red"
@@ -192,8 +192,8 @@
 				<span class="font-semibold text-oil-black">{$drivers.length}</span>
 			</div>
 			<div class="flex justify-between items-center">
-				<span class="text-oil-gray text-sm">Completed Hauls</span>
-				<span class="font-semibold text-oil-black">{$completedHauls.length}</span>
+				<span class="text-oil-gray text-sm">Completed Jobs</span>
+				<span class="font-semibold text-oil-black">{$completedJobs.length}</span>
 			</div>
 		</div>
 	</div>
@@ -226,8 +226,8 @@
 				<span class="font-semibold text-emerald-600">${totalRevenue.toLocaleString()}</span>
 			</div>
 			<div class="flex justify-between items-center">
-				<span class="text-oil-gray text-sm">Cost per BBL</span>
-				<span class="font-semibold text-oil-black">${costPerBarrel.toFixed(2)}</span>
+				<span class="text-oil-gray text-sm">Cost per units</span>
+				<span class="font-semibold text-oil-black">${costPerUnit.toFixed(2)}</span>
 			</div>
 			<div class="flex justify-between items-center">
 				<span class="text-oil-gray text-sm">Profit Margin</span>

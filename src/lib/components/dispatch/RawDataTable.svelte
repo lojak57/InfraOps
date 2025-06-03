@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { dispatchAnalytics } from '$lib/stores/dispatchAnalytics';
-	import type { DemoHaulData } from '$lib/stores/dispatchAnalytics';
+	import type { DemoJobData } from '$lib/stores/dispatchAnalytics';
 	import { 
 		Search, 
 		Filter, 
@@ -17,7 +17,7 @@
 	import { format } from 'date-fns';
 
 	// Reactive data
-	$: allHauls = $dispatchAnalytics.demoHauls;
+	$: allJobs = $dispatchAnalytics.demoJobs;
 	$: allYards = $dispatchAnalytics.demoYards;
 	$: allTrucks = $dispatchAnalytics.demoTrucks;
 
@@ -27,7 +27,7 @@
 	let selectedTruck = '';
 	let selectedDriver = '';
 	let selectedStatus = '';
-	let sortField: keyof DemoHaulData = 'startTime';
+	let sortField: keyof DemoJobData = 'startTime';
 	let sortDirection: 'asc' | 'desc' = 'desc';
 
 	// Pagination
@@ -35,25 +35,25 @@
 	let itemsPerPage = 25;
 
 	// Get unique values for filters
-	$: uniqueDrivers = [...new Set(allHauls.map(h => h.driverName))].sort();
-	$: uniqueStatuses = [...new Set(allHauls.map(h => h.status))];
+	$: uniqueDrivers = [...new Set(allJobs.map(h => h.driverName))].sort();
+	$: uniqueStatuses = [...new Set(allJobs.map(h => h.status))];
 
 	// Filter and sort data
-	$: filteredHauls = allHauls.filter(haul => {
+	$: filteredJobs = allJobs.filter(job => {
 		const matchesSearch = !searchQuery || 
-			haul.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			haul.truckId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			haul.driverName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			haul.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			haul.origin.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			haul.destination.toLowerCase().includes(searchQuery.toLowerCase());
+			job.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			job.truckId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			job.driverName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			job.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			job.origin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			job.destination.toLowerCase().includes(searchQuery.toLowerCase());
 
 		const matchesYard = !selectedYard || 
-			allTrucks.find(t => t.id === haul.truckId)?.yardId === selectedYard;
+			allTrucks.find(t => t.id === job.truckId)?.yardId === selectedYard;
 
-		const matchesTruck = !selectedTruck || haul.truckId === selectedTruck;
-		const matchesDriver = !selectedDriver || haul.driverName === selectedDriver;
-		const matchesStatus = !selectedStatus || haul.status === selectedStatus;
+		const matchesTruck = !selectedTruck || job.truckId === selectedTruck;
+		const matchesDriver = !selectedDriver || job.driverName === selectedDriver;
+		const matchesStatus = !selectedStatus || job.status === selectedStatus;
 
 		return matchesSearch && matchesYard && matchesTruck && matchesDriver && matchesStatus;
 	}).sort((a, b) => {
@@ -85,14 +85,14 @@
 	});
 
 	// Pagination calculations
-	$: totalPages = Math.ceil(filteredHauls.length / itemsPerPage);
-	$: paginatedHauls = filteredHauls.slice(
+	$: totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+	$: paginatedJobs = filteredJobs.slice(
 		(currentPage - 1) * itemsPerPage,
 		currentPage * itemsPerPage
 	);
 
 	// Handle sorting
-	function handleSort(field: keyof DemoHaulData) {
+	function handleSort(field: keyof DemoJobData) {
 		if (sortField === field) {
 			sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
 		} else {
@@ -104,39 +104,39 @@
 	// Mock CSV export
 	function exportToCSV() {
 		const headers = [
-			'Haul ID', 'Truck ID', 'Driver', 'Customer', 'Origin', 'Destination',
+			'Job ID', 'Truck ID', 'Driver', 'Customer', 'Origin', 'Destination',
 			'Start Time', 'End Time', 'Duration (min)', 'Distance (mi)',
 			'Onload Volume', 'Offload Volume', 'Volume Loss', 'Volume Loss %',
 			'Avg Temp', 'Min Temp', 'Max Temp', 'Efficiency %', 'Revenue',
 			'Fuel Cost', 'Status', 'Alerts', 'API Gravity', 'Water Cut', 'H2S Levels'
 		];
 
-		const csvData = filteredHauls.map(haul => [
-			haul.id,
-			haul.truckId,
-			haul.driverName,
-			haul.customer,
-			haul.origin,
-			haul.destination,
-			format(haul.startTime, 'yyyy-MM-dd HH:mm:ss'),
-			haul.endTime ? format(haul.endTime, 'yyyy-MM-dd HH:mm:ss') : '',
-			haul.duration,
-			haul.distance,
-			haul.onloadVolume.toFixed(2),
-			haul.offloadVolume.toFixed(2),
-			haul.volumeLoss.toFixed(2),
-			haul.volumeLossPercent.toFixed(2),
-			haul.avgTemp.toFixed(1),
-			haul.minTemp.toFixed(1),
-			haul.maxTemp.toFixed(1),
-			haul.efficiency.toFixed(1),
-			haul.revenue.toFixed(2),
-			haul.fuelCost.toFixed(2),
-			haul.status,
-			haul.alerts.length,
-			haul.apiGravity.toFixed(1),
-			haul.waterCut.toFixed(2),
-			haul.h2sLevels.toFixed(2)
+		const csvData = filteredJobs.map(job => [
+			job.id,
+			job.truckId,
+			job.driverName,
+			job.customer,
+			job.origin,
+			job.destination,
+			format(job.startTime, 'yyyy-MM-dd HH:mm:ss'),
+			job.endTime ? format(job.endTime, 'yyyy-MM-dd HH:mm:ss') : '',
+			job.duration,
+			job.distance,
+			job.onloadVolume.toFixed(2),
+			job.offloadVolume.toFixed(2),
+			job.volumeLoss.toFixed(2),
+			job.volumeLossPercent.toFixed(2),
+			job.avgTemp.toFixed(1),
+			job.minTemp.toFixed(1),
+			job.maxTemp.toFixed(1),
+			job.efficiency.toFixed(1),
+			job.revenue.toFixed(2),
+			job.fuelCost.toFixed(2),
+			job.status,
+			job.alerts.length,
+			job.apiGravity.toFixed(1),
+			job.waterCut.toFixed(2),
+			job.h2sLevels.toFixed(2)
 		]);
 
 		const csvContent = [headers, ...csvData]
@@ -148,7 +148,7 @@
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = `haul-tickets-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+		a.download = `job-tickets-${format(new Date(), 'yyyy-MM-dd')}.csv`;
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
@@ -210,12 +210,12 @@
 		}).format(num);
 	}
 
-	// Handle row click to drill down to haul detail
-	function handleHaulClick(haulId: string) {
-		dispatchAnalytics.drillDown('haul', haulId);
+	// Handle row click to drill down to job detail
+	function handleJobClick(jobId: string) {
+		dispatchAnalytics.drillDown('job', jobId);
 		// Dispatch custom event to trigger parent tab change
-		window.dispatchEvent(new CustomEvent('haul-detail-requested', { 
-			detail: { haulId }
+		window.dispatchEvent(new CustomEvent('job-detail-requested', { 
+			detail: { jobId }
 		}));
 	}
 </script>
@@ -227,10 +227,10 @@
 			<div class="title-section">
 				<h2 class="table-title">
 					<Database class="w-5 h-5" />
-					Raw Haul Ticket Data
+					Raw Job Ticket Data
 				</h2>
 				<p class="table-subtitle">
-					{filteredHauls.length} of {allHauls.length} haul tickets • Click any row to view detailed data
+					{filteredJobs.length} of {allJobs.length} job tickets • Click any row to view detailed data
 				</p>
 			</div>
 
@@ -254,7 +254,7 @@
 					<Search class="w-4 h-4 search-icon" />
 					<input
 						type="text"
-						placeholder="Search hauls, trucks, drivers, customers..."
+						placeholder="Search jobs, trucks, drivers, customers..."
 						bind:value={searchQuery}
 						class="search-input"
 					/>
@@ -307,7 +307,7 @@
 				<tr>
 					<th class="sortable" on:click={() => handleSort('id')}>
 						<span class="th-content">
-							Haul ID
+							Job ID
 							{#if sortField === 'id'}
 								<svelte:component this={sortDirection === 'asc' ? SortAsc : SortDesc} class="w-3 h-3" />
 							{/if}
@@ -382,46 +382,46 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each paginatedHauls as haul (haul.id)}
-					<tr class="data-row clickable-row" on:click={() => handleHaulClick(haul.id)}>
-						<td class="font-mono text-sm">{haul.id}</td>
-						<td class="font-mono font-medium">{haul.truckId}</td>
-						<td>{haul.driverName}</td>
-						<td>{haul.customer}</td>
+				{#each paginatedJobs as job (job.id)}
+					<tr class="data-row clickable-row" on:click={() => handleJobClick(job.id)}>
+						<td class="font-mono text-sm">{job.id}</td>
+						<td class="font-mono font-medium">{job.truckId}</td>
+						<td>{job.driverName}</td>
+						<td>{job.customer}</td>
 						<td class="font-mono text-sm">
-							{format(haul.startTime, 'MMM dd, HH:mm')}
+							{format(job.startTime, 'MMM dd, HH:mm')}
 						</td>
 						<td class="text-right">
-							<span class="volume-loss" class:high-loss={haul.volumeLossPercent > 3}>
-								{formatNumber(haul.volumeLossPercent, 1)}%
+							<span class="volume-loss" class:high-loss={job.volumeLossPercent > 3}>
+								{formatNumber(job.volumeLossPercent, 1)}%
 							</span>
 						</td>
 						<td class="text-right">
-							<span class="efficiency" class:low-efficiency={haul.efficiency < 85}>
-								{formatNumber(haul.efficiency, 1)}%
+							<span class="efficiency" class:low-efficiency={job.efficiency < 85}>
+								{formatNumber(job.efficiency, 1)}%
 							</span>
 						</td>
 						<td class="text-right font-mono">
-							{formatCurrency(haul.revenue)}
+							{formatCurrency(job.revenue)}
 						</td>
 						<td>
-							<span class="status-badge {getStatusStyle(haul.status)}">
-								<svelte:component this={getStatusIcon(haul.status)} class="w-3 h-3" />
-								{haul.status}
+							<span class="status-badge {getStatusStyle(job.status)}">
+								<svelte:component this={getStatusIcon(job.status)} class="w-3 h-3" />
+								{job.status}
 							</span>
 						</td>
 						<td>
-							{#if haul.alerts.length > 0}
+							{#if job.alerts.length > 0}
 								<span class="alerts-badge">
 									<AlertTriangle class="w-3 h-3" />
-									{haul.alerts.length}
+									{job.alerts.length}
 								</span>
 							{:else}
 								<span class="text-gray-400">—</span>
 							{/if}
 						</td>
 						<td>
-							<button class="action-btn" title="View Details" on:click|stopPropagation={() => handleHaulClick(haul.id)}>
+							<button class="action-btn" title="View Details" on:click|stopPropagation={() => handleJobClick(job.id)}>
 								<Eye class="w-4 h-4" />
 							</button>
 						</td>
@@ -430,10 +430,10 @@
 			</tbody>
 		</table>
 
-		{#if filteredHauls.length === 0}
+		{#if filteredJobs.length === 0}
 			<div class="empty-state">
 				<Search class="w-12 h-12 text-gray-300" />
-				<h3 class="empty-title">No haul tickets found</h3>
+				<h3 class="empty-title">No job tickets found</h3>
 				<p class="empty-description">
 					Try adjusting your search criteria or clearing filters.
 				</p>
@@ -445,7 +445,7 @@
 	{#if totalPages > 1}
 		<div class="pagination">
 			<div class="pagination-info">
-				Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredHauls.length)} of {filteredHauls.length} results
+				Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredJobs.length)} of {filteredJobs.length} results
 			</div>
 			
 			<div class="pagination-controls">

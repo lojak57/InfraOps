@@ -163,7 +163,7 @@
 		<div class="comparison-toggle">
 			<span class="current-model">Current Model</span>
 			<span class="vs">vs</span>
-			<span class="optimized-model">VeriHaul Optimization</span>
+			<span class="optimized-model">VeriJob Optimization</span>
 		</div>
 	</div>
 
@@ -172,7 +172,7 @@
 		<div class="table-row header-row">
 			<div class="table-cell item-header">Cost Component</div>
 			<div class="table-cell value-header">Current Model</div>
-			<div class="table-cell value-header optimized">VeriHaul Optimized</div>
+			<div class="table-cell value-header optimized">VeriJob Optimized</div>
 			<div class="table-cell value-header savings">Savings</div>
 		</div>
 
@@ -252,7 +252,7 @@
 			<div class="card-value">{formatCurrency($costBreakdown.annualTotal)}</div>
 		</div>
 		<div class="summary-card optimized">
-			<div class="card-label">With VeriHaul</div>
+			<div class="card-label">With VeriJob</div>
 			<div class="card-value">{formatCurrency($costBreakdown.optimizedAnnual)}</div>
 		</div>
 		<div class="summary-card savings">

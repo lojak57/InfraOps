@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { calculateExpectedLoss, type Haul } from '$lib/stores/haulStore';
+	import { calculateExpectedLoss, type Job } from '$lib/stores/jobStore';
 	
 	interface Props {
-		haul: Haul | null;
+		job: Job | null;
 	}
 	
-	let { haul }: Props = $props();
+	let { job }: Props = $props();
 	
 	let transitProgress = $state(0);
 	let estimatedTimeRemaining = $state(120); // minutes
@@ -16,10 +16,10 @@
 	
 	// Simulate transit progress
 	onMount(() => {
-		if (!haul) return;
+		if (!job) return;
 		
 		const interval = setInterval(() => {
-			if (haul && haul.status === 'transit') {
+			if (job && job.status === 'transit') {
 				transitProgress = Math.min(transitProgress + 1, 100);
 				estimatedTimeRemaining = Math.max(0, estimatedTimeRemaining - 1);
 				
@@ -30,7 +30,7 @@
 				// Calculate expected loss
 				const transitTimeHours = (120 - estimatedTimeRemaining) / 60;
 				expectedLoss = calculateExpectedLoss(
-					haul.initialVolume,
+					job.initialVolume,
 					currentAmbient,
 					currentInternal,
 					transitTimeHours
@@ -48,11 +48,11 @@
 	}
 </script>
 
-{#if !haul}
+{#if !job}
 	<div class="glass-card p-6 text-center">
 		<div class="text-6xl mb-4 opacity-50">🚚</div>
-		<h3 class="text-lg font-semibold text-oil-black mb-2">No Active Haul</h3>
-		<p class="text-oil-gray">Start a haul to begin transit monitoring</p>
+		<h3 class="text-lg font-semibold text-oil-black mb-2">No Active Job</h3>
+		<p class="text-oil-gray">Start a job to begin transit monitoring</p>
 	</div>
 {:else}
 	<div class="space-y-6">
@@ -84,10 +84,10 @@
 				
 				<!-- Start and End Points -->
 				<div class="absolute left-4 top-4 text-xs bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1">
-					📍 {haul.onloadSite.name}
+					📍 {job.onloadSite.name}
 				</div>
 				<div class="absolute right-4 bottom-4 text-xs bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1">
-					🎯 {haul.offloadSite.name}
+					🎯 {job.offloadSite.name}
 				</div>
 			</div>
 			

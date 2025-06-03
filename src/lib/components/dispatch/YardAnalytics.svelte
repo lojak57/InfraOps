@@ -29,10 +29,10 @@
 	<!-- Show aggregated yard data -->
 	<div class="yards-overview">
 		<div class="analytics-header">
-			<h1 class="page-title">All Yards Overview</h1>
+			<h1 class="page-title">All Sites Overview</h1>
 			<p class="page-subtitle">
 				<MapPin class="w-4 h-4 inline" />
-				Fleet-wide yard performance and metrics
+				System-wide site performance and metrics
 			</p>
 		</div>
 
@@ -44,8 +44,8 @@
 				</div>
 				<div class="kpi-content">
 					<div class="kpi-value">{allTrucks.length}</div>
-					<div class="kpi-label">Total Trucks</div>
-					<div class="kpi-sub">Across {allYards.length} yards</div>
+					<div class="kpi-label">Total Assets</div>
+					<div class="kpi-sub">Across {allYards.length} sites</div>
 				</div>
 			</div>
 
@@ -54,9 +54,9 @@
 					<Activity class="w-6 h-6" />
 				</div>
 				<div class="kpi-content">
-					<div class="kpi-value">{allYards.reduce((sum, y) => sum + y.todayHauls, 0)}</div>
-					<div class="kpi-label">Today's Hauls</div>
-					<div class="kpi-sub">{allYards.reduce((sum, y) => sum + y.weekHauls, 0)} this week</div>
+					<div class="kpi-value">{allYards.reduce((sum, y) => sum + y.todayJobs, 0)}</div>
+					<div class="kpi-label">Today's Jobs</div>
+					<div class="kpi-sub">{allYards.reduce((sum, y) => sum + y.weekJobs, 0)} this week</div>
 				</div>
 			</div>
 
@@ -78,7 +78,7 @@
 				<div class="kpi-content">
 					<div class="kpi-value">{formatRevenue(allYards.reduce((sum, y) => sum + y.revenue, 0))}</div>
 					<div class="kpi-label">Total Revenue</div>
-					<div class="kpi-sub">All yards combined</div>
+					<div class="kpi-sub">All sites combined</div>
 				</div>
 			</div>
 		</div>
@@ -86,8 +86,8 @@
 		<!-- Yard Cards -->
 		<div class="yards-section">
 			<h2 class="section-title">
-				Individual Yard Performance
-				<span class="section-subtitle">Click any yard to drill down</span>
+				Individual Site Performance
+				<span class="section-subtitle">Click any site to drill down</span>
 			</h2>
 			
 			<div class="yards-grid">
@@ -116,7 +116,7 @@
 				</div>
 				<div class="kpi-content">
 					<div class="kpi-value">{yardData.activeTrucks}/{yardData.totalTrucks}</div>
-					<div class="kpi-label">Active Trucks</div>
+					<div class="kpi-label">Active Assets</div>
 					<div class="kpi-sub">{((yardData.activeTrucks / yardData.totalTrucks) * 100).toFixed(0)}% utilization</div>
 				</div>
 			</div>
@@ -131,7 +131,7 @@
 				</div>
 				<div class="kpi-content">
 					<div class="kpi-value">{yardData.efficiency.toFixed(1)}%</div>
-					<div class="kpi-label">Yard Efficiency</div>
+					<div class="kpi-label">Site Efficiency</div>
 					<div class="kpi-sub">Target: 92.5%</div>
 				</div>
 			</div>
@@ -141,9 +141,9 @@
 					<Activity class="w-6 h-6" />
 				</div>
 				<div class="kpi-content">
-					<div class="kpi-value">{yardData.todayHauls}</div>
-					<div class="kpi-label">Today's Hauls</div>
-					<div class="kpi-sub">{yardData.weekHauls} this week</div>
+					<div class="kpi-value">{yardData.todayJobs}</div>
+					<div class="kpi-label">Today's Jobs</div>
+					<div class="kpi-sub">{yardData.weekJobs} this week</div>
 				</div>
 			</div>
 
@@ -152,7 +152,7 @@
 					<Activity class="w-6 h-6" />
 				</div>
 				<div class="kpi-content">
-					<div class="kpi-value">{yardData.activeBays}/{yardData.loadingBays}</div>
+					<div class="kpi-value">{yardData.activeBays}/{yardData.pickupBays}</div>
 					<div class="kpi-label">Loading Bays</div>
 					<div class="kpi-sub">Active/Total</div>
 				</div>
@@ -166,7 +166,7 @@
 					<AlertTriangle class="w-5 h-5" />
 				</div>
 				<div class="insight-content">
-					<div class="insight-title">Yard Alert</div>
+					<div class="insight-title">Site Alert</div>
 					{#each yardData.alerts as alert}
 						<div class="insight-text">{alert.summary}</div>
 					{/each}
@@ -177,12 +177,12 @@
 		<!-- Analytics Charts -->
 		{#if $viewMode === 'analytics'}
 			<div class="analytics-section">
-				<h2 class="section-title">Yard Performance Analytics</h2>
+				<h2 class="section-title">Site Performance Analytics</h2>
 				
 				<div class="charts-grid">
 					<div class="chart-placeholder">
 						<div class="chart-header">
-							<h3>Truck Efficiency Comparison</h3>
+							<h3>Asset Efficiency Comparison</h3>
 							<span class="chart-period">Current Week</span>
 						</div>
 						<div class="chart-body">
@@ -225,7 +225,7 @@
 	</div>
 {:else}
 	<div class="no-data">
-		<p>No yard data available</p>
+		<p>No site data available</p>
 	</div>
 {/if}
 

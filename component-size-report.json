@@ -1,0 +1,390 @@
+{
+  "timestamp": "2025-06-03T06:58:34.759Z",
+  "stats": {
+    "total": 93,
+    "under200": 35,
+    "under300": 52,
+    "over300": 41,
+    "over500": 26,
+    "over800": 6,
+    "largest": {
+      "path": "src/lib/components/driver/JobDetailModal.svelte",
+      "lines": 1041,
+      "name": "JobDetailModal.svelte"
+    }
+  },
+  "components": [
+    {
+      "name": "TextDelta.svelte",
+      "lines": 15
+    },
+    {
+      "name": "PreTripStep.svelte",
+      "lines": 22
+    },
+    {
+      "name": "ThermaHaulLogo.svelte",
+      "lines": 26
+    },
+    {
+      "name": "StartFromPreTrip.svelte",
+      "lines": 46
+    },
+    {
+      "name": "ClickToExplore.svelte",
+      "lines": 55
+    },
+    {
+      "name": "TrendCell.svelte",
+      "lines": 64
+    },
+    {
+      "name": "QuickNavBar.svelte",
+      "lines": 76
+    },
+    {
+      "name": "SystemStatusCard.svelte",
+      "lines": 82
+    },
+    {
+      "name": "DriverWorkflowRouter.svelte",
+      "lines": 90
+    },
+    {
+      "name": "QuickActionButtons.svelte",
+      "lines": 94
+    },
+    {
+      "name": "OnloadComponent.svelte",
+      "lines": 100
+    },
+    {
+      "name": "DriverLeaderboard.svelte",
+      "lines": 105
+    },
+    {
+      "name": "FleetStatusSection.svelte",
+      "lines": 105
+    },
+    {
+      "name": "LiveDataFeed.svelte",
+      "lines": 110
+    },
+    {
+      "name": "CollapsibleSection.svelte",
+      "lines": 116
+    },
+    {
+      "name": "SummaryCards.svelte",
+      "lines": 119
+    },
+    {
+      "name": "GaugeChart.svelte",
+      "lines": 120
+    },
+    {
+      "name": "RoleCard.svelte",
+      "lines": 123
+    },
+    {
+      "name": "ScheduleHeader.svelte",
+      "lines": 136
+    },
+    {
+      "name": "JobDetailModal.refactored.svelte",
+      "lines": 139
+    },
+    {
+      "name": "AnalyticsCard.svelte",
+      "lines": 140
+    },
+    {
+      "name": "EmergencyActionPanel.svelte",
+      "lines": 140
+    },
+    {
+      "name": "JobHeader.svelte",
+      "lines": 141
+    },
+    {
+      "name": "ROIJustificationCard.svelte",
+      "lines": 142
+    },
+    {
+      "name": "OffloadComponent.svelte",
+      "lines": 145
+    },
+    {
+      "name": "TransitComponent.svelte",
+      "lines": 146
+    },
+    {
+      "name": "LossAnalysis.svelte",
+      "lines": 149
+    },
+    {
+      "name": "InTransitHeader.svelte",
+      "lines": 160
+    },
+    {
+      "name": "HaulCard.svelte",
+      "lines": 163
+    },
+    {
+      "name": "GasDetector.svelte",
+      "lines": 173
+    },
+    {
+      "name": "SmartCalChart.svelte",
+      "lines": 175
+    },
+    {
+      "name": "FleetCard.svelte",
+      "lines": 183
+    },
+    {
+      "name": "TruckEfficiency.svelte",
+      "lines": 187
+    },
+    {
+      "name": "JobStepsProgress.svelte",
+      "lines": 191
+    },
+    {
+      "name": "PostTripStep.svelte",
+      "lines": 196
+    },
+    {
+      "name": "JobOverviewStep.svelte",
+      "lines": 200
+    },
+    {
+      "name": "DemoYardCard.svelte",
+      "lines": 208
+    },
+    {
+      "name": "SafetyMetricsDashboard.svelte",
+      "lines": 209
+    },
+    {
+      "name": "BatteryStatusWidget.svelte",
+      "lines": 211
+    },
+    {
+      "name": "Chart.svelte",
+      "lines": 214
+    },
+    {
+      "name": "ChartDebugControls.svelte",
+      "lines": 239
+    },
+    {
+      "name": "MapRenderer.svelte",
+      "lines": 239
+    },
+    {
+      "name": "JobMetrics.svelte",
+      "lines": 245
+    },
+    {
+      "name": "JobActions.svelte",
+      "lines": 246
+    },
+    {
+      "name": "JobSpecifications.svelte",
+      "lines": 248
+    },
+    {
+      "name": "WorkflowProgressShell.svelte",
+      "lines": 252
+    },
+    {
+      "name": "MetricCard.svelte",
+      "lines": 263
+    },
+    {
+      "name": "DemoTruckCard.svelte",
+      "lines": 266
+    },
+    {
+      "name": "PerformanceChart.svelte",
+      "lines": 284
+    },
+    {
+      "name": "ValveOverlay.svelte",
+      "lines": 284
+    },
+    {
+      "name": "DriverSchedule.svelte",
+      "lines": 294
+    },
+    {
+      "name": "FleetSizeControl.svelte",
+      "lines": 299
+    },
+    {
+      "name": "DemoHaulCard.svelte",
+      "lines": 303
+    },
+    {
+      "name": "UnloadingStep.svelte",
+      "lines": 303
+    },
+    {
+      "name": "RoleMetricCard.svelte",
+      "lines": 312
+    },
+    {
+      "name": "FleetAnalytics.svelte",
+      "lines": 338
+    },
+    {
+      "name": "LoadingStep.svelte",
+      "lines": 365
+    },
+    {
+      "name": "ValveStatusPanel.svelte",
+      "lines": 368
+    },
+    {
+      "name": "ToPickupStep.svelte",
+      "lines": 370
+    },
+    {
+      "name": "YardAnalytics.svelte",
+      "lines": 375
+    },
+    {
+      "name": "InTransitView.svelte",
+      "lines": 436
+    },
+    {
+      "name": "DispatchHub.svelte",
+      "lines": 456
+    },
+    {
+      "name": "InteractiveTruckDiagram.svelte",
+      "lines": 459
+    },
+    {
+      "name": "RoleSelector.svelte",
+      "lines": 472
+    },
+    {
+      "name": "PressureSensorPanel.svelte",
+      "lines": 475
+    },
+    {
+      "name": "TruckAnalytics.svelte",
+      "lines": 478
+    },
+    {
+      "name": "RealtimeChart.svelte",
+      "lines": 485
+    },
+    {
+      "name": "PreTripInspection.svelte",
+      "lines": 508
+    },
+    {
+      "name": "CostVisualizationTable.svelte",
+      "lines": 541
+    },
+    {
+      "name": "LoadCalculator.svelte",
+      "lines": 565
+    },
+    {
+      "name": "YardAnalyticsTable.svelte",
+      "lines": 579
+    },
+    {
+      "name": "HaulDetailView.svelte",
+      "lines": 593
+    },
+    {
+      "name": "ToTransitStep.svelte",
+      "lines": 600
+    },
+    {
+      "name": "Navigation.svelte",
+      "lines": 602
+    },
+    {
+      "name": "JobCard.svelte",
+      "lines": 613
+    },
+    {
+      "name": "IncidentDetailModal.svelte",
+      "lines": 619
+    },
+    {
+      "name": "JobMapView.svelte",
+      "lines": 645
+    },
+    {
+      "name": "CalibrationCostVisualizer.svelte",
+      "lines": 646
+    },
+    {
+      "name": "DocumentUpload.svelte",
+      "lines": 661
+    },
+    {
+      "name": "ToDeliveryStep.svelte",
+      "lines": 671
+    },
+    {
+      "name": "RawDataTable.svelte",
+      "lines": 674
+    },
+    {
+      "name": "SafetyAnalyticsModal.svelte",
+      "lines": 675
+    },
+    {
+      "name": "HaulTicketExtended.svelte",
+      "lines": 703
+    },
+    {
+      "name": "RegionalYardComparison.svelte",
+      "lines": 711
+    },
+    {
+      "name": "OptimizationPanel.svelte",
+      "lines": 750
+    },
+    {
+      "name": "TruckStatusDisplay.svelte",
+      "lines": 796
+    },
+    {
+      "name": "DocumentViewer.svelte",
+      "lines": 796
+    },
+    {
+      "name": "SmartCalibrationRecommender.svelte",
+      "lines": 858
+    },
+    {
+      "name": "FleetTrackingMap.svelte",
+      "lines": 863
+    },
+    {
+      "name": "HaulDetailView.svelte",
+      "lines": 914
+    },
+    {
+      "name": "ComplianceDashboard.svelte",
+      "lines": 1004
+    },
+    {
+      "name": "DocumentLibrary.svelte",
+      "lines": 1029
+    },
+    {
+      "name": "JobDetailModal.svelte",
+      "lines": 1041
+    }
+  ]
+}

@@ -25,15 +25,15 @@
         contact: sharedState.activeJob?.pickupContact || '(432) 555-0157',
         icon: '📍',
         type: 'Pickup Location',
-        detail: `Tank: ${sharedState.activeJob?.pickupTank || '#A-15'} | Expected Volume: ${sharedState.activeJob?.expectedVolume || '120'} BBL`
+        detail: `Tank: ${sharedState.activeJob?.pickupTank || '#A-15'} | Expected Volume: ${sharedState.activeJob?.expectedVolume || '120'} units`
       }
     : {
-        name: sharedState.activeJob?.deliverySiteName || 'Permian Basin Refinery',
+        name: sharedState.activeJob?.deliverySiteName || 'Permian Basin Processing Facility',
         address: sharedState.activeJob?.deliveryAddress || '1425 Industrial Blvd, Odessa, TX 79761',
         contact: sharedState.activeJob?.deliveryContact || '(432) 555-0199',
         icon: '🏭',
         type: 'Delivery Location',
-        detail: `Bay: ${sharedState.activeJob?.deliveryBay || '#7'} | Delivery Volume: ${sharedState.activeJob?.deliveryVolume || '120'} BBL`
+        detail: `Bay: ${sharedState.activeJob?.deliveryBay || '#7'} | Delivery Volume: ${sharedState.activeJob?.deliveryVolume || '120'} units`
       };
 
   $: routeData = {
@@ -52,7 +52,7 @@
     <div class="delivery-content">
       <div class="delivery-header">
         <h2>🚛 Loaded & Ready for Delivery</h2>
-        <p>Tank loaded with {sharedState.activeJob?.deliveryVolume || '120'} BBL - Plan your delivery route and navigate to offload site</p>
+        <p>Tank loaded with {sharedState.activeJob?.deliveryVolume || '120'} units - Plan your delivery route and navigate to offload site</p>
         
         <!-- Delivery Status Banner -->
         <div class="delivery-status-banner">
@@ -70,7 +70,7 @@
           </div>
           <div class="status-item pending">
             <span class="status-icon">⏳</span>
-            <span class="status-text">Unloading Pending</span>
+            <span class="status-text">Unpickup Pending</span>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@
     <div class="navigation-planning-content">
       <div class="navigation-header">
         <h2>🎯 Navigate to Delivery Site</h2>
-        <p>Loaded with {sharedState.activeJob?.deliveryVolume || '120'} BBL - Navigate to {destinationInfo.name} for unloading</p>
+        <p>Loaded with {sharedState.activeJob?.deliveryVolume || '120'} units - Navigate to {destinationInfo.name} for unpickup</p>
       </div>
       
       <!-- Load Status -->
@@ -101,7 +101,7 @@
         <div class="load-details">
           <div class="load-stat">
             <span class="stat-label">Loaded Volume</span>
-            <span class="stat-value">{sharedState.activeJob?.deliveryVolume || '120'} BBL</span>
+            <span class="stat-value">{sharedState.activeJob?.deliveryVolume || '120'} units</span>
           </div>
           <div class="load-stat">
             <span class="stat-label">From</span>

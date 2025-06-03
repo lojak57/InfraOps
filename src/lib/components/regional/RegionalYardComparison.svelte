@@ -27,7 +27,7 @@
 			driversAssigned: 42,
 			totalBPD: 2847,
 			avgDriveTime: 3.2,
-			barrelsPerHour: 185.3,
+			unitsPerHour: 185.3,
 			utilizationRate: 85.7,
 			efficiency: 94.2,
 			rank: 2,
@@ -44,7 +44,7 @@
 			driversAssigned: 34,
 			totalBPD: 2456,
 			avgDriveTime: 3.8,
-			barrelsPerHour: 165.2,
+			unitsPerHour: 165.2,
 			utilizationRate: 81.8,
 			efficiency: 91.8,
 			rank: 3,
@@ -61,7 +61,7 @@
 			driversAssigned: 58,
 			totalBPD: 3124,
 			avgDriveTime: 2.9,
-			barrelsPerHour: 198.7,
+			unitsPerHour: 198.7,
 			utilizationRate: 88.6,
 			efficiency: 96.1,
 			rank: 1,
@@ -78,7 +78,7 @@
 			driversAssigned: 28,
 			totalBPD: 1987,
 			avgDriveTime: 4.2,
-			barrelsPerHour: 142.8,
+			unitsPerHour: 142.8,
 			utilizationRate: 78.9,
 			efficiency: 87.3,
 			rank: 4,
@@ -311,9 +311,9 @@
 								</button>
 							</th>
 							<th>
-								<button on:click={() => sortData('barrelsPerHour')} class="sort-button">
-									Barrels per Hour
-									{#if sortColumn === 'barrelsPerHour'}
+								<button on:click={() => sortData('unitsPerHour')} class="sort-button">
+									Units per Hour
+									{#if sortColumn === 'unitsPerHour'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
@@ -348,8 +348,8 @@
 								<td class="metric-cell">
 									{yard.avgDriveTime}h
 								</td>
-								<td class="metric-cell {getPerformanceColor(yard.barrelsPerHour, 'bph')}">
-									{yard.barrelsPerHour}
+								<td class="metric-cell {getPerformanceColor(yard.unitsPerHour, 'bph')}">
+									{yard.unitsPerHour}
 								</td>
 								<td class="status-cell">
 									<div class="status-container {getStatusInfo(yard.status).bgColor}">

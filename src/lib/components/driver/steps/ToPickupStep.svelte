@@ -60,7 +60,7 @@
           <h3>📍 Pickup Location</h3>
           <p><strong>Johnson Tank Battery #3</strong></p>
           <p>2847 County Road 1250, Midland, TX 79701</p>
-          <p>Tank: #A-15 | Expected Volume: 120 BBL</p>
+          <p>Tank: #A-15 | Expected Volume: 120 units</p>
           <p>Contact: (432) 555-0157</p>
         </div>
         

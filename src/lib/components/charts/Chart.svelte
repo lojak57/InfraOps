@@ -12,7 +12,7 @@
   let chart: any = null;
   let Chart: any = null;
 
-  // Default options for oil field theme
+  // Default options for logistics theme
   const defaultOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -112,7 +112,7 @@
           createChart();
         }
       } catch (error) {
-        console.error('Error loading Chart.js:', error);
+        console.error('Error pickup Chart.js:', error);
       }
     }
   });

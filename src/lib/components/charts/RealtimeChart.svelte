@@ -73,7 +73,7 @@
 		dataPoints = [];
 		labels = [];
 		
-		// Generate realistic oil field data based on chart title
+		// Generate realistic logistics data based on chart title
 		const baseValue = getBaseValueFromTitle(title);
 		const variance = baseValue * 0.1; // 10% variance
 		
@@ -94,11 +94,11 @@
 	function getBaseValueFromTitle(title: string): number {
 		const titleLower = title.toLowerCase();
 		
-		// Return realistic values based on common oil field metrics
+		// Return realistic values based on common logistics metrics
 		if (titleLower.includes('temperature')) return 85; // °F
 		if (titleLower.includes('pressure')) return 120; // PSI
 		if (titleLower.includes('flow')) return 450; // rate
-		if (titleLower.includes('volume')) return 2500; // BBL
+		if (titleLower.includes('volume')) return 2500; // units
 		if (titleLower.includes('h2s') || titleLower.includes('safety')) return 0.5; // PPM
 		if (titleLower.includes('network') || titleLower.includes('health')) return 97; // %
 		if (titleLower.includes('efficiency')) return 94; // %
@@ -293,8 +293,8 @@
 				height={Math.max(height - 80, 320)}
 			/>
 		{:else}
-			<div class="chart-loading">
-				<div class="loading-spinner"></div>
+			<div class="chart-pickup">
+				<div class="pickup-spinner"></div>
 				<span>Loading chart data...</span>
 			</div>
 		{/if}
@@ -386,7 +386,7 @@
 		overflow: visible; /* Ensure labels aren't clipped */
 	}
 
-	.chart-loading {
+	.chart-pickup {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -396,7 +396,7 @@
 		gap: 12px;
 	}
 
-	.loading-spinner {
+	.pickup-spinner {
 		width: 24px;
 		height: 24px;
 		border: 2px solid #e5e7eb;
@@ -436,7 +436,7 @@
 			color: #f3f4f6;
 		}
 
-		.chart-loading {
+		.chart-pickup {
 			color: #9ca3af;
 		}
 	}

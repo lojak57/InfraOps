@@ -4,7 +4,7 @@
   import { documentActions, uploadProgress, type CustomerDocument } from '$lib/stores/documentStore';
   
   export let customerId: string;
-  export let haulId: string | undefined = undefined;
+  export let jobId: string | undefined = undefined;
   export let allowedTypes: CustomerDocument['type'][] = ['IFTA', 'Insurance', 'Contract', 'PreTrip', 'JSA', 'Emissions', 'BOL', 'Manifest', 'Safety', 'Maintenance'];
   export let maxFileSize = 10 * 1024 * 1024; // 10MB default
   export let multiple = true;
@@ -16,7 +16,7 @@
   
   let dragActive = false;
   let files: File[] = [];
-  let uploadingFiles: { [key: string]: { file: File; progress: number; status: 'uploading' | 'success' | 'error'; error?: string } } = {};
+  let uppickupFiles: { [key: string]: { file: File; progress: number; status: 'uppickup' | 'success' | 'error'; error?: string } } = {};
   
   // File validation
   const validateFile = (file: File): { valid: boolean; error?: string } => {
@@ -112,26 +112,26 @@
   const uploadFile = async (file: File, documentType: CustomerDocument['type'], tags: string[] = []): Promise<string> => {
     const fileId = `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    uploadingFiles[fileId] = {
+    uppickupFiles[fileId] = {
       file,
       progress: 0,
-      status: 'uploading'
+      status: 'uppickup'
     };
     
     // Simulate upload progress
     return new Promise((resolve, reject) => {
       const interval = setInterval(() => {
-        uploadingFiles[fileId].progress += Math.random() * 20;
+        uppickupFiles[fileId].progress += Math.random() * 20;
         
-        if (uploadingFiles[fileId].progress >= 100) {
+        if (uppickupFiles[fileId].progress >= 100) {
           clearInterval(interval);
-          uploadingFiles[fileId].progress = 100;
-          uploadingFiles[fileId].status = 'success';
+          uppickupFiles[fileId].progress = 100;
+          uppickupFiles[fileId].status = 'success';
           
           // Create document record
           const documentId = documentActions.addDocument({
             customerId,
-            haulId,
+            jobId,
             type: documentType,
             fileName: file.name,
             fileUrl: `/documents/${fileId}/${file.name}`,
@@ -154,8 +154,8 @@
       setTimeout(() => {
         if (Math.random() < 0.05) { // 5% chance of failure
           clearInterval(interval);
-          uploadingFiles[fileId].status = 'error';
-          uploadingFiles[fileId].error = 'Upload failed. Please try again.';
+          uppickupFiles[fileId].status = 'error';
+          uppickupFiles[fileId].error = 'Upload failed. Please try again.';
           reject(new Error('Upload failed'));
         }
       }, 1000);
@@ -172,7 +172,7 @@
           document: {
             id: documentId,
             customerId,
-            haulId,
+            jobId,
             type: allowedTypes[0],
             fileName: file.name,
             fileUrl: `/documents/${documentId}/${file.name}`,
@@ -198,7 +198,7 @@
   };
   
   $: hasFiles = files.length > 0;
-  $: isUploading = Object.values(uploadingFiles).some(f => f.status === 'uploading');
+  $: isUppickup = Object.values(uppickupFiles).some(f => f.status === 'uppickup');
 </script>
 
 <div class="document-upload">
@@ -258,15 +258,15 @@
         <button
           class="btn btn-primary"
           on:click={uploadAllFiles}
-          disabled={isUploading}
+          disabled={isUppickup}
         >
-          {isUploading ? 'Uploading...' : `Upload ${files.length} File${files.length > 1 ? 's' : ''}`}
+          {isUppickup ? 'Uppickup...' : `Upload ${files.length} File${files.length > 1 ? 's' : ''}`}
         </button>
         
         <button
           class="btn btn-secondary"
           on:click={() => files = []}
-          disabled={isUploading}
+          disabled={isUppickup}
         >
           Clear All
         </button>
@@ -275,17 +275,17 @@
   {/if}
   
   <!-- Upload Progress -->
-  {#if Object.keys(uploadingFiles).length > 0}
+  {#if Object.keys(uppickupFiles).length > 0}
     <div class="upload-progress">
       <h4>Upload Progress</h4>
       
-      {#each Object.entries(uploadingFiles) as [fileId, uploadFile]}
+      {#each Object.entries(uppickupFiles) as [fileId, uploadFile]}
         <div class="progress-item">
           <div class="progress-info">
             <div class="progress-details">
               <span class="progress-name">{uploadFile.file.name}</span>
               <span class="progress-status">
-                {#if uploadFile.status === 'uploading'}
+                {#if uploadFile.status === 'uppickup'}
                   {Math.round(uploadFile.progress)}%
                 {:else if uploadFile.status === 'success'}
                   <CheckCircle class="success-icon" size={16} />
@@ -297,7 +297,7 @@
               </span>
             </div>
             
-            {#if uploadFile.status === 'uploading'}
+            {#if uploadFile.status === 'uppickup'}
               <div class="progress-bar">
                 <div 
                   class="progress-fill" 

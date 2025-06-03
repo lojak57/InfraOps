@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { Haul } from '$lib/stores/haulStore';
+	import type { Job } from '$lib/stores/jobStore';
 
-	export let hauls: Haul[];
+	export let jobs: Job[];
 
 	// Calculate variance distribution
-	$: varianceData = hauls.map(haul => {
-		const variance = Math.abs((haul.actualLoss! - haul.expectedLoss) / haul.expectedLoss * 100);
+	$: varianceData = jobs.map(job => {
+		const variance = Math.abs((job.actualLoss! - job.expectedLoss) / job.expectedLoss * 100);
 		return {
-			id: haul.id,
+			id: job.id,
 			variance,
 			category: variance <= 5 ? 'good' : variance <= 15 ? 'moderate' : 'high'
 		};
@@ -112,7 +112,7 @@
 		<div class="grid grid-cols-1 gap-2 max-h-28 sm:max-h-32 overflow-y-auto">
 			{#each varianceData.slice(-6) as item}
 				<div class="flex items-center justify-between p-2 bg-white/30 rounded-lg">
-					<div class="text-xs text-oil-gray font-mono truncate flex-1 mr-2">Haul {item.id.slice(-6)}</div>
+					<div class="text-xs text-oil-gray font-mono truncate flex-1 mr-2">Job {item.id.slice(-6)}</div>
 					<div class="flex items-center gap-2 flex-shrink-0">
 						<div class="w-2 h-2 rounded-full {getVarianceColor(item.category)}"></div>
 						<span class="text-xs font-mono {item.category === 'good' ? 'text-emerald-600' : item.category === 'moderate' ? 'text-amber-600' : 'text-red-600'}">
@@ -137,7 +137,7 @@
 			<div class="metric-display text-blue-700 text-base sm:text-lg mb-1 leading-tight">
 				{distributionStats.total}
 			</div>
-			<div class="text-xs text-blue-600">Total Hauls</div>
+			<div class="text-xs text-blue-600">Total Jobs</div>
 		</div>
 		
 		<div class="text-center p-3 bg-slate-50 rounded-xl border border-slate-200">

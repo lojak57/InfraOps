@@ -332,7 +332,7 @@
 		<div class="callout-icon">🏭</div>
 		<div class="callout-content">
 			<h4>Powered by Advanced Diagnostics</h4>
-			<p>VeriHaul integrates with Krohne's Opticheck technology for real-time Coriolis meter diagnostics and predictive maintenance.</p>
+			<p>VeriJob integrates with Krohne's Opticheck technology for real-time Coriolis meter diagnostics and predictive maintenance.</p>
 			<button class="learn-more-btn">Learn More About Integration</button>
 		</div>
 	</div>

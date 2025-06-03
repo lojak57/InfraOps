@@ -177,7 +177,7 @@
 			</div>
 
 			{#if showLoadingState}
-				<div class="loading-indicator">
+				<div class="pickup-indicator">
 					<div class="spinner"></div>
 					<p>Loading truck diagram...</p>
 				</div>
@@ -219,10 +219,10 @@
 						/>
 					{/each}
 
-					<!-- DryDrive Logo -->
+					<!-- FlowOps Logo -->
 					<div class="logo-overlay">
 						<svg width="40" height="20" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<text x="50" y="30" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="12" font-weight="bold">DryDrive</text>
+							<text x="50" y="30" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="12" font-weight="bold">FlowOps</text>
 						</svg>
 					</div>
 				</div>
@@ -331,7 +331,7 @@
 		width: 100%;
 	}
 
-	.loading-indicator, .error-indicator {
+	.pickup-indicator, .error-indicator {
 		display: flex;
 		flex-direction: column;
 		align-items: center;

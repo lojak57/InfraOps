@@ -4,7 +4,7 @@ import { browser } from '$app/environment';
 export interface CustomerDocument {
   id: string;
   customerId: string;
-  haulId?: string;
+  jobId?: string;
   type: 'IFTA' | 'Insurance' | 'Contract' | 'PreTrip' | 'JSA' | 'Emissions' | 'BOL' | 'Manifest' | 'Safety' | 'Maintenance';
   fileName: string;
   fileUrl: string;
@@ -78,7 +78,7 @@ const mockDocuments: CustomerDocument[] = [
   {
     id: 'doc-001',
     customerId: 'customer-001',
-    haulId: 'haul-001',
+    jobId: 'job-001',
     type: 'IFTA',
     fileName: 'IFTA_Q4_2024.pdf',
     fileUrl: '/documents/ifta_q4_2024.pdf',

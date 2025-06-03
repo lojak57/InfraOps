@@ -321,7 +321,7 @@
           <hr>
           
           <h3>Sample Content</h3>
-          <p>This is a sample text document for the Oil Field Temperature Tracking system. This document contains important information related to ${doc.type} operations.</p>
+          <p>This is a sample text document for the Logistics Temperature Tracking system. This document contains important information related to ${doc.type} operations.</p>
           
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
           

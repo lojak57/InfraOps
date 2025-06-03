@@ -13,53 +13,53 @@
 <div class="workflow-view job-overview">
   <div class="job-overview-content">
     <div class="overview-header">
-      <h2>Today's Hauls</h2>
+      <h2>Today's Jobs</h2>
       <p>Review your assigned jobs for today and start your shift</p>
     </div>
     
-    <div class="daily-hauls">
-      <div class="haul-card">
-        <div class="haul-info">
+    <div class="daily-jobs">
+      <div class="job-card">
+        <div class="job-info">
           <h3>Job #TK-2024-001</h3>
           <p><strong>Pickup:</strong> Johnson Tank Battery #3</p>
-          <p><strong>Delivery:</strong> Permian Basin Refinery</p>
-          <p><strong>Expected Volume:</strong> 120 BBL</p>
+          <p><strong>Delivery:</strong> Permian Basin Processing Facility</p>
+          <p><strong>Expected Volume:</strong> 120 units</p>
           <p><strong>Scheduled:</strong> 8:00 AM - 12:00 PM</p>
         </div>
-        <div class="haul-status pending">PENDING</div>
+        <div class="job-status pending">PENDING</div>
       </div>
       
-      <div class="haul-card">
-        <div class="haul-info">
+      <div class="job-card">
+        <div class="job-info">
           <h3>Job #TK-2024-002</h3>
           <p><strong>Pickup:</strong> Eagle Ford Tank #7</p>
-          <p><strong>Delivery:</strong> Marathon Refinery</p>
-          <p><strong>Expected Volume:</strong> 98 BBL</p>
+          <p><strong>Delivery:</strong> Marathon Processing Facility</p>
+          <p><strong>Expected Volume:</strong> 98 units</p>
           <p><strong>Scheduled:</strong> 1:00 PM - 4:30 PM</p>
         </div>
-        <div class="haul-status scheduled">SCHEDULED</div>
+        <div class="job-status scheduled">SCHEDULED</div>
       </div>
       
-      <div class="haul-card">
-        <div class="haul-info">
+      <div class="job-card">
+        <div class="job-info">
           <h3>Job #TK-2024-003</h3>
           <p><strong>Pickup:</strong> Bakken Wells #12</p>
           <p><strong>Delivery:</strong> Local Storage</p>
-          <p><strong>Expected Volume:</strong> 105 BBL</p>
+          <p><strong>Expected Volume:</strong> 105 units</p>
           <p><strong>Scheduled:</strong> 5:00 PM - 7:00 PM</p>
         </div>
-        <div class="haul-status scheduled">SCHEDULED</div>
+        <div class="job-status scheduled">SCHEDULED</div>
       </div>
     </div>
     
     <div class="daily-summary">
       <div class="summary-stat">
-        <span class="stat-label">Total Hauls</span>
+        <span class="stat-label">Total Jobs</span>
         <span class="stat-value">3</span>
       </div>
       <div class="summary-stat">
         <span class="stat-label">Total Volume</span>
-        <span class="stat-value">323 BBL</span>
+        <span class="stat-value">323 units</span>
       </div>
       <div class="summary-stat">
         <span class="stat-label">Estimated Hours</span>
@@ -103,13 +103,13 @@
     font-size: 1.1rem;
   }
   
-  .daily-hauls {
+  .daily-jobs {
     display: grid;
     gap: 20px;
     margin-bottom: 32px;
   }
   
-  .haul-card {
+  .job-card {
     background: white;
     border-radius: 12px;
     padding: 24px;
@@ -120,30 +120,30 @@
     align-items: center;
   }
   
-  .haul-info h3 {
+  .job-info h3 {
     color: #1f2937;
     margin-bottom: 12px;
     font-size: 1.2rem;
   }
   
-  .haul-info p {
+  .job-info p {
     color: #6b7280;
     margin: 4px 0;
   }
   
-  .haul-status {
+  .job-status {
     padding: 8px 16px;
     border-radius: 20px;
     font-weight: 600;
     font-size: 0.875rem;
   }
   
-  .haul-status.pending {
+  .job-status.pending {
     background: #fef3c7;
     color: #92400e;
   }
   
-  .haul-status.scheduled {
+  .job-status.scheduled {
     background: #dbeafe;
     color: #1e40af;
   }

@@ -1,58 +1,94 @@
-# 🛢️ Oil Field Temperature Tracker
+# DataTracker Platform
 
-A professional SCADA-style web application for monitoring oil transport temperature variations and calculating expected vs actual volume loss during truck hauls.
+> **Professional Fleet and Logistics Operations Management System**
 
-## 🚀 Live Demo
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-FF3E00?logo=svelte&logoColor=white)](https://kit.svelte.dev/)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](https://github.com)
 
-- **Main Dashboard**: [http://localhost:5180/](http://localhost:5180/) - SCADA monitoring interface
-- **Analytics Dashboard**: [http://localhost:5180/admin](http://localhost:5180/admin) - Performance insights and operational intelligence
+## 🚀 Overview
 
-## ✨ Features
+DataTracker is a modern, white-label ready platform for managing fleet and logistics operations. Built with enterprise-grade architecture, it provides real-time monitoring, fleet management, and comprehensive analytics for logistics and transportation companies.
 
-### 📡 Real-Time SCADA Monitoring
-- **Live temperature tracking** with 3-second update intervals
-- **Multi-site operations** (Permian Basin, Eagle Ford, Houston Refinery, Corpus Christi)
-- **Real-time transit progress** with GPS location simulation
-- **Coriolis meter integration** for accurate volume measurements
+### ✨ Key Features
 
-### 🧮 Advanced Loss Calculations
-- **Thermal expansion modeling** based on temperature differentials
-- **Expected vs actual loss analysis** with variance detection
-- **Professional variance categorization** (Good ≤5%, Moderate 5-15%, High >15%)
-- **Financial impact tracking** with real oil price calculations
+- **Real-time Fleet Monitoring** - Live vehicle tracking and telemetry
+- **Driver Workflow Management** - Mobile-optimized driver interfaces
+- **Executive Analytics** - Comprehensive KPI dashboards
+- **Multi-tenant Architecture** - White-label ready for multiple clients
+- **Compliance Tools** - Safety inspection and regulatory management
+- **IoT Integration** - Sensor data, equipment monitoring, and control systems
 
-### 📊 Analytics Dashboard
-- **Driver performance leaderboard** with efficiency rankings
-- **Truck fleet analysis** with maintenance alerts
-- **Route optimization insights** for maximum efficiency
-- **Predictive analytics** with weather impact forecasting
-- **Financial KPIs** showing cost savings and losses
+## 🏗️ Architecture
 
-### 🎨 Professional Design
-- **Apple-inspired glassmorphism UI** with industrial automation feel
-- **SCADA-style color coding** and professional terminology
-- **Responsive design** optimized for all devices
-- **Real-time animations** and smooth transitions
+### Technology Stack
 
-## 🛠️ Technology Stack
+- **Frontend**: SvelteKit 5 + TypeScript
+- **Styling**: TailwindCSS + Custom Design System
+- **Build**: Vite 6.x
+- **Maps**: MapLibre GL JS
+- **Icons**: Lucide Svelte
+- **Testing**: Vitest + Playwright
+- **CI/CD**: GitHub Actions
+- **Deployment**: Vercel/Docker
 
-- **Frontend**: SvelteKit with TypeScript for type safety
-- **Styling**: Tailwind CSS 4.0 with custom oil field color scheme
-- **Architecture**: Component-based with reactive stores
-- **Real-time**: Live data simulation with WebSocket-ready architecture
+### Project Structure
 
-## 📦 Installation
+```
+src/
+├── app/                           # Application routes
+│   ├── (auth)/                   # Authenticated routes
+│   │   ├── dashboard/            # Main dashboard
+│   │   ├── modules/              # Feature modules
+│   │   │   ├── dispatch/         # Dispatch management
+│   │   │   ├── driver/           # Driver workflows
+│   │   │   ├── executive/        # Executive analytics
+│   │   │   └── monitoring/       # Real-time monitoring
+│   │   └── settings/             # User settings
+│   └── (public)/                 # Public routes
+│       ├── login/                # Authentication
+│       └── marketing/            # Landing pages
+├── lib/
+│   ├── core/                     # Core business logic
+│   │   ├── stores/               # State management
+│   │   ├── types/                # TypeScript definitions
+│   │   ├── services/             # API services
+│   │   └── utils/                # Utilities
+│   ├── ui/                       # Design system
+│   │   ├── components/           # UI components
+│   │   ├── layouts/              # Layout components
+│   │   ├── theme/                # Theme system
+│   │   └── icons/                # Icon components
+│   └── modules/                  # Feature modules
+│       ├── dispatch/             # Dispatch logic
+│       ├── driver/               # Driver logic
+│       ├── executive/            # Executive logic
+│       └── monitoring/           # Monitoring logic
+```
+
+### Design Principles
+
+1. **Single Responsibility** - Each component/module has one clear purpose
+2. **Type Safety** - Full TypeScript coverage with strict mode
+3. **Component Limits** - Max 200 lines per component, 50 lines per function
+4. **Domain-Driven Design** - Features organized by business domain
+5. **White-Label Ready** - Themeable and configurable for multiple clients
+
+## 🛠️ Development Setup
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
 
-### Quick Start
+- Node.js 18+ 
+- npm 9+
+- Git
+
+### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/lojak57/drydriveTempTracker.git
-cd drydriveTempTracker
+git clone https://github.com/your-org/datatracker-platform.git
+cd datatracker-platform
 
 # Install dependencies
 npm install
@@ -64,191 +100,210 @@ npm run dev
 open http://localhost:5173
 ```
 
-## 🚀 Deployment
-
-### Deploy to Vercel (Recommended)
-
-The easiest way to deploy your Oil Field Temperature Tracker:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/lojak57/drydriveTempTracker)
-
-#### Manual Vercel Deployment
-
-1. **Install Vercel CLI** (if not already installed):
-```bash
-npm i -g vercel
-```
-
-2. **Login to Vercel**:
-```bash
-vercel login
-```
-
-3. **Deploy from your local machine**:
-```bash
-npm run build  # Test build locally first
-vercel        # Deploy to Vercel
-```
-
-4. **Set Environment Variables** in Vercel Dashboard:
-   - Go to your project settings
-   - Add environment variables as needed
-   - Redeploy if environment variables are critical
-
-#### Alternative Deployment Options
-
-- **Netlify**: Works with SvelteKit adapter-netlify
-- **Railway**: Perfect for full-stack applications
-- **DigitalOcean App Platform**: Great for scalable deployments
-- **AWS Amplify**: Enterprise-grade hosting
-
-### Environment Variables for Production
-
-Set these in your deployment platform:
-
-```env
-NODE_ENV=production
-VITE_UPDATE_INTERVAL=3000
-VITE_TEMPERATURE_SIMULATION=true
-# Add your API endpoints when backend is ready
-```
-
-### Available Scripts
+### Available Commands
 
 ```bash
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run preview      # Preview production build
-npm run check        # Run Svelte check
-npm run check:watch  # Run Svelte check in watch mode
-npm run lint         # Run ESLint
+npm run test         # Run unit tests
+npm run test:e2e     # Run end-to-end tests
+npm run lint         # Lint codebase
+npm run type-check   # TypeScript type checking
 npm run format       # Format code with Prettier
 ```
 
-## 🏗️ Project Structure
+## 🧪 Testing Strategy
 
-```
-src/
-├── lib/
-│   ├── components/
-│   │   ├── analytics/          # Analytics dashboard components
-│   │   │   ├── AnalyticsCard.svelte
-│   │   │   ├── DriverLeaderboard.svelte
-│   │   │   ├── LossAnalysis.svelte
-│   │   │   ├── PerformanceChart.svelte
-│   │   │   └── TruckEfficiency.svelte
-│   │   ├── dashboard/          # Main SCADA components
-│   │   │   ├── HaulCard.svelte
-│   │   │   ├── HaulDetailView.svelte
-│   │   │   ├── LiveDataFeed.svelte
-│   │   │   └── SystemStatusCard.svelte
-│   │   └── ui/                 # Reusable UI components
-│   │       ├── MetricCard.svelte
-│   │       └── Navigation.svelte
-│   └── stores/
-│       └── haulStore.ts        # Reactive data management
-└── routes/
-    ├── +page.svelte           # Main SCADA dashboard
-    ├── admin/+page.svelte     # Analytics dashboard
-    └── haul/+page.svelte      # Individual haul monitoring
-```
+### Testing Framework
 
-## 🔧 Configuration
+- **Unit Tests**: Vitest
+- **Integration Tests**: Vitest + Testing Library
+- **E2E Tests**: Playwright
+- **Component Tests**: Svelte Testing Library
 
-### Environment Variables
-Create a `.env` file in the root directory:
+### Coverage Requirements
 
-```env
-# API Configuration (for future backend integration)
-VITE_API_BASE_URL=http://localhost:3000/api
-VITE_WEBSOCKET_URL=ws://localhost:3000/ws
+- **Unit Tests**: 80% minimum coverage
+- **Integration Tests**: All API endpoints
+- **E2E Tests**: Critical user workflows
+- **Visual Tests**: Component library
 
-# SCADA Configuration
-VITE_UPDATE_INTERVAL=3000
-VITE_OIL_PRICE_API=your-oil-price-api-key
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode  
+npm run test:watch
+
+# Run E2E tests
+npm run test:e2e
+
+# Generate coverage report
+npm run test:coverage
 ```
 
-### Tailwind Customization
-The app uses a custom color scheme defined in `tailwind.config.js`:
+## 🎨 Theming & White-Label
 
-```js
-colors: {
-  oil: {
-    orange: '#ff6b35',
-    blue: '#004e89',
-    black: '#1a1a1a',
-    gray: '#6b7280'
-  }
-}
-```
+### Theme Configuration
 
-## 📈 Data Model
-
-### Core Interfaces
+The platform supports dynamic theming for white-label deployments:
 
 ```typescript
-interface Haul {
-  id: string;
-  truckId: string;
-  driverId: string;
-  onloadSite: Site;
-  offloadSite: Site;
-  initialVolume: number;
-  finalVolume?: number;
-  expectedLoss: number;
-  actualLoss?: number;
-  status: 'loading' | 'transit' | 'offloading' | 'completed';
-  temperatureReadings: TemperatureReading[];
-  transitProgress: number;
-}
-
-interface TemperatureReading {
-  timestamp: Date;
-  ambient: number;
-  internal: number;
-}
+// lib/ui/theme/themes/client-name.theme.ts
+export const clientTheme: ThemeConfig = {
+  brand: {
+    name: "Client Name",
+    logo: "/assets/client-logo.png",
+    colors: {
+      primary: "#your-primary-color",
+      secondary: "#your-secondary-color",
+      // ...
+    }
+  },
+  features: {
+    hasExecutiveReports: true,
+    hasRealTimeMonitoring: true,
+    // ...
+  }
+};
 ```
 
-## 🎯 Usage
+### Asset Management
 
-### Main Dashboard
-Navigate to the main dashboard to:
-- Monitor active hauls in real-time
-- View live temperature readings
-- Track transit progress
-- Review SCADA system status
+- **Logos**: Place in `/static/assets/`
+- **Favicons**: Update in `/static/`
+- **Theme CSS**: Auto-generated from theme config
 
-### Analytics Dashboard  
-Access `/admin` to:
-- Analyze driver and truck performance
-- Review loss variance patterns
-- Monitor financial impact
-- View predictive insights
+## 📡 API Integration
 
-### Haul Details
-Click any haul card to see:
-- Complete 4-step workflow visualization
-- Real-time temperature monitoring
-- Expected loss calculations
-- Variance analysis results
+### Real-time Data
 
-## 🔮 Future Enhancements
+- **WebSocket**: Real-time vehicle positions and telemetry
+- **REST API**: CRUD operations for business entities
+- **IoT Integration**: Equipment monitoring and control
 
-- [ ] **Backend Integration** with real SCADA hardware
-- [ ] **WebSocket real-time updates** for live data streaming
-- [ ] **Advanced ML predictions** for loss optimization
-- [ ] **Mobile app** for field operations
-- [ ] **Historical data analysis** with trend forecasting
-- [ ] **Alert system** with SMS/email notifications
-- [ ] **Multi-tenant support** for different oil companies
+### Data Flow
 
-## 🤝 Contributing
+1. **Sensors** → **IoT Gateway** → **API** → **WebSocket** → **Frontend**
+2. **Mobile Apps** → **API** → **Database**
+3. **Third-party Systems** → **Webhooks** → **Event Processing**
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## 🔒 Security
+
+### Authentication & Authorization
+
+- **Multi-tenant**: Organization-scoped data access
+- **Role-based**: Driver, Dispatch, Manager, Executive roles
+- **API Security**: JWT tokens with proper expiration
+
+### Security Best Practices
+
+- Input validation and sanitization
+- SQL injection prevention
+- XSS protection
+- CSRF protection
+- Secure headers and HTTPS
+
+## 🚢 Deployment
+
+### Environment Variables
+
+```bash
+# Required
+DATABASE_URL=postgresql://...
+WEBSOCKET_URL=wss://api.datatracker.com
+ORGANIZATION_ID=your-org-id
+
+# Optional
+MAPBOX_TOKEN=your-mapbox-token
+SENTRY_DSN=your-sentry-dsn
+```
+
+### Production Deployment
+
+```bash
+# Build production bundle
+npm run build
+
+# Deploy to Vercel
+vercel --prod
+
+# Or deploy with Docker
+docker build -t datatracker .
+docker run -p 3000:3000 datatracker
+```
+
+## 📝 Contributing
+
+### Code Standards
+
+- **TypeScript**: Strict mode enabled, no `any` types
+- **ESLint**: All rules must pass
+- **Prettier**: Code formatting enforced
+- **Conventional Commits**: Use semantic commit messages
+
+### Pull Request Process
+
+1. **Fork** the repository
+2. **Create** feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** changes: `git commit -m 'feat: add amazing feature'`
+4. **Test** thoroughly: `npm test && npm run test:e2e`
+5. **Push** to branch: `git push origin feature/amazing-feature`
+6. **Open** Pull Request with detailed description
+
+### Code Review Checklist
+
+- [ ] All tests pass
+- [ ] TypeScript types are correct
+- [ ] Component size limits respected (200 lines max)
+- [ ] Function complexity under control (50 lines max)
+- [ ] Security considerations addressed
+- [ ] Performance implications reviewed
+- [ ] Documentation updated
+
+## 🗺️ Roadmap
+
+### Phase 1: Foundation ✅
+- [x] Core architecture
+- [x] White-label theming
+- [x] Basic dashboards
+- [x] Driver workflows
+
+### Phase 2: Real-time (Current)
+- [ ] WebSocket integration
+- [ ] Live fleet tracking
+- [ ] Real-time alerts
+- [ ] Mobile optimization
+
+### Phase 3: Advanced Analytics
+- [ ] Predictive maintenance
+- [ ] Route optimization
+- [ ] Cost analysis
+- [ ] Performance insights
+
+### Phase 4: Integration
+- [ ] ERP system connectors
+- [ ] Third-party APIs
+- [ ] Mobile applications
+- [ ] IoT device management
+
+## 🤝 Support
+
+### Documentation
+
+- **API Docs**: `/docs/api`
+- **Component Library**: `/docs/components`
+- **Deployment Guide**: `/docs/deployment`
+- **Architecture Guide**: `/docs/architecture`
+
+### Getting Help
+
+- **Issues**: [GitHub Issues](https://github.com/your-org/datatracker-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-org/datatracker-platform/discussions)
+- **Email**: support@datatracker.com
 
 ## 📄 License
 
@@ -256,13 +311,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Oil Industry Standards** for thermal expansion calculations
-- **SCADA Best Practices** for industrial monitoring interfaces
-- **Apple Design System** for UI/UX inspiration
-- **SvelteKit Community** for excellent documentation and support
+- **SvelteKit Team** - For the amazing framework
+- **TailwindCSS** - For the utility-first CSS framework
+- **MapLibre** - For open-source mapping solutions
+- **Lucide** - For beautiful open-source icons
 
 ---
 
-**Built with ❤️ for the oil & gas industry**
+**Built with ❤️ for the logistics industry**
 
-For questions or support, please open an issue or contact the development team.
+*DataTracker Platform - Where Technology Meets Transportation*

@@ -27,7 +27,7 @@
 		{ id: 'hood', category: 'Exterior', description: 'Hood latched securely', status: 'pass' },
 		
 		// Engine Compartment
-		{ id: 'oil-level', category: 'Engine', description: 'Engine oil level and condition', status: 'pass', critical: true },
+		{ id: 'fluid-level', category: 'Engine', description: 'Engine fluid level and condition', status: 'pass', critical: true },
 		{ id: 'coolant', category: 'Engine', description: 'Coolant level and condition', status: 'pending', critical: true },
 		{ id: 'belts', category: 'Engine', description: 'Drive belts (wear, tension)', status: 'pass' },
 		{ id: 'hoses', category: 'Engine', description: 'Hoses and connections', status: 'pass' },

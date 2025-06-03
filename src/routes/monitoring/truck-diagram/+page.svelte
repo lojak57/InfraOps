@@ -9,7 +9,7 @@
 	let showDiagramLabels = true;
 
 	onMount(() => {
-		document.title = 'Live Truck Monitoring - DryDrive Oil Field Temp Tracker';
+		document.title = 'Live Truck Monitoring - FlowOps Logistics Operations';
 	});
 
 	function handleValveToggled(event: CustomEvent) {
@@ -43,7 +43,7 @@
 </script>
 
 <svelte:head>
-	<title>Live Truck Monitoring - DryDrive Oil Field Temp Tracker</title>
+	<title>Live Truck Monitoring - FlowOps Logistics Operations</title>
 	<meta name="description" content="Real-time valve and sensor monitoring for oil transport trucks with interactive diagrams and LOVISVision integration.">
 </svelte:head>
 
@@ -236,7 +236,7 @@
 				<span>Interactive valve control • Live sensor simulation • LOVISVision integration</span>
 			</div>
 			<div class="tech-stack">
-				<span>Powered by DryDrive • Krohne Opticheck • LOVISVision</span>
+				<span>Powered by FlowOps • Krohne Opticheck • LOVISVision</span>
 			</div>
 		</div>
 	</div>

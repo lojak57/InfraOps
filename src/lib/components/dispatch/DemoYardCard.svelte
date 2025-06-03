@@ -62,8 +62,8 @@
 			</div>
 			
 			<div class="metric">
-				<div class="metric-label">Today's Hauls</div>
-				<div class="metric-value">{yard.todayHauls}</div>
+				<div class="metric-label">Today's Jobs</div>
+				<div class="metric-value">{yard.todayJobs}</div>
 			</div>
 		</div>
 
@@ -100,7 +100,7 @@
 				<div class="metric-label">Loading Bays</div>
 				<div class="metric-value">
 					<Activity class="w-4 h-4" />
-					{yard.activeBays}/{yard.loadingBays}
+					{yard.activeBays}/{yard.pickupBays}
 				</div>
 			</div>
 		</div>

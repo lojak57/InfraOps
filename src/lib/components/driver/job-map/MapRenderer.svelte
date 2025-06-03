@@ -23,7 +23,7 @@
 	function initializeMap() {
 		mapStore.setLoading(true);
 
-		// Initialize map with light styling suitable for oil field operations
+		// Initialize map with light styling suitable for logistics operations
 		const map = new maplibregl.Map({
 			container: mapContainer,
 			style: {

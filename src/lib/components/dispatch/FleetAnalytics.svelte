@@ -64,7 +64,7 @@
 			<div class="kpi-content">
 				<div class="kpi-value">{formatRevenue(demoFleet.monthlyRevenue)}</div>
 				<div class="kpi-label">Monthly Revenue</div>
-				<div class="kpi-sub">{formatLargeNumber(demoFleet.monthHauls)} hauls completed</div>
+				<div class="kpi-sub">{formatLargeNumber(demoFleet.monthJobs)} jobs completed</div>
 			</div>
 		</div>
 
@@ -101,7 +101,7 @@
 			<div class="kpi-content">
 				<div class="kpi-value">{demoFleet.totalYards}</div>
 				<div class="kpi-label">Active Yards</div>
-				<div class="kpi-sub">{demoFleet.todayHauls} hauls today</div>
+				<div class="kpi-sub">{demoFleet.todayJobs} jobs today</div>
 			</div>
 		</div>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { scadaStatus } from '$lib/stores/haulStore';
+	import { scadaStatus } from '$lib/stores/jobStore';
 
 	function getLatencyStatus(latency: number) {
 		if (latency < 1.0) return { color: 'text-emerald-600', status: 'Excellent' };

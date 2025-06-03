@@ -1,21 +1,21 @@
 <script lang="ts">
-	import type { Truck, Haul } from '$lib/stores/haulStore';
+	import type { Truck, Job } from '$lib/stores/jobStore';
 
 	export let trucks: Truck[];
-	export let hauls: Haul[];
+	export let jobs: Job[];
 
-	// Calculate truck performance from hauls
+	// Calculate truck performance from jobs
 	$: truckPerformance = trucks.map(truck => {
-		const truckHauls = hauls.filter(h => h.truckId === truck.id);
-		const completedHauls = truckHauls.filter(h => h.actualLoss !== undefined);
+		const truckJobs = jobs.filter(h => h.truckId === truck.id);
+		const completedJobs = truckJobs.filter(h => h.actualLoss !== undefined);
 		
-		const totalVolume = truckHauls.reduce((sum, h) => sum + h.initialVolume, 0);
-		const totalLoss = completedHauls.reduce((sum, h) => sum + (h.actualLoss || 0), 0);
+		const totalVolume = truckJobs.reduce((sum, h) => sum + h.initialVolume, 0);
+		const totalLoss = completedJobs.reduce((sum, h) => sum + (h.actualLoss || 0), 0);
 		const currentEfficiency = totalVolume > 0 ? ((totalVolume - totalLoss) / totalVolume * 100) : truck.averageEfficiency;
 		
-		// Calculate trend (last 5 vs previous 5 hauls)
-		const recent5 = completedHauls.slice(-5);
-		const previous5 = completedHauls.slice(-10, -5);
+		// Calculate trend (last 5 vs previous 5 jobs)
+		const recent5 = completedJobs.slice(-5);
+		const previous5 = completedJobs.slice(-10, -5);
 		
 		const recentEff = recent5.length > 0 
 			? recent5.reduce((sum, h) => sum + ((h.initialVolume - (h.actualLoss || 0)) / h.initialVolume * 100), 0) / recent5.length
@@ -30,8 +30,8 @@
 		return {
 			...truck,
 			currentEfficiency,
-			totalHauls: truckHauls.length,
-			completedHauls: completedHauls.length,
+			totalJobs: truckJobs.length,
+			completedJobs: completedJobs.length,
 			totalVolume,
 			trend,
 			status: getMaintenanceStatus(currentEfficiency, trend)
@@ -132,8 +132,8 @@
 					</div>
 					
 					<div class="text-center">
-						<div class="text-xs text-oil-gray">Total Hauls</div>
-						<div class="text-xs sm:text-sm font-semibold text-oil-black leading-tight">{truck.totalHauls}</div>
+						<div class="text-xs text-oil-gray">Total Jobs</div>
+						<div class="text-xs sm:text-sm font-semibold text-oil-black leading-tight">{truck.totalJobs}</div>
 						<div class="text-xs text-oil-gray">completed</div>
 					</div>
 					
@@ -146,7 +146,7 @@
 					<div class="text-center">
 						<div class="text-xs text-oil-gray">Utilization</div>
 						<div class="text-xs sm:text-sm font-semibold text-oil-black leading-tight">
-							{truck.totalVolume > 0 ? ((truck.totalVolume / truck.totalHauls / truck.capacity) * 100).toFixed(0) : 0}%
+							{truck.totalVolume > 0 ? ((truck.totalVolume / truck.totalJobs / truck.capacity) * 100).toFixed(0) : 0}%
 						</div>
 						<div class="text-xs text-oil-gray">avg load</div>
 					</div>

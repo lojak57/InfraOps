@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RoleCard from '$lib/components/shared/RoleCard.svelte';
-	import DryDriveLogo from '$lib/components/ui/DryDriveLogo.svelte';
+	import DataTrackerLogo from '$lib/components/ui/DataTrackerLogo.svelte';
 
 	const roles = [
 		{
@@ -8,52 +8,51 @@
 			title: 'Executive',
 			icon: 'TrendingUp' as const,
 			description: 'Strategic overview, KPIs, and financial performance',
-			href: '/executive'
+			href: '/dashboards/executive'
 		},
 		{
 			id: 'regional',
 			title: 'Regional Manager',
 			icon: 'MapPin' as const,
-			description: 'Multi-yard oversight, regional analytics, and strategic planning',
-			href: '/regional'
+			description: 'Multi-site oversight, regional analytics, and strategic planning',
+			href: '/dashboards/regional'
 		},
 		{
-			id: 'yard',
-			title: 'Yard Manager',
+			id: 'site',
+			title: 'Site Manager',
 			icon: 'Warehouse' as const,
-			description: 'Fleet overview, driver management, and yard operations',
-			href: '/yard'
+			description: 'Asset overview, operator management, and site operations',
+			href: '/dashboards/site'
 		},
 		{
-			id: 'driver',
-			title: 'Driver',
+			id: 'operator',
+			title: 'Field Operator',
 			icon: 'Truck' as const,
-			description: 'Schedule, pre-trip inspection, and job management',
-			href: '/driver'
+			description: 'Schedule, pre-task inspection, and job management',
+			href: '/dashboards/driver'
 		},
 		{
 			id: 'dispatch',
-			title: 'Dispatch',
+			title: 'Operations Control',
 			icon: 'Radio' as const,
-			description: 'Route planning, fleet status, and active hauls',
-			href: '/dispatch'
+			description: 'Route planning, asset status, and active jobs',
+			href: '/dashboards/dispatch'
 		}
 	];
 </script>
 
 <svelte:head>
-	<title>Oil Field Temp Tracker - Dashboard</title>
-	<meta name="description" content="Oil field temperature tracking and haul management system" />
+	<title>Operations Platform - Dashboard</title>
+	<meta name="description" content="Operations management and asset tracking platform" />
 </svelte:head>
 
 <div class="dashboard-landing">
 	<!-- Header -->
 	<div class="landing-header">
 		<div class="header-content">
-			<DryDriveLogo />
+			<DataTrackerLogo />
 			<div class="header-text">
-				<h1 class="main-title">DryDrive Nexus</h1>
-				<p class="main-subtitle">AI-Driven Logistics for Oilfield Excellence</p>
+				<p class="main-subtitle">Unified Operations Management Platform</p>
 			</div>
 		</div>
 	</div>
@@ -84,7 +83,7 @@
 
 	<!-- Footer Info -->
 	<div class="landing-footer">
-		<p>Secure access to real-time haul monitoring and fleet management</p>
+		<p>Secure access to real-time job monitoring and fleet management</p>
 	</div>
 </div>
 

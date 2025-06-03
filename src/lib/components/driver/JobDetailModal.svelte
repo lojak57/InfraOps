@@ -141,7 +141,7 @@
 						<div class="spec-item">
 							<Gauge size={16} />
 							<span class="spec-label">EST Volume</span>
-							<span class="spec-value">{job.estimatedBarrels} BBL</span>
+							<span class="spec-value">{job.estimatedUnits} units</span>
 						</div>
 						<div class="spec-item">
 							<BarChart3 size={16} />
@@ -297,7 +297,7 @@
 							<span class="location-address">{job.deliveryLocation.address}</span>
 						</div>
 						<div class="location-meta">
-							<span class="distance-badge">{job.estimatedBarrels} BBL</span>
+							<span class="distance-badge">{job.estimatedUnits} units</span>
 						</div>
 					</div>
 				</div>

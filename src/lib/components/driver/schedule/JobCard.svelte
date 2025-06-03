@@ -21,7 +21,7 @@
 			address: string;
 			coordinates: { lat: number; lng: number };
 		};
-		estimatedBarrels: number;
+		estimatedUnits: number;
 		tankLevelHeight: string;
 		scheduledTime: Date;
 		estimatedDuration: number;
@@ -31,7 +31,7 @@
 		routeType: 'highway' | 'rural' | 'city';
 		specialInstructions?: string;
 		expectedTemperature: { min: number; max: number };
-		loadType: 'crude' | 'condensate' | 'refined';
+		loadType: 'product' | 'condensate' | 'refined';
 		hazmatRequired: boolean;
 		customerContact: {
 			name: string;
@@ -112,17 +112,17 @@
 
 	<!-- Main card content -->
 	<div class="card-content">
-		<!-- Left section: Time and Barrels -->
-		<div class="time-barrels-section">
+		<!-- Left section: Time and Units -->
+		<div class="time-units-section">
 			<div class="time-display">
 				<div class="scheduled-time">{formatTime(job.scheduledTime)}</div>
 				<div class="time-status {isJobOverdue(job.scheduledTime) ? 'overdue' : isJobSoon(job.scheduledTime) ? 'soon' : 'normal'}">
 					{getTimeUntilJob(job.scheduledTime)}
 				</div>
 			</div>
-			<div class="barrels-display">
-				<div class="barrels-value">{job.estimatedBarrels}</div>
-				<div class="barrels-label">BBLS</div>
+			<div class="units-display">
+				<div class="units-value">{job.estimatedUnits}</div>
+				<div class="units-label">unitsS</div>
 			</div>
 		</div>
 
@@ -243,8 +243,8 @@
 		min-height: 100px;
 	}
 
-	/* Time and Barrels Section - Hard Left Alignment */
-	.time-barrels-section {
+	/* Time and Units Section - Hard Left Alignment */
+	.time-units-section {
 		width: 84px;
 		padding: 0;
 		text-align: left;
@@ -299,7 +299,7 @@
 		color: #dc2626;
 	}
 
-	.barrels-display {
+	.units-display {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -307,7 +307,7 @@
 		width: 100%;
 	}
 
-	.barrels-value {
+	.units-value {
 		text-align: left;
 		font-size: 22px;
 		font-weight: 700;
@@ -317,7 +317,7 @@
 		margin: 0;
 	}
 
-	.barrels-label {
+	.units-label {
 		font-size: 9px;
 		color: #64748b;
 		font-weight: 600;
@@ -540,7 +540,7 @@
 			padding: 12px;
 		}
 
-		.time-barrels-section {
+		.time-units-section {
 			grid-column: 1;
 			grid-row: 1;
 			min-width: 75px;
@@ -572,7 +572,7 @@
 			font-size: 12px;
 		}
 
-		.barrels-value {
+		.units-value {
 			font-size: 20px;
 		}
 

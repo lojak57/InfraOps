@@ -18,11 +18,11 @@
 			gradient: 'from-oil-blue/20 to-oil-blue/5'
 		},
 		orange: { 
-			primary: 'text-oil-orange', 
+			primary: 'text-primary-orange', 
 			bg: 'from-orange-50/90 to-orange-100/70',
-			accent: 'bg-oil-orange/15',
-			border: 'border-oil-orange/25',
-			gradient: 'from-oil-orange/20 to-oil-orange/5'
+			accent: 'bg-primary-orange/15',
+			border: 'border-primary-orange/25',
+			gradient: 'from-primary-orange/20 to-primary-orange/5'
 		},
 		emerald: { 
 			primary: 'text-emerald-600', 

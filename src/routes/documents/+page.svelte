@@ -27,8 +27,8 @@
 </script>
 
 <svelte:head>
-  <title>Document Management - Oil Field Tracker</title>
-  <meta name="description" content="Comprehensive document management and compliance tracking for oil field operations" />
+  <title>Document Management - Logistics Tracker</title>
+  <meta name="description" content="Comprehensive document management and compliance tracking for logistics operations" />
 </svelte:head>
 
 <div class="documents-page">

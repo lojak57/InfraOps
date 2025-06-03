@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import MetricCard from '$lib/components/ui/MetricCard.svelte';
-	import { activeHauls, trucks, drivers, scadaStatus } from '$lib/stores/haulStore';
+	import { activeJobs, trucks, drivers, scadaStatus } from '$lib/stores/jobStore';
 
 	// Fleet-level metrics
 	let totalActiveVolume = 0;
@@ -15,7 +15,7 @@
 	onMount(() => {
 		updateInterval = setInterval(() => {
 			// Calculate fleet-level metrics
-			totalActiveVolume = $activeHauls.reduce((sum, haul) => sum + haul.initialVolume, 0);
+			totalActiveVolume = $activeJobs.reduce((sum, job) => sum + job.initialVolume, 0);
 			averageEfficiency = 95 + Math.random() * 5; // 95-100%
 			systemHealthScore = 92 + Math.random() * 8; // 92-100%
 			alertCount = Math.random() > 0.8 ? Math.floor(Math.random() * 3) : 0;
@@ -28,7 +28,7 @@
 		}
 	});
 
-	// Get truck and driver info for each haul
+	// Get truck and driver info for each job
 	function getTruckInfo(truckId: string) {
 		return $trucks.find(truck => truck.id === truckId);
 	}
@@ -37,12 +37,12 @@
 		return $drivers.find(driver => driver.id === driverId);
 	}
 
-	// Get status color for haul status
+	// Get status color for job status
 	function getStatusColor(status: string): string {
 		switch (status) {
-			case 'loading': return 'bg-amber-100 text-amber-700 border-amber-200';
+			case 'pickup': return 'bg-amber-100 text-amber-700 border-amber-200';
 			case 'transit': return 'bg-blue-100 text-blue-700 border-blue-200';
-			case 'offloading': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+			case 'offpickup': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
 			case 'completed': return 'bg-gray-100 text-gray-700 border-gray-200';
 			default: return 'bg-gray-100 text-gray-700 border-gray-200';
 		}
@@ -109,26 +109,26 @@
 <!-- Active Fleet Grid -->
 <div class="mb-6 sm:mb-8">
 	<div class="flex items-center justify-between mb-4">
-		<h3 class="text-xl sm:text-2xl font-semibold tracking-tight text-oil-black">Active Hauls</h3>
+		<h3 class="text-xl sm:text-2xl font-semibold tracking-tight text-oil-black">Active Jobs</h3>
 		<div class="text-sm text-oil-gray">
-			{$activeHauls.length} trucks active
+			{$activeJobs.length} assets active
 		</div>
 	</div>
 	
 	<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-		{#each $activeHauls as haul}
-			{@const truck = getTruckInfo(haul.truckId)}
-			{@const driver = getDriverInfo(haul.driverId)}
-			{@const latestTemp = haul.temperatureReadings[haul.temperatureReadings.length - 1]}
-			{@const latestCoriolis = haul.coriolisReadings[haul.coriolisReadings.length - 1]}
-			{@const latestPressure = haul.pressureReadings[haul.pressureReadings.length - 1]}
+		{#each $activeJobs as job}
+			{@const truck = getTruckInfo(job.truckId)}
+			{@const driver = getDriverInfo(job.driverId)}
+			{@const latestTemp = job.temperatureReadings[job.temperatureReadings.length - 1]}
+			{@const latestCoriolis = job.coriolisReadings[job.coriolisReadings.length - 1]}
+			{@const latestPressure = job.pressureReadings[job.pressureReadings.length - 1]}
 			
-			<a href="/haul?id={haul.id}" class="block">
+			<a href="/job?id={job.id}" class="block">
 				<div class="glass-card p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 					<!-- Header -->
 					<div class="flex items-center justify-between mb-4">
 						<div class="flex items-center space-x-3">
-							<div class="w-10 h-10 bg-oil-orange/10 rounded-xl flex items-center justify-center">
+							<div class="w-10 h-10 bg-primary-orange/10 rounded-xl flex items-center justify-center">
 								<span class="text-lg">🚛</span>
 							</div>
 							<div>
@@ -136,22 +136,22 @@
 								<p class="text-sm text-oil-gray">{driver?.name || 'Unknown Driver'}</p>
 							</div>
 						</div>
-						<div class="px-3 py-1 rounded-full text-xs font-medium border {getStatusColor(haul.status)}">
-							{haul.status.charAt(0).toUpperCase() + haul.status.slice(1)}
+						<div class="px-3 py-1 rounded-full text-xs font-medium border {getStatusColor(job.status)}">
+							{job.status.charAt(0).toUpperCase() + job.status.slice(1)}
 						</div>
 					</div>
 
 					<!-- Route Info -->
 					<div class="mb-4">
 						<div class="text-sm text-oil-gray mb-2">
-							{haul.onloadSite.name} → {haul.offloadSite.name}
+							{job.onloadSite.name} → {job.offloadSite.name}
 						</div>
 						<div class="w-full bg-gray-200 rounded-full h-2">
-							<div class="h-2 rounded-full {getProgressColor(haul.transitProgress)}" style="width: {haul.transitProgress}%"></div>
+							<div class="h-2 rounded-full {getProgressColor(job.transitProgress)}" style="width: {job.transitProgress}%"></div>
 						</div>
 						<div class="flex justify-between text-xs text-oil-gray mt-1">
-							<span>{haul.transitProgress}% complete</span>
-							<span>{haul.estimatedTimeRemaining} min remaining</span>
+							<span>{job.transitProgress}% complete</span>
+							<span>{job.estimatedTimeRemaining} min remaining</span>
 						</div>
 					</div>
 
@@ -159,7 +159,7 @@
 					<div class="grid grid-cols-2 gap-3">
 						<div class="bg-white/30 rounded-lg p-3">
 							<div class="text-xs text-oil-gray">Volume</div>
-							<div class="font-semibold text-oil-black">{latestCoriolis?.netVolume.toFixed(1) || 'N/A'} BBL</div>
+							<div class="font-semibold text-oil-black">{latestCoriolis?.netVolume.toFixed(1) || 'N/A'} units</div>
 						</div>
 						<div class="bg-white/30 rounded-lg p-3">
 							<div class="text-xs text-oil-gray">Oil Temp</div>
@@ -205,7 +205,7 @@
 		<div class="text-center p-4 bg-white/30 rounded-xl">
 			<div class="w-3 h-3 bg-emerald-400 rounded-full mx-auto mb-2"></div>
 			<div class="text-sm font-medium text-oil-black">Coriolis</div>
-			<div class="text-xs text-oil-gray">{$activeHauls.length} Active</div>
+			<div class="text-xs text-oil-gray">{$activeJobs.length} Active</div>
 		</div>
 		<div class="text-center p-4 bg-white/30 rounded-xl">
 			<div class="w-3 h-3 bg-emerald-400 rounded-full mx-auto mb-2"></div>

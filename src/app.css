@@ -3,22 +3,49 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Apple-like design system for DryDrive applications */
+/* =================================
+   ThermaHaul Design System 
+   ================================= */
+
+/* Professional design system for ThermaHaul applications */
+
+/* Color Palette */
 :root {
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --blur-backdrop: blur(20px) saturate(180%);
-  --drydrive-green: #7CB342;
-  --drydrive-light-green: #9CCC65;
-  --drydrive-dark-green: #558B2F;
-  --drydrive-accent: #CDDC39;
-  --drydrive-black: #1A1A1A;
-  --drydrive-gray: #6B7280;
-  --drydrive-light: #F8FAFC;
-  --drydrive-dark: #0F172A;
+  /* Brand Colors - Updated for darker blue scheme to match new logo */
+  --thermahaul-primary: #1E3A8A;      /* Darker industrial blue - main brand */
+  --thermahaul-primary-light: #2563EB; /* Medium blue for accents */
+  --thermahaul-primary-dark: #1E293B;  /* Very dark blue for headers */
+  --thermahaul-secondary: #0F766E;     /* Dark teal for secondary elements */
+  --thermahaul-success: #059669;       /* Keep operations green */
+  --thermahaul-warning: #D97706;       /* Amber for warnings */
+  --thermahaul-error: #DC2626;         /* Keep safety red */
+  --thermahaul-industrial: #334155;    /* Darker steel gray */
+  --thermahaul-orange: #EA580C;        /* Slightly brighter orange */
+  --thermahaul-charcoal: #1E293B;      /* Match primary dark */
+  --thermahaul-rust: #7C2D12;          /* Keep rust for accents */
+  --thermahaul-gray: #475569;          /* Darker gray */
+  --thermahaul-light: #F8FAFC;         /* Keep light backgrounds */
+  --thermahaul-dark: #0F172A;          /* Keep deep dark */
+  
+  /* Sidebar and navigation specific colors */
+  --sidebar-bg: #1E293B;               /* Dark blue background */
+  --sidebar-border: #334155;           /* Subtle border */
+  --nav-text: #CBD5E1;                 /* Light gray text */
+  --nav-text-active: #FFFFFF;          /* White for active items */
+  --nav-hover-bg: #2563EB;             /* Blue fill for hover - this will be perfect! */
+  --nav-hover-text: #FFFFFF;           /* White text on hover */
+  
+  /* Additional navigation variables for better maintainability */
+  --nav-text-secondary: rgba(255, 255, 255, 0.6);  /* Secondary text with better contrast */
+  --nav-section-title: rgba(255, 255, 255, 0.7);   /* Section titles with good contrast */
+  --nav-footer-bg: rgba(0, 0, 0, 0.1);             /* Footer background */
+  --nav-footer-text: rgba(255, 255, 255, 0.8);     /* Footer text */
+  --nav-version-text: rgba(255, 255, 255, 0.5);    /* Version info text */
+  
+  /* Header colors */
+  --header-bg: #1E3A8A;                /* Primary blue for headers */
+  --header-text: #FFFFFF;              /* White text in headers */
+  --header-border: #2563EB;            /* Lighter blue borders */
   
   /* Mobile-first viewport units */
   --vh-mobile: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
@@ -174,12 +201,12 @@ body {
 .btn-primary {
 	@apply relative overflow-hidden;
 	background: linear-gradient(135deg, 
-		rgba(124, 179, 66, 1) 0%, 
-		rgba(156, 204, 101, 0.9) 100%);
+		var(--thermahaul-primary) 0%, 
+		var(--thermahaul-primary-light) 100%);
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 12px;
 	box-shadow: 
-		0 4px 12px rgba(124, 179, 66, 0.2),
+		0 4px 12px rgba(30, 58, 138, 0.25),
 		0 1px 4px rgba(0, 0, 0, 0.08),
 		inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	transition: all 0.3s ease;
@@ -200,7 +227,7 @@ body {
 @media (min-width: 768px) {
 	.btn-primary {
 		box-shadow: 
-			0 8px 24px rgba(124, 179, 66, 0.3),
+			0 8px 24px rgba(30, 58, 138, 0.3),
 			0 2px 8px rgba(0, 0, 0, 0.1),
 			inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
@@ -214,7 +241,7 @@ body {
 	.btn-primary:hover {
 		transform: translateY(-2px);
 		box-shadow: 
-			0 12px 32px rgba(124, 179, 66, 0.4),
+			0 12px 32px rgba(30, 58, 138, 0.4),
 			0 4px 12px rgba(0, 0, 0, 0.15),
 			inset 0 1px 0 rgba(255, 255, 255, 0.4);
 	}
@@ -222,18 +249,18 @@ body {
 
 .btn-primary:active {
 	transform: translateY(0);
-	box-shadow: 0 1px 5px 0 rgba(124, 179, 66, 0.2);
+	box-shadow: 0 1px 5px 0 rgba(30, 58, 138, 0.25);
 }
 
 .btn-secondary {
 	@apply relative overflow-hidden;
 	background: linear-gradient(135deg, 
-		rgba(85, 139, 47, 1) 0%, 
-		rgba(85, 139, 47, 0.9) 100%);
+		var(--thermahaul-secondary) 0%, 
+		rgba(15, 118, 110, 0.9) 100%);
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 12px;
 	box-shadow: 
-		0 4px 12px rgba(85, 139, 47, 0.2),
+		0 4px 12px rgba(15, 118, 110, 0.25),
 		0 1px 4px rgba(0, 0, 0, 0.08),
 		inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	transition: all 0.3s ease;
@@ -254,7 +281,7 @@ body {
 @media (min-width: 768px) {
 	.btn-secondary {
 		box-shadow: 
-			0 8px 24px rgba(85, 139, 47, 0.3),
+			0 8px 24px rgba(15, 118, 110, 0.3),
 			0 2px 8px rgba(0, 0, 0, 0.1),
 			inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
@@ -268,7 +295,7 @@ body {
 	.btn-secondary:hover {
 		transform: translateY(-2px);
 		box-shadow: 
-			0 12px 32px rgba(85, 139, 47, 0.4),
+			0 12px 32px rgba(15, 118, 110, 0.4),
 			0 4px 12px rgba(0, 0, 0, 0.15),
 			inset 0 1px 0 rgba(255, 255, 255, 0.4);
 	}
@@ -461,19 +488,16 @@ body {
 	}
 }
 
-/* Enhanced Metric Cards - Mobile First */
+/* Enhanced Metric Cards - Mobile First - Clean minimal design */
 .metric-card {
 	@apply relative overflow-hidden;
-	background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-	backdrop-filter: blur(24px);
-	border: 1px solid rgba(255, 255, 255, 0.25);
-	border-radius: 16px;
+	background: #ffffff;
+	border: 1px solid rgba(229, 231, 235, 0.6);
+	border-radius: 12px;
 	box-shadow: 
-		0 4px 16px rgba(0, 0, 0, 0.06),
-		0 1px 4px rgba(0, 0, 0, 0.03),
-		inset 0 1px 0 rgba(255, 255, 255, 0.5),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		0 1px 3px rgba(0, 0, 0, 0.02),
+		0 1px 2px rgba(0, 0, 0, 0.01);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	padding: 16px;
 	min-height: 100px;
 }
@@ -487,35 +511,12 @@ body {
 
 @media (min-width: 768px) {
 	.metric-card {
-		border-radius: 24px;
+		border-radius: 16px;
 		box-shadow: 
-			0 12px 40px rgba(0, 0, 0, 0.1),
-			0 4px 16px rgba(0, 0, 0, 0.06),
-			inset 0 2px 0 rgba(255, 255, 255, 0.5),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+			0 1px 3px rgba(0, 0, 0, 0.03),
+			0 1px 2px rgba(0, 0, 0, 0.02);
 		padding: 24px;
 		min-height: 140px;
-	}
-}
-
-.metric-card::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 2px;
-	background: linear-gradient(90deg, 
-		transparent 0%, 
-		rgba(255, 107, 53, 0.6) 25%, 
-		rgba(0, 78, 137, 0.6) 75%, 
-		transparent 100%);
-	border-radius: 16px 16px 0 0;
-}
-
-@media (min-width: 768px) {
-	.metric-card::before {
-		border-radius: 24px 24px 0 0;
 	}
 }
 
@@ -527,11 +528,10 @@ body {
 	.metric-card:hover {
 		transform: translateY(-6px) scale(1.02);
 		box-shadow: 
-			0 24px 60px rgba(0, 0, 0, 0.15),
-			0 8px 24px rgba(0, 0, 0, 0.08),
-			inset 0 2px 0 rgba(255, 255, 255, 0.6),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.08);
-		border-color: rgba(255, 255, 255, 0.4);
+			0 20px 40px rgba(0, 0, 0, 0.08),
+			0 8px 16px rgba(0, 0, 0, 0.04),
+			0 2px 4px rgba(0, 0, 0, 0.02);
+		border-color: rgba(203, 213, 225, 0.4);
 	}
 }
 
@@ -782,7 +782,7 @@ body {
 }
 
 .mobile-input:focus {
-	border-color: var(--drydrive-green);
+	border-color: var(--thermahaul-success);
 	outline: none;
 	box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.1);
 }
@@ -853,30 +853,192 @@ body {
 	}
 }
 
-/* MINIMAL blue line hover effect ONLY - Phase 1 */
+/* Enhanced dashboard card hover effect with middle-out blue line */
 .dashboard-card-hover {
   position: relative;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dashboard-card-hover::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(to right, #3b82f6, #2563eb);
-  opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  left: 50%;
+  right: 50%;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 12px 12px 0 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
 }
 
+.dashboard-card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.12),
+    0 8px 16px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
 .dashboard-card-hover:hover::before {
-  opacity: 1;
-  transform: scaleX(1);
+  left: 0;
+  right: 0;
 }
 
 /* NO OTHER CHANGES - no transform, no shadow, no size changes */
+
+/* Sidebar Navigation - Dark Blue Theme */
+.sidebar-nav {
+	background: var(--sidebar-bg);
+	border-right: 1px solid var(--sidebar-border);
+	height: 100vh;
+	width: var(--sidebar-width, 280px);
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	overflow-y: auto;
+}
+
+.sidebar-header {
+	background: var(--header-bg);
+	color: var(--header-text);
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid var(--header-border);
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-height: var(--header-height);
+}
+
+.sidebar-nav-list {
+	list-style: none;
+	margin: 0;
+	padding: 1rem 0;
+	flex: 1;
+}
+
+.sidebar-nav-item {
+	margin: 0;
+	padding: 0;
+}
+
+.sidebar-nav-link {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 1.5rem;
+	color: var(--nav-text);
+	text-decoration: none;
+	font-size: 0.875rem;
+	font-weight: 500;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	overflow: hidden;
+}
+
+/* The perfect blue fill hover effect! */
+.sidebar-nav-link::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	right: 0;
+	bottom: 0;
+	background: var(--nav-hover-bg);
+	transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	z-index: 0;
+}
+
+.sidebar-nav-link:hover::before {
+	left: 0;
+}
+
+.sidebar-nav-link:hover {
+	color: var(--nav-hover-text);
+	transform: translateX(4px);
+}
+
+.sidebar-nav-link.active {
+	color: var(--nav-text-active);
+	background: var(--nav-hover-bg);
+	font-weight: 600;
+}
+
+.sidebar-nav-link.active::before {
+	left: 0;
+}
+
+.sidebar-nav-icon {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex-shrink: 0;
+	z-index: 1;
+	position: relative;
+}
+
+.sidebar-nav-text {
+	z-index: 1;
+	position: relative;
+}
+
+/* Header Styles - Dark Blue Theme */
+.page-header {
+	background: var(--header-bg);
+	color: var(--header-text);
+	padding: 1rem 2rem;
+	border-bottom: 1px solid var(--header-border);
+	box-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
+}
+
+.page-header h1 {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--header-text);
+}
+
+.page-header .breadcrumb {
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 0.875rem;
+	margin-top: 0.25rem;
+}
+
+/* Card Headers with Dark Blue Theme */
+.card-header {
+	background: var(--header-bg);
+	color: var(--header-text);
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid var(--header-border);
+	border-radius: 0.75rem 0.75rem 0 0;
+	font-weight: 600;
+	font-size: 1.125rem;
+}
+
+.card-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-left: auto;
+}
+
+/* Dashboard Cards with Enhanced Blue Theme */
+.dashboard-card-blue {
+	@apply relative overflow-hidden bg-white rounded-xl border border-slate-200;
+	box-shadow: 
+		0 4px 6px -1px rgba(30, 58, 138, 0.1),
+		0 2px 4px -1px rgba(30, 58, 138, 0.06);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-card-blue:hover {
+	transform: translateY(-2px);
+	box-shadow: 
+		0 10px 25px -3px rgba(30, 58, 138, 0.15),
+		0 4px 6px -2px rgba(30, 58, 138, 0.1);
+	border-color: var(--thermahaul-primary-light);
+}
+
+.dashboard-card-blue .card-header {
+	background: linear-gradient(135deg, var(--thermahaul-primary) 0%, var(--thermahaul-primary-light) 100%);
+}

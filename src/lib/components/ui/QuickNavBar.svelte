@@ -33,15 +33,15 @@
 		<nav class="flex justify-between items-center max-w-4xl mx-auto">
 			{#each navItems as item}
 				<button
-					class="group flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-oil-orange/50 min-w-[44px] touch-manipulation"
+					class="group flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary-orange/50 min-w-[44px] touch-manipulation"
 					class:active={activeSection === item.id}
 					on:click={() => handleNavClick(item.id)}
 				>
 					<span class="text-lg group-hover:scale-110 transition-transform duration-200">
 						{item.icon}
 					</span>
-					<span class="text-xs font-medium text-white group-hover:text-oil-orange transition-colors duration-200"
-						  class:text-oil-orange={activeSection === item.id}>
+					<span class="text-xs font-medium text-white group-hover:text-primary-orange transition-colors duration-200"
+						  class:text-primary-orange={activeSection === item.id}>
 						{item.label}
 					</span>
 				</button>
@@ -52,11 +52,11 @@
 
 <style>
 	.active {
-		@apply bg-oil-orange/20 text-oil-orange;
+		@apply bg-primary-orange/20 text-primary-orange;
 	}
 	
 	.active span {
-		@apply text-oil-orange;
+		@apply text-primary-orange;
 	}
 	
 	/* Mobile optimization */

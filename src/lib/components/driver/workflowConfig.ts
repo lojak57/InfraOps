@@ -12,18 +12,18 @@ export type WorkflowStep =
   | 'job-overview'   // Job Overview (clipboard icon)
   | 'pre-trip'         // Pre-Trip (checklist icon)  
   | 'to-pickup'        // To Pickup (arrow up-right icon)
-  | 'loading'          // Loading (truck icon)
+  | 'pickup'          // Loading (truck icon)
   | 'to-delivery'      // To Delivery (navigation icon)
-  | 'unloading'        // Unloading (package icon)
+  | 'delivery'        // Delivery (package icon)
   | 'post-trip';       // Post-Trip (checkmark icon)
 
 export const WORKFLOW_STEPS: WorkflowStep[] = [
   'job-overview',
   'pre-trip',
   'to-pickup', 
-  'loading',
+  'pickup',
   'to-delivery',
-  'unloading',
+  'delivery',
   'post-trip'
 ];
 
@@ -31,9 +31,9 @@ export const STEP_CONFIG = {
   'job-overview': { icon: ClipboardList, label: 'Job Overview' },
   'pre-trip': { icon: ListChecks, label: 'Pre-Trip' },
   'to-pickup': { icon: ArrowUpRight, label: 'To Pickup' },
-  'loading': { icon: Truck, label: 'Loading' },
+  'pickup': { icon: Truck, label: 'Loading' },
   'to-delivery': { icon: Navigation, label: 'To Delivery' },
-  'unloading': { icon: PackageOpen, label: 'Unloading' },
+  'delivery': { icon: PackageOpen, label: 'Delivery' },
   'post-trip': { icon: CheckCircle2, label: 'Post-Trip' }
 };
 
@@ -41,9 +41,9 @@ export const WORKFLOW_STEP_LABELS: Record<WorkflowStep, string> = {
   'job-overview': 'Job Overview',
   'pre-trip': 'Pre-Trip',
   'to-pickup': 'To Pickup',
-  'loading': 'Loading',
+  'pickup': 'Loading',
   'to-delivery': 'To Delivery',
-  'unloading': 'Unloading',
+  'delivery': 'Delivery',
   'post-trip': 'Post-Trip'
 };
 
@@ -57,7 +57,7 @@ export function mapSectionToStep(section: string, currentView: string, activeJob
   switch (section) {
     case 'pretrip': return 'pre-trip';
     case 'schedule': return activeJob ? 'to-pickup' : 'job-overview';
-    case 'performance': return 'loading';
+    case 'performance': return 'pickup';
     case 'safety': return 'post-trip';
     default: return 'job-overview';
   }

@@ -28,7 +28,7 @@
 	function getItemStatusColor(itemStatus: string) {
 		switch (itemStatus.toLowerCase()) {
 			case 'on route':
-			case 'loading':
+			case 'pickup':
 			case 'ready':
 			case 'active':
 				return 'text-green-600 bg-green-50 border-l-green-500';

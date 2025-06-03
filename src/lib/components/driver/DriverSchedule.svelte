@@ -7,7 +7,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	// Job/Haul data structure
+	// Job/Job data structure
 	interface ScheduledJob {
 		id: string;
 		accountName: string;
@@ -25,7 +25,7 @@
 			address: string;
 			coordinates: { lat: number; lng: number };
 		};
-		estimatedBarrels: number;
+		estimatedUnits: number;
 		tankLevelHeight: string;
 		scheduledTime: Date;
 		estimatedDuration: number; // hours
@@ -35,7 +35,7 @@
 		routeType: 'highway' | 'rural' | 'city';
 		specialInstructions?: string;
 		expectedTemperature: { min: number; max: number };
-		loadType: 'crude' | 'condensate' | 'refined';
+		loadType: 'product' | 'condensate' | 'refined';
 		hazmatRequired: boolean;
 		customerContact: {
 			name: string;
@@ -61,7 +61,7 @@
 				address: 'LAT: 28.99683, LONG: -98.03021',
 				coordinates: { lat: 28.99683, lng: -98.03021 }
 			},
-			estimatedBarrels: 185,
+			estimatedUnits: 185,
 			tankLevelHeight: "17' 4\"",
 			scheduledTime: new Date(2024, 0, 15, 6, 0), // 6:00 AM
 			estimatedDuration: 3.5,
@@ -69,9 +69,9 @@
 			status: 'scheduled',
 			distance: 24.5,
 			routeType: 'highway',
-			specialInstructions: 'Use east gate entrance. Check tank temp before loading.',
+			specialInstructions: 'Use east gate entrance. Check tank temp before pickup.',
 			expectedTemperature: { min: 75, max: 85 },
-			loadType: 'crude',
+			loadType: 'product',
 			hazmatRequired: true,
 			customerContact: {
 				name: 'Mike Rodriguez',
@@ -94,7 +94,7 @@
 				address: 'LAT: 28.84889, LONG: -97.99120',
 				coordinates: { lat: 28.84889, lng: -97.99120 }
 			},
-			estimatedBarrels: 210,
+			estimatedUnits: 210,
 			tankLevelHeight: "22' 8\"",
 			scheduledTime: new Date(2024, 0, 15, 11, 30), // 11:30 AM
 			estimatedDuration: 4.2,
@@ -104,7 +104,7 @@
 			routeType: 'highway',
 			specialInstructions: 'Priority delivery - customer waiting. Call dispatch if delays.',
 			expectedTemperature: { min: 78, max: 88 },
-			loadType: 'crude',
+			loadType: 'product',
 			hazmatRequired: true,
 			customerContact: {
 				name: 'Sarah Chen',
@@ -127,7 +127,7 @@
 				address: 'LAT: 28.99683, LONG: -98.03021',
 				coordinates: { lat: 28.99683, lng: -98.03021 }
 			},
-			estimatedBarrels: 165,
+			estimatedUnits: 165,
 			tankLevelHeight: "14' 11\"",
 			scheduledTime: new Date(2024, 0, 15, 16, 0), // 4:00 PM
 			estimatedDuration: 3.8,
@@ -156,7 +156,7 @@
 
 	// Schedule stats
 	$: totalJobs = todaysJobs.length;
-	$: totalBarrels = todaysJobs.reduce((sum, job) => sum + job.estimatedBarrels, 0);
+	$: totalUnits = todaysJobs.reduce((sum, job) => sum + job.estimatedUnits, 0);
 	$: totalDistance = todaysJobs.reduce((sum, job) => sum + job.distance, 0);
 	$: totalHours = todaysJobs.reduce((sum, job) => sum + job.estimatedDuration, 0);
 	$: urgentJobs = todaysJobs.filter(job => job.priority === 'urgent').length;
@@ -205,7 +205,7 @@
 
 	<!-- Summary Cards Component -->
 	<SummaryCards 
-		{totalBarrels}
+		{totalUnits}
 		{totalDistance}
 		{totalHours}
 		trailerNumber={driverInfo.trailerNumber}

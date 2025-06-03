@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import type { WorkflowStep } from './workflowConfig.js';
+  import type { WorkflowStep } from './workflowConfig';
   
   // Import all step components (will create these next)
   import JobOverviewStep from './steps/JobOverviewStep.svelte';
@@ -54,10 +54,10 @@
       {eventHandlers}
       transitType="pickup"
     />
-  {:else if currentWorkflowView === 'loading'}
+  {:else if currentWorkflowView === 'pickup'}
     <LoadingStep 
       {sharedState}
-      on:loading-complete={() => eventHandlers.navigateToStep('to-delivery')}
+      on:pickup-complete={() => eventHandlers.navigateToStep('to-delivery')}
       on:back-to-pickup={() => eventHandlers.navigateToStep('to-pickup')}
     />
   {:else if currentWorkflowView === 'to-delivery'}
@@ -67,7 +67,7 @@
       {eventHandlers}
       transitType="delivery"
     />
-  {:else if currentWorkflowView === 'unloading'}
+  {:else if currentWorkflowView === 'delivery'}
     <UnloadingStep 
       {sharedState}
       on:delivery-complete={() => eventHandlers.navigateToStep('post-trip')}

@@ -1,1 +1,0 @@
-		{ id: 'analytics', label: 'God View Analytics', icon: '🔥' }

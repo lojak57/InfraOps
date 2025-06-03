@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeHauls } from '$lib/stores/haulStore';
+	import { activeJobs } from '$lib/stores/jobStore';
 	import { onMount } from 'svelte';
 
 	let feedData: Array<{

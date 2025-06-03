@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { sites, drivers, trucks, type Site } from '$lib/stores/haulStore';
+	import { sites, drivers, trucks, type Site } from '$lib/stores/jobStore';
 	
 	interface Props {
 		selectedSite: Site | null;
 		selectedDriver: string;
 		selectedTruck: string;
 		initialVolume: number;
-		startHaul: () => void;
+		startJob: () => void;
 	}
 	
 	let { 
@@ -14,7 +14,7 @@
 		selectedDriver = $bindable(),
 		selectedTruck = $bindable(),
 		initialVolume = $bindable(),
-		startHaul
+		startJob
 	}: Props = $props();
 	
 	let onloadSites = $derived($sites.filter(site => site.type === 'onload'));
@@ -23,13 +23,13 @@
 <div class="glass-card p-6 space-y-6">
 	<!-- Site Selection -->
 	<div>
-		<label for="loading-site" class="block text-sm font-semibold text-oil-black mb-2">Loading Site</label>
+		<label for="pickup-site" class="block text-sm font-semibold text-oil-black mb-2">Loading Site</label>
 		<select 
-			id="loading-site"
+			id="pickup-site"
 			bind:value={selectedSite}
 			class="w-full p-3 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
 		>
-			<option value={null}>Select loading site...</option>
+			<option value={null}>Select pickup site...</option>
 			{#each onloadSites as site}
 				<option value={site}>{site.name}</option>
 			{/each}
@@ -90,12 +90,12 @@
 		<p class="text-xs text-oil-gray mt-1">Verified measurement</p>
 	</div>
 	
-	<!-- Start Haul Button -->
+	<!-- Start Job Button -->
 	<button 
-		onclick={startHaul}
+		onclick={startJob}
 		class="w-full btn-primary"
 		disabled={!selectedSite || !selectedDriver || !selectedTruck}
 	>
-		🚚 Start Haul
+		🚚 Start Job
 	</button>
 </div> 

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { sites, type Haul } from '$lib/stores/haulStore';
+	import { sites, type Job } from '$lib/stores/jobStore';
 	
 	interface Props {
-		haul: Haul | null;
+		job: Job | null;
 	}
 	
-	let { haul }: Props = $props();
+	let { job }: Props = $props();
 	
 	let selectedOffloadSite = $state<string>('');
 	let finalVolume = $state(0);
@@ -14,24 +14,24 @@
 	let offloadSites = $derived($sites.filter(site => site.type === 'offload'));
 	
 	function calculateActualLoss() {
-		if (haul && finalVolume > 0) {
-			actualLoss = haul.initialVolume - finalVolume;
+		if (job && finalVolume > 0) {
+			actualLoss = job.initialVolume - finalVolume;
 		}
 	}
 	
 	function completeMeasurement() {
-		if (!haul || finalVolume <= 0) return;
+		if (!job || finalVolume <= 0) return;
 		
 		calculateActualLoss();
-		// In real app, this would update the haul status and save to backend
-		alert(`Haul completed! Actual loss: ${actualLoss.toFixed(1)} gallons`);
+		// In real app, this would update the job status and save to backend
+		alert(`Job completed! Actual loss: ${actualLoss.toFixed(1)} gallons`);
 	}
 	
 	function getVarianceStatus(): 'normal' | 'warning' | 'critical' {
-		if (!haul || actualLoss === 0) return 'normal';
+		if (!job || actualLoss === 0) return 'normal';
 		
-		const variance = Math.abs(actualLoss - haul.expectedLoss);
-		const variancePercentage = (variance / haul.expectedLoss) * 100;
+		const variance = Math.abs(actualLoss - job.expectedLoss);
+		const variancePercentage = (variance / job.expectedLoss) * 100;
 		
 		if (variancePercentage > 20) return 'critical';
 		if (variancePercentage > 10) return 'warning';
@@ -39,10 +39,10 @@
 	}
 </script>
 
-{#if !haul}
+{#if !job}
 	<div class="glass-card p-6 text-center">
 		<div class="text-6xl mb-4 opacity-50">⚖️</div>
-		<h3 class="text-lg font-semibold text-oil-black mb-2">Awaiting Haul</h3>
+		<h3 class="text-lg font-semibold text-oil-black mb-2">Awaiting Job</h3>
 		<p class="text-oil-gray">Complete transit to begin offload measurements</p>
 	</div>
 {:else}
@@ -106,7 +106,7 @@
 				<div class="grid grid-cols-2 gap-4 mb-6">
 					<div class="bg-blue-50/50 rounded-xl p-4">
 						<span class="text-sm font-medium text-oil-black">Expected Loss</span>
-						<div class="metric-display text-oil-blue !text-xl mt-1">{haul.expectedLoss.toFixed(1)} gal</div>
+						<div class="metric-display text-oil-blue !text-xl mt-1">{job.expectedLoss.toFixed(1)} gal</div>
 					</div>
 					
 					<div class="bg-red-50/50 rounded-xl p-4">
@@ -123,12 +123,12 @@
 					</div>
 					
 					<div class="metric-display text-oil-black !text-xl">
-						{Math.abs(actualLoss - haul.expectedLoss).toFixed(1)} gal
+						{Math.abs(actualLoss - job.expectedLoss).toFixed(1)} gal
 					</div>
 					
 					<p class="text-sm text-oil-gray mt-1">
-						{((Math.abs(actualLoss - haul.expectedLoss) / haul.expectedLoss) * 100).toFixed(1)}% 
-						{actualLoss > haul.expectedLoss ? 'higher' : 'lower'} than expected
+						{((Math.abs(actualLoss - job.expectedLoss) / job.expectedLoss) * 100).toFixed(1)}% 
+						{actualLoss > job.expectedLoss ? 'higher' : 'lower'} than expected
 					</p>
 				</div>
 				
@@ -138,7 +138,7 @@
 					class="w-full btn-primary mt-6"
 					disabled={!selectedOffloadSite || finalVolume <= 0}
 				>
-					✅ Complete Haul
+					✅ Complete Job
 				</button>
 			</div>
 		{/if}

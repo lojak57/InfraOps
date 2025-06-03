@@ -107,7 +107,7 @@
 					on:click={() => showOptimizationDetails = !showOptimizationDetails}
 				>
 					<span class="toggle-icon" class:rotated={showOptimizationDetails}>▶</span>
-					How VeriHaul Optimization Works
+					How VeriJob Optimization Works
 				</button>
 				
 				{#if showOptimizationDetails}
@@ -164,7 +164,7 @@
 				<div class="insight-icon">🎯</div>
 				<div class="insight-content">
 					<h3>Per-Truck Impact</h3>
-					<p>Average savings of <strong>{formatCurrency(keyStats.avgSavingsPerTruck)}/truck/year</strong> with VeriHaul</p>
+					<p>Average savings of <strong>{formatCurrency(keyStats.avgSavingsPerTruck)}/truck/year</strong> with VeriJob</p>
 				</div>
 			</div>
 		</div>
@@ -178,7 +178,7 @@
 				<span>Plains All American - {keyStats.totalFleet} Truck Fleet</span>
 			</div>
 			<div class="contact-info">
-				<span>Learn more about VeriHaul optimization</span>
+				<span>Learn more about VeriJob optimization</span>
 				<button class="contact-btn">Contact Sales</button>
 			</div>
 		</div>

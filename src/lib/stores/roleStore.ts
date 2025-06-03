@@ -187,8 +187,8 @@ export const roles: Role[] = [
 				description: 'Performance above 90% shows excellence'
 			},
 			{
-				id: 'hauls-completed',
-				label: 'Hauls This Month',
+				id: 'jobs-completed',
+				label: 'Jobs This Month',
 				value: '47',
 				unit: '',
 				trend: 'up',
@@ -226,7 +226,7 @@ export const roles: Role[] = [
 			}
 		],
 		layout: {
-			heroMetrics: ['safety-score', 'efficiency-rating', 'hauls-completed'],
+			heroMetrics: ['safety-score', 'efficiency-rating', 'jobs-completed'],
 			primaryMetrics: ['fuel-efficiency'],
 			secondaryMetrics: [],
 			heroCharts: ['personal-performance'],
@@ -281,8 +281,8 @@ export const roles: Role[] = [
 				description: 'Cost reduction directly impacts profitability'
 			},
 			{
-				id: 'active-hauls',
-				label: 'Active Hauls',
+				id: 'active-jobs',
+				label: 'Active Jobs',
 				value: '23',
 				unit: '',
 				trend: 'stable',
@@ -310,7 +310,7 @@ export const roles: Role[] = [
 		],
 		layout: {
 			heroMetrics: ['on-time-delivery', 'fleet-efficiency', 'cost-per-mile'],
-			primaryMetrics: ['active-hauls'],
+			primaryMetrics: ['active-jobs'],
 			secondaryMetrics: [],
 			heroCharts: ['fleet-tracking'],
 			primaryCharts: ['scheduling-efficiency'],

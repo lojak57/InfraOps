@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Menu, X, Home, Truck, FileText, BarChart3, Settings, Users, MapPin, AlertTriangle, Wrench, DollarSign, Clock, Shield, Globe, TrendingUp, Thermometer } from 'lucide-svelte';
-	import DryDriveLogo from './DryDriveLogo.svelte';
+	import { Menu, X, Home, Truck, FileText, BarChart3, Settings, Users, MapPin, AlertTriangle, Wrench, DollarSign, Clock, Shield, Globe, TrendingUp, Thermometer, Fuel } from 'lucide-svelte';
+	import DataTrackerLogo from './DataTrackerLogo.svelte';
 
 	let mobileMenuOpen = $state(false);
 
@@ -10,25 +10,28 @@
 		{
 			title: 'Role Dashboards',
 			items: [
-				{ href: '/', label: 'Dashboard', icon: Home, description: 'Role selection and main dashboard' }
+				{ href: '/', label: 'Dashboard', icon: Home, description: 'Role selection and main dashboard' },
+				{ href: '/dashboards/executive', label: 'Executive Dashboard', icon: BarChart3, description: 'Executive dashboard with KPIs and analytics' },
+				{ href: '/dashboards/dispatch', label: 'Dispatch Hub', icon: MapPin, description: 'Operations control and fleet management' },
+				{ href: '/dashboards/driver', label: 'Driver Center', icon: Truck, description: 'Field operator workflows and tracking' },
+				{ href: '/dashboards/regional', label: 'Regional Manager', icon: Globe, description: 'Multi-region oversight and analytics' },
+				{ href: '/dashboards/site', label: 'Site Manager', icon: Settings, description: 'Site operations and asset management' }
 			]
 		},
 		{
 			title: 'Operations',
 			items: [
-				{ href: '/master-dispatch', label: 'Fleet Intelligence Nexus', icon: BarChart3, description: 'Executive fleet intelligence and analytics' }
+				{ href: '/dispatch', label: 'Asset Intelligence Hub', icon: BarChart3, description: 'Executive asset intelligence and analytics' },
+				{ href: '/fleet', label: 'Fleet Management', icon: Truck, description: 'Vehicle and driver management' },
+				{ href: '/job', label: 'Job History', icon: Clock, description: 'Transport operation history' },
+				{ href: '/job/live', label: 'Live Monitoring', icon: TrendingUp, description: 'Real-time job monitoring' }
 			]
 		},
 		{
 			title: 'Monitoring',
 			items: [
-				{ href: '/monitoring/truck-diagram', label: 'Live Truck Monitoring', icon: BarChart3, description: 'Interactive valve and sensor monitoring' }
-			]
-		},
-		{
-			title: 'Calibration',
-			items: [
-				{ href: '/calibration/smart-recommender', label: 'Coriolis Calibration Status', icon: BarChart3, description: 'Coriolis flow meter calibration management' }
+				{ href: '/monitoring/truck-diagram', label: 'Live Asset Monitoring', icon: BarChart3, description: 'Interactive sensor and system monitoring' },
+				{ href: '/calibration/smart-recommender', label: 'Calibration Status', icon: Settings, description: 'Smart calibration recommendations' }
 			]
 		},
 		{
@@ -41,14 +44,14 @@
 	];
 
 	const navigationItems = [
-		{ href: '/driver', label: 'Driver Center', icon: Truck, description: 'Real-time tracking and workflow' },
-		{ href: '/dispatch', label: 'Dispatch Hub', icon: MapPin, description: 'Operations and fleet management' },
-		{ href: '/executive', label: 'Executive Dashboard', icon: BarChart3, description: 'Strategic insights for PAA leadership' },
-		{ href: '/regional', label: 'Regional Manager', icon: Globe, description: 'Multi-region oversight and comparison' },
+		{ href: '/dashboards/driver', label: 'Driver Center', icon: Truck, description: 'Real-time tracking and workflow' },
+		{ href: '/dashboards/dispatch', label: 'Dispatch Hub', icon: MapPin, description: 'Operations and fleet management' },
+		{ href: '/dashboards/executive', label: 'Executive Dashboard', icon: BarChart3, description: 'Strategic operations oversight and performance analytics' },
+		{ href: '/dashboards/regional', label: 'Regional Manager', icon: Globe, description: 'Multi-region oversight and comparison' },
 		{ href: '/safety', label: 'Safety Central', icon: Shield, description: 'Risk mitigation and compliance' },
 		{ href: '/analytics', label: 'Yard Analytics', icon: TrendingUp, description: 'Performance and efficiency metrics' },
 		{ href: '/maintenance', label: 'Fleet Management', icon: Wrench, description: 'Vehicle status and maintenance tracking' },
-		{ href: '/thermal', label: 'Thermal Analysis', icon: Thermometer, description: 'DryDrive temperature insights' },
+		{ href: '/thermal', label: 'Thermal Analysis', icon: Thermometer, description: 'DataTracker temperature insights' },
 		{ href: '/calibration', label: 'Coriolis Calibration Status', icon: Settings, description: 'Flow meter calibration management' }
 	];
 
@@ -73,10 +76,10 @@
 	<div class="desktop-nav">
 		<div class="nav-header">
 			<a href="/" class="logo-container">
-				<DryDriveLogo size={120} />
+				<DataTrackerLogo size={120} />
 				<div class="logo-text">
-					<span class="brand-name">DryDrive</span>
-					<span class="brand-tagline">Oil Transport Operations</span>
+					<span class="brand-name">OpsPlatform</span>
+					<span class="brand-tagline">Operations Management</span>
 				</div>
 			</a>
 		</div>
@@ -120,8 +123,8 @@
 	<div class="mobile-nav">
 		<div class="mobile-header">
 			<a href="/" class="mobile-logo">
-				<DryDriveLogo size={80} />
-				<span class="mobile-brand">DryDrive</span>
+				<DataTrackerLogo size={80} />
+				<span class="mobile-brand">OpsPlatform</span>
 			</a>
 			<button 
 				class="mobile-menu-toggle"
@@ -177,9 +180,9 @@
 		right: 0;
 		z-index: 1000;
 		font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-		background: rgba(15, 23, 42, 0.95);
+		background: var(--sidebar-bg);
 		backdrop-filter: blur(24px);
-		border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+		border-bottom: 1px solid var(--sidebar-border);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
 
@@ -198,8 +201,8 @@
 		justify-content: space-between;
 		padding: 6px 16px;
 		height: 48px;
-		background: linear-gradient(135deg, rgb(15, 23, 42) 0%, rgb(30, 41, 59) 100%);
-		border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+		background: var(--header-bg);
+		border-bottom: 1px solid var(--header-border);
 	}
 
 	.mobile-logo {
@@ -212,13 +215,13 @@
 	.mobile-brand {
 		font-size: 16px;
 		font-weight: 700;
-		color: #ffffff;
+		color: var(--header-text);
 	}
 
 	.mobile-menu-toggle {
 		background: none;
 		border: none;
-		color: #e2e8f0;
+		color: var(--nav-text);
 		cursor: pointer;
 		padding: 8px;
 		border-radius: 8px;
@@ -226,8 +229,8 @@
 	}
 
 	.mobile-menu-toggle:hover {
-		background: rgba(124, 179, 66, 0.2);
-		color: #7CB342;
+		background: var(--nav-hover-bg);
+		color: var(--nav-hover-text);
 	}
 
 	.mobile-backdrop {
@@ -254,7 +257,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(15, 23, 42, 0.98);
+		background: var(--sidebar-bg);
 		backdrop-filter: blur(24px);
 		overflow-y: auto;
 		z-index: 999;
@@ -278,12 +281,12 @@
 	.mobile-section-title {
 		font-size: 12px;
 		font-weight: 600;
-		color: #94a3b8;
+		color: var(--nav-section-title);
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
 		margin-bottom: 12px;
 		padding-bottom: 8px;
-		border-bottom: 1px solid rgba(124, 179, 66, 0.2);
+		border-bottom: 1px solid var(--sidebar-border);
 	}
 
 	.mobile-section-items {
@@ -300,18 +303,18 @@
 		border-radius: 12px;
 		text-decoration: none;
 		transition: all 0.2s ease;
-		color: #e2e8f0;
+		color: var(--nav-text);
 	}
 
 	.mobile-nav-item:hover {
-		background: rgba(124, 179, 66, 0.15);
-		color: #7CB342;
+		background: var(--nav-hover-bg);
+		color: var(--nav-hover-text);
 	}
 
 	.mobile-nav-item.active {
-		background: linear-gradient(135deg, rgba(124, 179, 66, 0.25) 0%, rgba(85, 139, 47, 0.2) 100%);
-		color: #7CB342;
-		border: 1px solid rgba(124, 179, 66, 0.3);
+		background: var(--nav-hover-bg);
+		color: var(--nav-text-active);
+		border: 1px solid var(--nav-hover-bg);
 	}
 
 	.mobile-item-content {
@@ -330,7 +333,7 @@
 	.mobile-item-description {
 		font-size: 13px;
 		font-weight: 400;
-		color: #94a3b8;
+		color: var(--nav-text-secondary);
 		line-height: 1.2;
 	}
 
@@ -344,7 +347,7 @@
 			bottom: 0;
 			width: 280px;
 			height: 100vh;
-			border-right: 1px solid rgba(255, 255, 255, 0.2);
+			border-right: 1px solid var(--sidebar-border);
 			border-bottom: none;
 			box-shadow: 
 				0 8px 32px rgba(0, 0, 0, 0.1),
@@ -364,8 +367,8 @@
 
 		.nav-header {
 			padding: 12px 16px;
-			border-bottom: 1px solid rgba(148, 163, 184, 0.3);
-			background: linear-gradient(135deg, rgb(15, 23, 42) 0%, rgb(30, 41, 59) 100%);
+			border-bottom: 1px solid var(--header-border);
+			background: var(--header-bg);
 		}
 
 		.logo-container {
@@ -388,14 +391,14 @@
 		.brand-name {
 			font-size: 18px;
 			font-weight: 700;
-			color: #ffffff;
+			color: var(--header-text);
 			line-height: 1.2;
 		}
 
 		.brand-tagline {
 			font-size: 11px;
 			font-weight: 500;
-			color: #7CB342;
+			color: var(--datatracker-primary-light);
 			line-height: 1.2;
 		}
 
@@ -418,12 +421,12 @@
 		.section-title {
 			font-size: 12px;
 			font-weight: 600;
-			color: #6b7280;
+			color: var(--nav-section-title);
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
 			margin: 0 20px 12px 20px;
 			padding-bottom: 4px;
-			border-bottom: 1px solid rgba(124, 179, 66, 0.1);
+			border-bottom: 1px solid var(--sidebar-border);
 		}
 
 		.section-items {
@@ -452,13 +455,13 @@
 			top: 0;
 			bottom: 0;
 			width: 3px;
-			background: linear-gradient(135deg, #7CB342 0%, #558B2F 100%);
+			background: var(--nav-hover-bg);
 			transform: scaleY(0);
 			transition: transform 0.2s ease;
 		}
 
 		.nav-item:hover {
-			background: rgba(124, 179, 66, 0.08);
+			background: var(--nav-hover-bg);
 			transform: translateX(4px);
 		}
 
@@ -467,8 +470,8 @@
 		}
 
 		.nav-item.active {
-			background: linear-gradient(135deg, rgba(124, 179, 66, 0.15) 0%, rgba(85, 139, 47, 0.1) 100%);
-			border: 1px solid rgba(124, 179, 66, 0.2);
+			background: var(--nav-hover-bg);
+			border: 1px solid var(--nav-hover-bg);
 			transform: translateX(4px);
 		}
 
@@ -477,14 +480,14 @@
 		}
 
 		.nav-item-icon {
-			color: #6b7280;
+			color: var(--nav-text);
 			transition: color 0.2s ease;
 			flex-shrink: 0;
 		}
 
 		.nav-item:hover .nav-item-icon,
 		.nav-item.active .nav-item-icon {
-			color: #558B2F;
+			color: var(--nav-hover-text);
 		}
 
 		.nav-item-content {
@@ -498,32 +501,38 @@
 		.nav-item-label {
 			font-size: 14px;
 			font-weight: 600;
-			color: #1f2937;
+			color: var(--nav-text);
 			line-height: 1.2;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
 
-		.nav-item.active .nav-item-label {
-			color: #558B2F;
+		.nav-item.active .nav-item-label,
+		.nav-item:hover .nav-item-label {
+			color: var(--nav-text-active);
 			font-weight: 700;
 		}
 
 		.nav-item-description {
 			font-size: 11px;
 			font-weight: 400;
-			color: #9ca3af;
+			color: var(--nav-text-secondary);
 			line-height: 1.2;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
 
+		.nav-item:hover .nav-item-description,
+		.nav-item.active .nav-item-description {
+			color: rgba(255, 255, 255, 0.9); /* Even better contrast on hover/active */
+		}
+
 		.nav-footer {
 			padding: 16px 20px;
-			border-top: 1px solid rgba(124, 179, 66, 0.1);
-			background: rgba(124, 179, 66, 0.02);
+			border-top: 1px solid var(--sidebar-border);
+			background: var(--nav-footer-bg);
 		}
 
 		.system-status {
@@ -537,12 +546,12 @@
 			width: 8px;
 			height: 8px;
 			border-radius: 50%;
-			background: #10b981;
+			background: var(--datatracker-success);
 			animation: pulse 2s infinite;
 		}
 
 		.status-indicator.online {
-			background: #10b981;
+			background: var(--datatracker-success);
 		}
 
 		@keyframes pulse {
@@ -557,13 +566,13 @@
 		.status-text {
 			font-size: 12px;
 			font-weight: 500;
-			color: #374151;
+			color: var(--nav-footer-text);
 		}
 
 		.version-info {
 			font-size: 10px;
 			font-weight: 400;
-			color: #9ca3af;
+			color: var(--nav-version-text);
 		}
 	}
 

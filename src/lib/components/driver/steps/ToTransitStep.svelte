@@ -35,7 +35,7 @@
         coordinates: { lat: 31.8457, lng: -102.3676 }
       }
     : {
-        name: sharedState.activeJob?.deliverySiteName || 'Permian Basin Refinery',
+        name: sharedState.activeJob?.deliverySiteName || 'Permian Basin Processing Facility',
         address: sharedState.activeJob?.deliveryAddress || '1425 Industrial Blvd, Odessa, TX 79761',
         coordinates: { lat: 31.8457, lng: -102.2676 }
       };
@@ -99,7 +99,7 @@
             </div>
             <div class="status-item pending">
               <span class="status-icon">⏳</span>
-              <span class="status-text">Unloading</span>
+              <span class="status-text">Unpickup</span>
             </div>
           </div>
         {/if}
@@ -129,7 +129,7 @@
     <div class="navigation-planning-content">
       <div class="navigation-header">
         <h2>🎯 Navigate to {transitType === 'pickup' ? 'Pickup' : 'Delivery'} Site</h2>
-        <p>{transitType === 'pickup' ? 'Navigate to well pad for loading' : `Loaded with ${sharedState.activeJob?.deliveryVolume || '120'} BBL - Navigate to ${destination.name} for unloading`}</p>
+        <p>{transitType === 'pickup' ? 'Navigate to well pad for pickup' : `Loaded with ${sharedState.activeJob?.deliveryVolume || '120'} units - Navigate to ${destination.name} for unpickup`}</p>
       </div>
       
       <!-- Load Status for Delivery -->
@@ -139,7 +139,7 @@
           <div class="load-details">
             <div class="load-stat">
               <span class="stat-label">Loaded Volume</span>
-              <span class="stat-value">{sharedState.activeJob?.deliveryVolume || '120'} BBL</span>
+              <span class="stat-value">{sharedState.activeJob?.deliveryVolume || '120'} units</span>
             </div>
             <div class="load-stat">
               <span class="stat-label">From</span>

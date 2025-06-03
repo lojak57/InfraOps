@@ -80,7 +80,7 @@
 				<div class="load-item">
 					<Gauge size={16} />
 					<span class="load-label">Volume:</span>
-					<span class="load-value">{job.estimatedBarrels} BBL</span>
+					<span class="load-value">{job.estimatedUnits} units</span>
 				</div>
 				<div class="load-item">
 					<BarChart3 size={16} />
