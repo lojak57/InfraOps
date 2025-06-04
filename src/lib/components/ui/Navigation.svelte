@@ -1,66 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Menu, X, Home, Truck, FileText, BarChart3, Settings, Users, MapPin, AlertTriangle, Wrench, DollarSign, Clock, Shield, Globe, TrendingUp, Thermometer, Fuel } from 'lucide-svelte';
-	import DataTrackerLogo from './DataTrackerLogo.svelte';
+	import { navigationTerms, assetTerms, brandInfo } from '$lib/core/stores/platform.store';
+	import { getNavigationSections, systemStatus, isActiveRoute } from '$lib/utils/navigation-utils';
+	import DesktopNavigation from './navigation/DesktopNavigation.svelte';
+	import MobileNavigation from './navigation/MobileNavigation.svelte';
 
 	let mobileMenuOpen = $state(false);
+	const currentPath = $derived($page.url.pathname);
 
-	// Clean navigation structure - only working routes
-	const navigationSections = [
-		{
-			title: 'Role Dashboards',
-			items: [
-				{ href: '/', label: 'Dashboard', icon: Home, description: 'Role selection and main dashboard' },
-				{ href: '/dashboards/executive', label: 'Executive Dashboard', icon: BarChart3, description: 'Executive dashboard with KPIs and analytics' },
-				{ href: '/dashboards/dispatch', label: 'Dispatch Hub', icon: MapPin, description: 'Operations control and fleet management' },
-				{ href: '/dashboards/driver', label: 'Driver Center', icon: Truck, description: 'Field operator workflows and tracking' },
-				{ href: '/dashboards/regional', label: 'Regional Manager', icon: Globe, description: 'Multi-region oversight and analytics' },
-				{ href: '/dashboards/site', label: 'Site Manager', icon: Settings, description: 'Site operations and asset management' }
-			]
-		},
-		{
-			title: 'Operations',
-			items: [
-				{ href: '/dispatch', label: 'Asset Intelligence Hub', icon: BarChart3, description: 'Executive asset intelligence and analytics' },
-				{ href: '/fleet', label: 'Fleet Management', icon: Truck, description: 'Vehicle and driver management' },
-				{ href: '/job', label: 'Job History', icon: Clock, description: 'Transport operation history' },
-				{ href: '/job/live', label: 'Live Monitoring', icon: TrendingUp, description: 'Real-time job monitoring' }
-			]
-		},
-		{
-			title: 'Monitoring',
-			items: [
-				{ href: '/monitoring/truck-diagram', label: 'Live Asset Monitoring', icon: BarChart3, description: 'Interactive sensor and system monitoring' },
-				{ href: '/calibration/smart-recommender', label: 'Calibration Status', icon: Settings, description: 'Smart calibration recommendations' }
-			]
-		},
-		{
-			title: 'Management',
-			items: [
-				{ href: '/documents', label: 'Document Center', icon: FileText, description: 'Compliance & file management' },
-				{ href: '/admin', label: 'System Admin', icon: Settings, description: 'Administrative controls' }
-			]
-		}
-	];
-
-	const navigationItems = [
-		{ href: '/dashboards/driver', label: 'Driver Center', icon: Truck, description: 'Real-time tracking and workflow' },
-		{ href: '/dashboards/dispatch', label: 'Dispatch Hub', icon: MapPin, description: 'Operations and fleet management' },
-		{ href: '/dashboards/executive', label: 'Executive Dashboard', icon: BarChart3, description: 'Strategic operations oversight and performance analytics' },
-		{ href: '/dashboards/regional', label: 'Regional Manager', icon: Globe, description: 'Multi-region oversight and comparison' },
-		{ href: '/safety', label: 'Safety Central', icon: Shield, description: 'Risk mitigation and compliance' },
-		{ href: '/analytics', label: 'Yard Analytics', icon: TrendingUp, description: 'Performance and efficiency metrics' },
-		{ href: '/maintenance', label: 'Fleet Management', icon: Wrench, description: 'Vehicle status and maintenance tracking' },
-		{ href: '/thermal', label: 'Thermal Analysis', icon: Thermometer, description: 'DataTracker temperature insights' },
-		{ href: '/calibration', label: 'Coriolis Calibration Status', icon: Settings, description: 'Flow meter calibration management' }
-	];
-
-	function isActiveRoute(href: string): boolean {
-		if (href === '/') {
-			return $page.url.pathname === '/';
-		}
-		return $page.url.pathname.startsWith(href);
-	}
+	// Reactive navigation sections based on platform configuration
+	const navigationSections = $derived(getNavigationSections());
+	const brand = $derived($brandInfo);
 
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
@@ -73,106 +23,28 @@
 
 <nav class="navigation-container">
 	<!-- Desktop Navigation -->
-	<div class="desktop-nav">
-		<div class="nav-header">
-			<a href="/" class="logo-container">
-				<DataTrackerLogo size={120} />
-				<div class="logo-text">
-					<span class="brand-name">OpsPlatform</span>
-					<span class="brand-tagline">Operations Management</span>
-				</div>
-			</a>
-		</div>
-
-		<div class="nav-sections">
-			{#each navigationSections as section}
-				<div class="nav-section">
-					<h3 class="section-title">{section.title}</h3>
-					<div class="section-items">
-						{#each section.items as item}
-							<a 
-								href={item.href} 
-								class="nav-item"
-								class:active={isActiveRoute(item.href)}
-								title={item.description}
-							>
-								<div class="nav-item-icon">
-									<svelte:component this={item.icon} size={18} />
-								</div>
-								<div class="nav-item-content">
-									<span class="nav-item-label">{item.label}</span>
-									<span class="nav-item-description">{item.description}</span>
-								</div>
-							</a>
-						{/each}
-					</div>
-				</div>
-			{/each}
-		</div>
-
-		<div class="nav-footer">
-			<div class="system-status">
-				<div class="status-indicator online"></div>
-				<span class="status-text">System Online</span>
-			</div>
-			<div class="version-info">v2.1.0</div>
-		</div>
+	<div class="desktop-nav-wrapper">
+		<DesktopNavigation 
+			sections={navigationSections}
+			{currentPath}
+			{systemStatus}
+			version="v2.1.0"
+		/>
 	</div>
 
 	<!-- Mobile Navigation -->
-	<div class="mobile-nav">
-		<div class="mobile-header">
-			<a href="/" class="mobile-logo">
-				<DataTrackerLogo size={80} />
-				<span class="mobile-brand">OpsPlatform</span>
-			</a>
-			<button 
-				class="mobile-menu-toggle"
-				onclick={toggleMobileMenu}
-				aria-label="Toggle navigation menu"
-			>
-				{#if mobileMenuOpen}
-					<X size={24} />
-				{:else}
-					<Menu size={24} />
-				{/if}
-			</button>
-		</div>
-
-		{#if mobileMenuOpen}
-			<!-- Mobile Menu Backdrop -->
-			<div class="mobile-backdrop" onclick={closeMobileMenu}></div>
-			<div class="mobile-menu open" role="dialog" aria-modal="true">
-				<div class="mobile-menu-content">
-					{#each navigationSections as section}
-						<div class="mobile-section">
-							<h3 class="mobile-section-title">{section.title}</h3>
-							<div class="mobile-section-items">
-								{#each section.items as item}
-									<a 
-										href={item.href} 
-										class="mobile-nav-item"
-										class:active={isActiveRoute(item.href)}
-										onclick={closeMobileMenu}
-									>
-										<svelte:component this={item.icon} size={20} />
-										<div class="mobile-item-content">
-											<span class="mobile-item-label">{item.label}</span>
-											<span class="mobile-item-description">{item.description}</span>
-										</div>
-									</a>
-								{/each}
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
+	<div class="mobile-nav-wrapper">
+		<MobileNavigation 
+			sections={navigationSections}
+			{currentPath}
+			{mobileMenuOpen}
+			onToggleMenu={toggleMobileMenu}
+			onCloseMenu={closeMobileMenu}
+		/>
 	</div>
 </nav>
 
 <style>
-	/* Mobile-First Approach - Start with mobile styles */
 	.navigation-container {
 		position: fixed;
 		top: 0;
@@ -187,154 +59,12 @@
 	}
 
 	/* Mobile Navigation (Default) */
-	.desktop-nav {
+	.desktop-nav-wrapper {
 		display: none;
 	}
 
-	.mobile-nav {
+	.mobile-nav-wrapper {
 		display: block;
-	}
-
-	.mobile-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 6px 16px;
-		height: 48px;
-		background: var(--header-bg);
-		border-bottom: 1px solid var(--header-border);
-	}
-
-	.mobile-logo {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		text-decoration: none;
-	}
-
-	.mobile-brand {
-		font-size: 16px;
-		font-weight: 700;
-		color: var(--header-text);
-	}
-
-	.mobile-menu-toggle {
-		background: none;
-		border: none;
-		color: var(--nav-text);
-		cursor: pointer;
-		padding: 8px;
-		border-radius: 8px;
-		transition: all 0.2s ease;
-	}
-
-	.mobile-menu-toggle:hover {
-		background: var(--nav-hover-bg);
-		color: var(--nav-hover-text);
-	}
-
-	.mobile-backdrop {
-		position: fixed;
-		top: 56px;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
-		z-index: 998;
-		opacity: 0;
-		animation: fadeIn 0.3s ease forwards;
-	}
-
-	@keyframes fadeIn {
-		to {
-			opacity: 1;
-		}
-	}
-
-	.mobile-menu {
-		position: fixed;
-		top: 56px;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: var(--sidebar-bg);
-		backdrop-filter: blur(24px);
-		overflow-y: auto;
-		z-index: 999;
-		transform: translateY(-100%);
-		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.mobile-menu.open {
-		transform: translateY(0);
-	}
-
-	.mobile-menu-content {
-		padding: 16px;
-		padding-bottom: 80px; /* Extra space for safe area */
-	}
-
-	.mobile-section {
-		margin-bottom: 24px;
-	}
-
-	.mobile-section-title {
-		font-size: 12px;
-		font-weight: 600;
-		color: var(--nav-section-title);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-		margin-bottom: 12px;
-		padding-bottom: 8px;
-		border-bottom: 1px solid var(--sidebar-border);
-	}
-
-	.mobile-section-items {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.mobile-nav-item {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 16px 12px;
-		border-radius: 12px;
-		text-decoration: none;
-		transition: all 0.2s ease;
-		color: var(--nav-text);
-	}
-
-	.mobile-nav-item:hover {
-		background: var(--nav-hover-bg);
-		color: var(--nav-hover-text);
-	}
-
-	.mobile-nav-item.active {
-		background: var(--nav-hover-bg);
-		color: var(--nav-text-active);
-		border: 1px solid var(--nav-hover-bg);
-	}
-
-	.mobile-item-content {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		flex: 1;
-	}
-
-	.mobile-item-label {
-		font-size: 16px;
-		font-weight: 600;
-		line-height: 1.2;
-	}
-
-	.mobile-item-description {
-		font-size: 13px;
-		font-weight: 400;
-		color: var(--nav-text-secondary);
-		line-height: 1.2;
 	}
 
 	/* Desktop Navigation - Enhanced for larger screens */
@@ -354,225 +84,12 @@
 				0 2px 8px rgba(0, 0, 0, 0.05);
 		}
 
-		.desktop-nav {
-			display: flex;
-			flex-direction: column;
-			height: 100%;
-			padding: 0;
+		.desktop-nav-wrapper {
+			display: block;
 		}
 
-		.mobile-nav {
+		.mobile-nav-wrapper {
 			display: none;
-		}
-
-		.nav-header {
-			padding: 12px 16px;
-			border-bottom: 1px solid var(--header-border);
-			background: var(--header-bg);
-		}
-
-		.logo-container {
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			text-decoration: none;
-			transition: all 0.3s ease;
-		}
-
-		.logo-container:hover {
-			transform: translateY(-1px);
-		}
-
-		.logo-text {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.brand-name {
-			font-size: 18px;
-			font-weight: 700;
-			color: var(--header-text);
-			line-height: 1.2;
-		}
-
-		.brand-tagline {
-			font-size: 11px;
-			font-weight: 500;
-			color: var(--datatracker-primary-light);
-			line-height: 1.2;
-		}
-
-		.nav-sections {
-			flex: 1;
-			overflow-y: auto;
-			padding: 16px 0;
-			scrollbar-width: none;
-			-ms-overflow-style: none;
-		}
-
-		.nav-sections::-webkit-scrollbar {
-			display: none;
-		}
-
-		.nav-section {
-			margin-bottom: 24px;
-		}
-
-		.section-title {
-			font-size: 12px;
-			font-weight: 600;
-			color: var(--nav-section-title);
-			text-transform: uppercase;
-			letter-spacing: 0.5px;
-			margin: 0 20px 12px 20px;
-			padding-bottom: 4px;
-			border-bottom: 1px solid var(--sidebar-border);
-		}
-
-		.section-items {
-			display: flex;
-			flex-direction: column;
-			gap: 2px;
-		}
-
-		.nav-item {
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			padding: 12px 20px;
-			margin: 0 8px;
-			border-radius: 12px;
-			text-decoration: none;
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-			position: relative;
-			overflow: hidden;
-		}
-
-		.nav-item::before {
-			content: '';
-			position: absolute;
-			left: 0;
-			top: 0;
-			bottom: 0;
-			width: 3px;
-			background: var(--nav-hover-bg);
-			transform: scaleY(0);
-			transition: transform 0.2s ease;
-		}
-
-		.nav-item:hover {
-			background: var(--nav-hover-bg);
-			transform: translateX(4px);
-		}
-
-		.nav-item:hover::before {
-			transform: scaleY(1);
-		}
-
-		.nav-item.active {
-			background: var(--nav-hover-bg);
-			border: 1px solid var(--nav-hover-bg);
-			transform: translateX(4px);
-		}
-
-		.nav-item.active::before {
-			transform: scaleY(1);
-		}
-
-		.nav-item-icon {
-			color: var(--nav-text);
-			transition: color 0.2s ease;
-			flex-shrink: 0;
-		}
-
-		.nav-item:hover .nav-item-icon,
-		.nav-item.active .nav-item-icon {
-			color: var(--nav-hover-text);
-		}
-
-		.nav-item-content {
-			display: flex;
-			flex-direction: column;
-			gap: 2px;
-			flex: 1;
-			min-width: 0;
-		}
-
-		.nav-item-label {
-			font-size: 14px;
-			font-weight: 600;
-			color: var(--nav-text);
-			line-height: 1.2;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		.nav-item.active .nav-item-label,
-		.nav-item:hover .nav-item-label {
-			color: var(--nav-text-active);
-			font-weight: 700;
-		}
-
-		.nav-item-description {
-			font-size: 11px;
-			font-weight: 400;
-			color: var(--nav-text-secondary);
-			line-height: 1.2;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		.nav-item:hover .nav-item-description,
-		.nav-item.active .nav-item-description {
-			color: rgba(255, 255, 255, 0.9); /* Even better contrast on hover/active */
-		}
-
-		.nav-footer {
-			padding: 16px 20px;
-			border-top: 1px solid var(--sidebar-border);
-			background: var(--nav-footer-bg);
-		}
-
-		.system-status {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			margin-bottom: 8px;
-		}
-
-		.status-indicator {
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: var(--datatracker-success);
-			animation: pulse 2s infinite;
-		}
-
-		.status-indicator.online {
-			background: var(--datatracker-success);
-		}
-
-		@keyframes pulse {
-			0%, 100% {
-				opacity: 1;
-			}
-			50% {
-				opacity: 0.5;
-			}
-		}
-
-		.status-text {
-			font-size: 12px;
-			font-weight: 500;
-			color: var(--nav-footer-text);
-		}
-
-		.version-info {
-			font-size: 10px;
-			font-weight: 400;
-			color: var(--nav-version-text);
 		}
 	}
 
@@ -582,22 +99,6 @@
 			background: rgba(30, 30, 30, 0.95);
 			border-right-color: rgba(255, 255, 255, 0.1);
 			border-bottom-color: rgba(255, 255, 255, 0.1);
-		}
-
-		.brand-name,
-		.nav-item-label,
-		.status-text,
-		.mobile-brand {
-			color: #f3f4f6;
-		}
-
-		.nav-item-description,
-		.mobile-item-description {
-			color: #6b7280;
-		}
-
-		.mobile-menu {
-			background: rgba(30, 30, 30, 0.98);
 		}
 	}
 </style> 

@@ -7,10 +7,10 @@
 <script lang="ts">
 	import { 
 		Gauge, BarChart3, FileText, Database, Clock, MapPin, AlertCircle,
-		Truck 
+		Truck, Thermometer, AlertTriangle, Package, Droplets, TrendingUp 
 	} from 'lucide-svelte';
-	import { formatDuration, getPriorityColor, getPriorityLabel } from '../utils/job-calculations.js';
-	import type { ScheduledJob } from '../types/job-detail.types.js';
+	import { formatDuration, getPriorityColor, getPriorityLabel } from './utils/job-calculations.js';
+	import type { ScheduledJob } from './types/job-detail.types.js';
 	
 	// Props
 	export let job: ScheduledJob;

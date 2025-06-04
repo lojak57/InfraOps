@@ -4,6 +4,7 @@
 
 import { writable, derived } from 'svelte/store';
 import type { Region, RegionalPerformance, RegionalState } from '../types/regional.types.js';
+import type { RegionalData } from '../types/regional.types';
 
 // Regional data - consolidated to regional rollups only (no states)
 const regions: Region[] = [
@@ -29,62 +30,90 @@ const regions: Region[] = [
 	}
 ];
 
-// Regional performance data - scalable structure with proper typing
-const regionalData: Record<string, RegionalPerformance> = {
-	'Gulf Coast': {
-		fleetSize: 142,
-		activeTrucks: 125,
-		driversAssigned: 234,
-		totalBPD: 12847,
-		avgDriveTime: 3.2,
-		unitsPerHour: 185.3,
+// Mock regional data with anonymized locations and generic units
+export const regionalData: Record<string, RegionalData> = {
+	'metro-alpha': {
+		id: 'metro-alpha',
+		name: 'Metro Hub Alpha',
+		region: 'Eastern Region',
+		coordinates: { lat: 35.0000, lng: -98.0000 },
+		totalTrucks: 34,
+		activeTrucks: 31,
+		driversAssigned: 52,
 		efficiency: 94.2,
-		utilization: 88.0,
-		trend: 'up',
-		status: 'excellent'
+		utilizationRate: 91.2,
+		avgDriveTime: 2.8,
+		unitsPerHour: 198.7,
+		dailyUnits: 12847,
+		alerts: 2,
+		status: 'excellent',
+		lastUpdate: new Date('2024-01-15T10:30:00'),
+		monthlyRevenue: 1247000,
+		fuelEfficiency: 7.2
 	},
-	'Southwest TX': {
-		fleetSize: 89,
-		activeTrucks: 78,
-		driversAssigned: 156,
-		totalBPD: 8456,
+	'metro-beta': {
+		id: 'metro-beta',
+		name: 'Metro Hub Beta',
+		region: 'Central Region',
+		coordinates: { lat: 36.0000, lng: -96.0000 },
+		totalTrucks: 28,
+		activeTrucks: 24,
+		driversAssigned: 42,
+		efficiency: 89.1,
+		utilizationRate: 85.7,
+		avgDriveTime: 3.2,
+		unitsPerHour: 165.3,
+		dailyUnits: 8456,
+		alerts: 5,
+		status: 'good',
+		lastUpdate: new Date('2024-01-15T10:45:00'),
+		monthlyRevenue: 967000,
+		fuelEfficiency: 6.8
+	},
+	'metro-gamma': {
+		id: 'metro-gamma',
+		name: 'Metro Hub Gamma',
+		region: 'Northern Region',
+		coordinates: { lat: 34.0000, lng: -97.0000 },
+		totalTrucks: 22,
+		activeTrucks: 18,
+		driversAssigned: 34,
+		efficiency: 82.3,
+		utilizationRate: 81.8,
 		avgDriveTime: 3.8,
-		unitsPerHour: 165.2,
-		efficiency: 91.8,
-		utilization: 87.6,
-		trend: 'stable',
-		status: 'good'
-	},
-	'Rockies': {
-		fleetSize: 67,
-		activeTrucks: 54,
-		driversAssigned: 98,
-		totalBPD: 5987,
-		avgDriveTime: 4.2,
 		unitsPerHour: 142.8,
-		efficiency: 87.3,
-		utilization: 80.6,
-		trend: 'down',
-		status: 'attention'
+		dailyUnits: 5987,
+		alerts: 8,
+		status: 'attention',
+		lastUpdate: new Date('2024-01-15T10:15:00'),
+		monthlyRevenue: 634000,
+		fuelEfficiency: 6.1
 	},
-	'Midcon': {
-		fleetSize: 104,
-		activeTrucks: 92,
-		driversAssigned: 178,
-		totalBPD: 9124,
-		avgDriveTime: 3.5,
-		unitsPerHour: 168.7,
-		efficiency: 92.5,
-		utilization: 88.5,
-		trend: 'up',
-		status: 'excellent'
+	'metro-delta': {
+		id: 'metro-delta',
+		name: 'Metro Hub Delta',
+		region: 'Western Region',
+		coordinates: { lat: 37.0000, lng: -95.0000 },
+		totalTrucks: 19,
+		activeTrucks: 15,
+		driversAssigned: 28,
+		efficiency: 87.9,
+		utilizationRate: 78.9,
+		avgDriveTime: 4.2,
+		unitsPerHour: 156.4,
+		dailyUnits: 9124,
+		alerts: 3,
+		status: 'good',
+		lastUpdate: new Date('2024-01-15T09:50:00'),
+		monthlyRevenue: 823000,
+		fuelEfficiency: 6.9
 	}
 };
 
 // Store state
 export const activeRegion = writable<string>('Gulf Coast');
 export const showYardComparison = writable<boolean>(false);
-export const selectedRegion = writable<string>('');
+export const selectedRegion = writable<string>('metro-alpha');
 
 // Read-only derived stores
 export const regionsStore = writable(regions);

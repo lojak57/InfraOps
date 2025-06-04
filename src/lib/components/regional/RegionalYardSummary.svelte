@@ -14,8 +14,8 @@
     <h4>Regional Performance</h4>
     <div class="summary-stats">
       <div class="stat">
-        <span class="stat-label">Avg BPD</span>
-        <span class="stat-value">{regionalAverage.totalBPD.toLocaleString()}</span>
+        <span class="stat-label">Avg Daily Units</span>
+        <span class="stat-value">{regionalAverage.dailyUnits.toLocaleString()}</span>
       </div>
       <div class="stat">
         <span class="stat-label">Avg Efficiency</span>
@@ -23,7 +23,7 @@
       </div>
       <div class="stat">
         <span class="stat-label">Avg Utilization</span>
-        <span class="stat-value">{regionalAverage.utilization}%</span>
+        <span class="stat-value">{regionalAverage.utilizationRate}%</span>
       </div>
       <div class="stat">
         <span class="stat-label">Avg Drive Time</span>
@@ -35,7 +35,7 @@
     <h4>Key Insights</h4>
     <p>
       {#if bestPerformer}
-        <strong>{bestPerformer.yardName}</strong> leads in efficiency ({bestPerformer.efficiency}%) and BPD output.
+        <strong>{bestPerformer.yardName}</strong> leads in efficiency ({bestPerformer.efficiency}%) and Daily Units output.
       {/if}
       {#if improvementOpportunity}
         <strong>{improvementOpportunity.yardName}</strong> needs operational review to improve below-average metrics.

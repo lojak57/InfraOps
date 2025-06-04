@@ -36,100 +36,88 @@
 	let updateInterval: number;
 	let isMapLoaded = false;
 
-	// Fleet data - demo data
-	let fleetAssets: FleetAsset[] = [
-		{
-			id: 'T-156',
-			driver: 'Carlos Martinez',
-			lat: 29.7604,
-			lng: -95.3698,
-			status: 'transit',
-			currentJob: 'Pickup at Eagle Ford',
+	// Mock fleet data with anonymized coordinates (updated to match FleetAsset interface)
+	const mockTrucks: FleetAsset[] = [
+		{ 
+			id: 'FL-001', 
+			lat: 35.0000, 
+			lng: -98.0000, 
+			driver: 'Driver Alpha-1', 
+			status: 'transit' as const,
+			currentJob: 'Pickup at Production Site',
 			eta: '14:30',
-			route: {
-				origin: { lat: 29.7604, lng: -95.3698, name: 'Eagle Ford Shale' },
-				destination: { lat: 29.6844, lng: -95.1544, name: 'Port Arthur Processing Facility' }
-			},
-			speed: 65,
+			speed: 58,
 			bearing: 45,
 			lastUpdate: new Date()
 		},
-		{
-			id: 'T-203',
-			driver: 'Amanda Johnson',
-			lat: 31.8457,
-			lng: -102.3676,
-			status: 'loading',
-			currentJob: 'Loading at Permian Basin',
+		{ 
+			id: 'FL-002', 
+			lat: 35.1500, 
+			lng: -97.8500, 
+			driver: 'Driver Alpha-2', 
+			status: 'loading' as const,
+			currentJob: 'Loading at Collection Hub',
 			eta: '16:45',
-			route: {
-				origin: { lat: 31.8457, lng: -102.3676, name: 'Permian Basin' },
-				destination: { lat: 29.7589, lng: -95.3677, name: 'Houston Ship Channel' }
-			},
 			speed: 0,
 			bearing: 0,
 			lastUpdate: new Date()
 		},
-		{
-			id: 'T-089',
-			driver: 'Tony Valdez',
-			lat: 30.2672,
-			lng: -97.7431,
-			status: 'delivery',
-			currentJob: 'Delivery to Cushing Hub',
+		{ 
+			id: 'FL-003', 
+			lat: 35.2000, 
+			lng: -97.7000, 
+			driver: 'Driver Beta-1', 
+			status: 'delivery' as const,
+			currentJob: 'Unloading at destination',
 			eta: '12:15',
-			route: {
-				origin: { lat: 30.2672, lng: -97.7431, name: 'Austin Hub' },
-				destination: { lat: 35.9848, lng: -96.7678, name: 'Cushing Terminal' }
-			},
-			speed: 58,
-			bearing: 15,
-			lastUpdate: new Date()
-		},
-		{
-			id: 'T-234',
-			driver: 'Rachel Foster',
-			lat: 32.7767,
-			lng: -96.7970,
-			status: 'transit',
-			currentJob: 'En route to pickup',
-			eta: '15:20',
-			route: {
-				origin: { lat: 32.7767, lng: -96.7970, name: 'Dallas Hub' },
-				destination: { lat: 29.3013, lng: -94.7977, name: 'Beaumont Terminal' }
-			},
-			speed: 72,
-			bearing: 180,
-			lastUpdate: new Date()
-		},
-		{
-			id: 'T-167',
-			driver: 'Mark Stevens',
-			lat: 29.3013,
-			lng: -94.7977,
-			status: 'available',
-			currentJob: 'Awaiting dispatch',
-			eta: '—',
 			speed: 0,
 			bearing: 0,
 			lastUpdate: new Date()
 		},
-		{
-			id: 'T-401',
-			driver: 'Jessica Kim',
-			lat: 26.2034,
-			lng: -98.2300,
-			status: 'maintenance',
-			currentJob: 'Scheduled maintenance',
-			eta: '09:00 Tomorrow',
+		{ 
+			id: 'FL-004', 
+			lat: 36.0000, 
+			lng: -96.0000, 
+			driver: 'Driver Beta-2', 
+			status: 'available' as const,
+			currentJob: 'Available for dispatch',
+			eta: '10:00',
 			speed: 0,
 			bearing: 0,
 			lastUpdate: new Date()
 		}
 	];
 
+	// Mock yard locations with anonymized coordinates
+	const mockYards = [
+		{ 
+			id: 'alpha-yard', 
+			name: 'Metro Hub Alpha', 
+			lat: 35.0000, 
+			lng: -98.0000,
+			trucks: 12,
+			status: 'operational'
+		},
+		{ 
+			id: 'beta-yard', 
+			name: 'Metro Hub Beta', 
+			lat: 35.1000, 
+			lng: -97.9000,
+			trucks: 8,
+			status: 'operational'
+		},
+		{ 
+			id: 'gamma-yard', 
+			name: 'Metro Hub Gamma', 
+			lat: 36.0000, 
+			lng: -96.0000,
+			trucks: 6,
+			status: 'maintenance'
+		}
+	];
+
 	// Filtered assets based on tracking mode
-	$: filteredAssets = getFilteredAssets(fleetAssets, trackingMode);
+	$: filteredAssets = getFilteredAssets(mockTrucks, trackingMode);
 
 	onMount(() => {
 		initializeMap();
@@ -264,7 +252,7 @@
 
 	function startRealtimeTracking() {
 		updateInterval = setInterval(() => {
-			fleetAssets = fleetAssets.map(simulateAssetMovement);
+			filteredAssets = filteredAssets.map(simulateAssetMovement);
 			if (isMapLoaded) addFleetAssetsToMap();
 		}, 10000);
 	}
@@ -295,7 +283,7 @@
 <div class="fleet-map-container" class:fullscreen={showFullscreen}>
 	<!-- Map Controls Component -->
 	<FleetMapControls 
-		{fleetAssets}
+		fleetAssets={filteredAssets}
 		{trackingMode}
 		{showFullscreen}
 		on:tracking-mode-change={handleTrackingModeChange}
@@ -310,7 +298,7 @@
 	<div class="map-content" bind:this={mapContainer}></div>
 
 	<!-- Fleet Summary Component -->
-	<FleetSummaryPanel {fleetAssets} {autoUpdate} />
+	<FleetSummaryPanel fleetAssets={filteredAssets} {autoUpdate} />
 </div>
 
 <style>

@@ -3,13 +3,8 @@
 // @phase: Phase 1 - Critical Components
 
 import type { PerformanceThresholds } from '../types/regional.types.js';
-
-// Performance thresholds for attention checking
-const PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
-	bpd: 2000,
-	efficiency: 88,
-	bph: 150
-};
+import type { RegionalData } from '../types/regional.types';
+import { PERFORMANCE_THRESHOLDS } from '../types/regional.types';
 
 // Status color mapping - using only green/red for performance indicators
 export function getStatusColor(status: string): string {
@@ -32,25 +27,40 @@ export function getTrendColor(trend: string): string {
 
 // Get performance-based bar color (dark default, red for low performers)
 export function getPerformanceBarColor(value: number, metric: string): string {
-	let threshold = 0;
+	let threshold: number;
+	
 	switch (metric) {
-		case 'bpd': threshold = PERFORMANCE_THRESHOLDS.bpd; break;
 		case 'efficiency': threshold = PERFORMANCE_THRESHOLDS.efficiency; break;
-		case 'bph': threshold = PERFORMANCE_THRESHOLDS.bph; break;
-		default: threshold = 0;
+		case 'utilization': threshold = PERFORMANCE_THRESHOLDS.utilization; break;
+		case 'dailyUnits': threshold = PERFORMANCE_THRESHOLDS.dailyUnits; break;
+		case 'alerts': threshold = PERFORMANCE_THRESHOLDS.alerts; break;
+		default: return '#6b7280';
 	}
 	
-	return value < threshold ? '#ef4444' : '#1e293b'; // Red for low performers, navy for others
+	if (metric === 'alerts') {
+		// For alerts, more is worse
+		if (value >= threshold * 2) return '#ef4444'; // Red
+		if (value >= threshold) return '#f59e0b';     // Yellow
+		return '#10b981';                             // Green
+	} else {
+		// For other metrics, more is better
+		if (value >= threshold * 1.2) return '#10b981'; // Green
+		if (value >= threshold) return '#3b82f6';        // Blue
+		if (value >= threshold * 0.8) return '#f59e0b';  // Yellow
+		return '#ef4444';                                // Red
+	}
 }
 
 // Check if region needs attention (for alert icons)
 export function needsAttention(value: number, metric: string): boolean {
-	let threshold = 0;
+	let threshold: number;
+	
 	switch (metric) {
-		case 'bpd': threshold = PERFORMANCE_THRESHOLDS.bpd; break;
 		case 'efficiency': threshold = PERFORMANCE_THRESHOLDS.efficiency; break;
-		case 'bph': threshold = PERFORMANCE_THRESHOLDS.bph; break;
-		default: threshold = 0;
+		case 'utilization': threshold = PERFORMANCE_THRESHOLDS.utilization; break;
+		case 'dailyUnits': threshold = PERFORMANCE_THRESHOLDS.dailyUnits; break;
+		case 'alerts': threshold = PERFORMANCE_THRESHOLDS.alerts; break;
+		default: return false;
 	}
 	
 	return value < threshold;
@@ -80,5 +90,19 @@ export function createDropdownHandlers() {
 		},
 
 		getHoveredRegion: () => hoveredRegion
+	};
+}
+
+export function calculateRegionalAverage(regionalData: Record<string, RegionalData>) {
+	const regions = Object.values(regionalData);
+	const count = regions.length;
+	
+	if (count === 0) return null;
+	
+	return {
+		efficiency: Math.round(regions.reduce((sum, r) => sum + r.efficiency, 0) / count),
+		utilization: Math.round(regions.reduce((sum, r) => sum + r.utilizationRate, 0) / count),
+		dailyUnits: Math.round(regions.reduce((sum, r) => sum + r.dailyUnits, 0) / count),
+		alerts: Math.round(regions.reduce((sum, r) => sum + r.alerts, 0) / count)
 	};
 } 

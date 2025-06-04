@@ -151,7 +151,7 @@
 		id: 'DRV-892',
 		truckId: 'TX-TRK-892',
 		trailerNumber: 'TX-TRL-445',
-		currentLocation: 'Houston Dispatch Yard'
+		currentLocation: 'Metro Dispatch Hub'
 	};
 
 	// Schedule stats

@@ -1,47 +1,57 @@
 <script lang="ts">
-	import { dispatchAnalytics, viewMode, yardsForCurrentLevel } from '$lib/stores/dispatchAnalytics';
+	import { onMount } from 'svelte';
+	import { dispatchAnalytics, viewMode } from '$lib/stores/dispatchAnalytics';
+	import { navigationTerms, assetTerms } from '$lib/core/stores/platform.store';
 	import DemoYardCard from './DemoYardCard.svelte';
-	import { BarChart3, Truck, DollarSign, TrendingUp, TrendingDown, AlertTriangle, Users, Building2 } from 'lucide-svelte';
+	import { 
+		Truck, 
+		DollarSign, 
+		TrendingUp, 
+		TrendingDown, 
+		BarChart3,
+		MapPin,
+		Users,
+		AlertTriangle
+	} from 'lucide-svelte';
 
-	// Drill-down handler prop
-	export let handleDrillDown: (targetLevel: string, id?: string) => void;
+	// Props using runes mode
+	interface Props {
+		handleDrillDown: (level: string, id?: string) => void;
+	}
+	
+	let { handleDrillDown }: Props = $props();
 
-	$: ({ demoFleet } = $dispatchAnalytics);
-	$: yards = $yardsForCurrentLevel;
+	// Platform terminology
+	const navTerms = $derived($navigationTerms);
+	const terms = $derived($assetTerms);
 
-	function formatRevenue(amount: number) {
-		if (amount >= 1000000) {
-			return '$' + (amount / 1000000).toFixed(1) + 'M';
+	// Demo data from store - converted to $derived for runes mode compatibility
+	const demoFleet = $derived($dispatchAnalytics.demoFleet);
+	const yards = $derived($dispatchAnalytics.demoYards);
+
+	// Helper functions for formatting
+	function formatRevenue(revenue: number): string {
+		if (revenue >= 1000000) {
+			return `$${(revenue / 1000000).toFixed(1)}M`;
 		}
-		if (amount >= 1000) {
-			return '$' + (amount / 1000).toFixed(0) + 'K';
-		}
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD',
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0
-		}).format(amount);
+		return `$${(revenue / 1000).toFixed(0)}K`;
 	}
 
-	function formatLargeNumber(num: number) {
-		if (num >= 1000000) {
-			return (num / 1000000).toFixed(1) + 'M';
-		}
+	function formatLargeNumber(num: number): string {
 		if (num >= 1000) {
-			return (num / 1000).toFixed(1) + 'K';
+			return `${(num / 1000).toFixed(1)}K`;
 		}
 		return num.toString();
 	}
 
-	// Demo insight for narrative
-	$: fleetInsight = "Fleet efficiency is 3.2% below target. Permian Basin yard showing efficiency issues with Truck T-205 underperforming significantly.";
+	// Demo insight for narrative - converted to $derived
+	const fleetInsight = $derived("Fleet efficiency is 3.2% below target. Permian Basin yard showing efficiency issues with Truck T-205 underperforming significantly.");
 </script>
 
 <div class="fleet-analytics">
 	<div class="analytics-header">
-		<h1 class="page-title">Fleet Overview</h1>
-		<p class="page-subtitle">247 trucks across 6 operational yards generating comprehensive fleet intelligence</p>
+		<h1 class="page-title">{navTerms.dashboardName} Overview</h1>
+		<p class="page-subtitle">{demoFleet.totalTrucks} {terms.asset.toLowerCase()}s across {demoFleet.totalYards} operational {terms.site.toLowerCase()}s generating comprehensive operations intelligence</p>
 	</div>
 
 	<!-- Fleet KPI Dashboard -->
@@ -52,8 +62,8 @@
 			</div>
 			<div class="kpi-content">
 				<div class="kpi-value">{demoFleet.totalTrucks}</div>
-				<div class="kpi-label">Total Trucks</div>
-				<div class="kpi-sub">{demoFleet.totalDrivers} drivers assigned</div>
+				<div class="kpi-label">Total {terms.asset}s</div>
+				<div class="kpi-sub">{demoFleet.totalDrivers} {terms.operator.toLowerCase()}s assigned</div>
 			</div>
 		</div>
 
@@ -64,7 +74,7 @@
 			<div class="kpi-content">
 				<div class="kpi-value">{formatRevenue(demoFleet.monthlyRevenue)}</div>
 				<div class="kpi-label">Monthly Revenue</div>
-				<div class="kpi-sub">{formatLargeNumber(demoFleet.monthJobs)} jobs completed</div>
+				<div class="kpi-sub">{formatLargeNumber(demoFleet.monthJobs)} {terms.job.toLowerCase()}s completed</div>
 			</div>
 		</div>
 
@@ -78,7 +88,7 @@
 			</div>
 			<div class="kpi-content">
 				<div class="kpi-value">{demoFleet.efficiency.toFixed(1)}%</div>
-				<div class="kpi-label">Fleet Efficiency</div>
+				<div class="kpi-label">{navTerms.dashboardName} Efficiency</div>
 				<div class="kpi-sub">Target: 92.5%</div>
 			</div>
 		</div>
@@ -96,16 +106,16 @@
 
 		<div class="kpi-card info dashboard-card-hover">
 			<div class="kpi-icon">
-				<Building2 class="w-6 h-6" />
+				<MapPin class="w-6 h-6" />
 			</div>
 			<div class="kpi-content">
 				<div class="kpi-value">{demoFleet.totalYards}</div>
-				<div class="kpi-label">Active Yards</div>
-				<div class="kpi-sub">{demoFleet.todayJobs} jobs today</div>
+				<div class="kpi-label">Active {terms.site}s</div>
+				<div class="kpi-sub">All operational</div>
 			</div>
 		</div>
 
-		<div class="kpi-card {demoFleet.safetyScore >= 95 ? 'success' : 'warning'} dashboard-card-hover">
+		<div class="kpi-card info dashboard-card-hover">
 			<div class="kpi-icon">
 				<Users class="w-6 h-6" />
 			</div>
@@ -139,24 +149,24 @@
 			<div class="charts-grid">
 				<div class="chart-placeholder">
 					<div class="chart-header">
-						<h3>Fleet Efficiency Trend</h3>
+						<h3>{navTerms.dashboardName} Efficiency Trend</h3>
 						<span class="chart-period">Last 30 Days</span>
 					</div>
 					<div class="chart-body">
 						<div class="chart-mock">
-							📈 Fleet efficiency trending down -3.2% from target
+							📈 {navTerms.dashboardName} efficiency trending down -3.2% from target
 						</div>
 					</div>
 				</div>
 
 				<div class="chart-placeholder">
 					<div class="chart-header">
-						<h3>Yard Performance Comparison</h3>
+						<h3>{terms.site} Performance Comparison</h3>
 						<span class="chart-period">Current Month</span>
 					</div>
 					<div class="chart-body">
 						<div class="chart-mock">
-							📊 Eagle Ford: 94.7% | Permian Basin: 91.2% (⚠️ attention)
+							📊 {yards[1]?.name || 'Site A'}: 94.7% | {yards[0]?.name || 'Site B'}: 91.2% (⚠️ attention)
 						</div>
 					</div>
 				</div>
@@ -168,7 +178,7 @@
 					</div>
 					<div class="chart-body">
 						<div class="chart-mock">
-							💰 $4.2M total | Permian: $847K | Eagle Ford: $723K
+							💰 {formatRevenue(demoFleet.monthlyRevenue)} total | {yards[0]?.name || 'Site A'}: {formatRevenue(yards[0]?.revenue || 0)} | {yards[1]?.name || 'Site B'}: {formatRevenue(yards[1]?.revenue || 0)}
 						</div>
 					</div>
 				</div>
@@ -180,7 +190,7 @@
 					</div>
 					<div class="chart-body">
 						<div class="chart-mock">
-							🔍 2.1% avg loss | Problem trucks: T-205 (4.1%)
+							🔍 {demoFleet.avgVolumeLoss.toFixed(1)}% avg loss | Problem {terms.asset.toLowerCase()}s identified
 						</div>
 					</div>
 				</div>
@@ -191,8 +201,8 @@
 	{#if $viewMode === 'cards' || $viewMode === 'analytics'}
 		<div class="yards-section">
 			<h2 class="section-title">
-				Yard Performance Overview 
-				<span class="section-subtitle">Click any yard to drill down</span>
+				{terms.site} Performance Overview 
+				<span class="section-subtitle">Click any {terms.site.toLowerCase()} to drill down</span>
 			</h2>
 			
 			<div class="yards-grid">
@@ -222,11 +232,11 @@
 	}
 
 	.kpi-grid {
-		@apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6;
+		@apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6;
 	}
 
 	.kpi-card {
-		@apply bg-white dark:bg-gray-800 rounded-lg border p-4 flex items-center gap-4 min-w-0;
+		@apply bg-white dark:bg-gray-800 rounded-lg border p-6 flex items-center gap-4 min-w-0;
 	}
 
 	.kpi-card.primary {
@@ -250,7 +260,7 @@
 	}
 
 	.kpi-icon {
-		@apply flex-shrink-0 p-2 rounded-lg bg-white dark:bg-gray-700;
+		@apply flex-shrink-0 p-3 rounded-lg bg-white dark:bg-gray-700;
 	}
 
 	.kpi-content {
@@ -258,15 +268,15 @@
 	}
 
 	.kpi-value {
-		@apply text-2xl font-bold text-gray-900 dark:text-white truncate;
+		@apply text-2xl font-bold text-gray-900 dark:text-white break-words;
 	}
 
 	.kpi-label {
-		@apply text-sm font-medium text-gray-600 dark:text-gray-300 truncate;
+		@apply text-sm font-medium text-gray-600 dark:text-gray-300 break-words leading-tight;
 	}
 
 	.kpi-sub {
-		@apply text-xs text-gray-500 dark:text-gray-400 truncate;
+		@apply text-xs text-gray-500 dark:text-gray-400 break-words leading-tight mt-1;
 	}
 
 	.insights-banner {

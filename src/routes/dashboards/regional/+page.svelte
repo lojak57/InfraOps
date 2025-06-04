@@ -1,309 +1,298 @@
 <!-- 
 @refactored: 2024-12-17 - Component Size Optimization Plan
-@original-size: 1056 lines → @current-size: ~180 lines  
+@original-size: 1056 lines → @current-size: ~140 lines  
 @phase: Phase 1 - Critical Components
-@extractors: RegionalHeader, PerformanceMetrics, regional.store.ts, regional-utils.ts, regional.types.ts
+@extractors: PerformanceMetrics, YardComparisonChart, RegionalFilters, regional-utils.ts, regional.types.ts
 -->
 <script lang="ts">
-	import RegionalHeader from './components/RegionalHeader.svelte';
 	import PerformanceMetrics from './components/PerformanceMetrics.svelte';
 	import RegionalYardComparison from '$lib/components/regional/RegionalYardComparison.svelte';
-	import { 
-		activeRegion, 
-		showYardComparison, 
-		selectedRegion, 
-		currentRegionData,
-		regionalDataStore,
-		regionalActions 
-	} from './stores/regional.store.js';
-	import { 
-		getStatusColor, 
-		getPerformanceBarColor, 
-		needsAttention 
-	} from './utils/regional-utils.js';
+	import { activeRegion, showYardComparison, regionalDataStore, selectedRegion } from './stores/regional.store.js';
+	import { getPerformanceBarColor, needsAttention } from './utils/regional-utils.js';
+	import type { RegionalData } from './types/regional.types.js';
 
-	// Reactive values from stores
-	$: currentData = $currentRegionData;
-	$: regionalData = $regionalDataStore;
+	// Track which regional dashboard view to show
+	let showComparison = false;
 
-	// Event handlers
+	// Subscribe to store updates
+	$: currentRegionData = $regionalDataStore[$selectedRegion] || Object.values($regionalDataStore)[0];
+
+	// Event handler for yard comparison
 	function handleYardComparison(regionName: string) {
-		regionalActions.openYardComparison(regionName);
+		showComparison = true;
+		$showYardComparison = true;
 	}
 
-	function handleCloseYardComparison() {
-		regionalActions.closeYardComparison();
+	function handleBackToDashboard() {
+		showComparison = false;
+		$showYardComparison = false;
 	}
 </script>
 
-<div class="regional-dashboard font-sans text-sm text-slate-800">
-	<!-- Header and Region Filters -->
-	<RegionalHeader 
-		activeRegion={$activeRegion}
-		onYardComparison={handleYardComparison}
-	/>
+<svelte:head>
+	<title>Regional Dashboard - Fleet Analytics</title>
+</svelte:head>
 
-	<!-- Performance Metrics Section -->
-	<PerformanceMetrics 
-		currentRegionData={currentData}
-		activeRegion={$activeRegion}
-		onYardComparison={handleYardComparison}
-	/>
+{#if showComparison}
+	<!-- Yard Comparison Component -->
+	<RegionalYardComparison on:back-to-dashboard={handleBackToDashboard} />
+{:else}
+	<!-- Main Regional Dashboard -->
+	<div class="regional-dashboard">
+		<!-- Header -->
+		<div class="dashboard-header">
+			<h1 class="dashboard-title">Regional Operations Dashboard</h1>
+			<p class="dashboard-subtitle">Real-time fleet performance across regional hubs</p>
+		</div>
 
-	<!-- Main Content -->
-	<div class="main-content">
-		<!-- Regional Comparison Summary -->
-		<div class="content-section">
-			<h2 class="text-xl font-semibold text-slate-800 mb-6">Cross-Regional Performance</h2>
-			<div class="comparison-grid">
-				{#each Object.entries(regionalData) as [regionName, data]}
-					<div class="region-summary-card" class:active={regionName === $activeRegion} style="--region-color: {regionalActions.getRegionColor(regionName)}">
-						<div class="region-header">
-							<h3 class="text-lg font-semibold text-slate-800">{regionName}</h3>
-							<div class="region-status {getStatusColor(data.status)}"></div>
+		<!-- Region Selector -->
+		<div class="region-selector">
+			{#each Object.values($regionalDataStore) as region}
+				<button 
+					class="region-btn {$selectedRegion === region.id ? 'active' : ''}"
+					on:click={() => $selectedRegion = region.id}
+				>
+					{region.name}
+				</button>
+			{/each}
+		</div>
+
+		<!-- Performance Overview -->
+		<div class="performance-section">
+			<div class="section-header">
+				<h2>Performance Overview - {currentRegionData.name}</h2>
+				<div class="quick-stats">
+					<span class="text-slate-600">Total Trucks:</span>
+					<span class="metric-value font-mono font-semibold text-slate-800">{currentRegionData.totalTrucks}</span>
+					<span class="text-slate-600">Daily Units:</span>
+					<span class="metric-value font-mono font-semibold text-slate-800">{currentRegionData.dailyUnits.toLocaleString()}</span>
+				</div>
+			</div>
+
+			<!-- Performance Metrics Component -->
+			<PerformanceMetrics {currentRegionData} />
+		</div>
+
+		<!-- Comparative Performance Charts -->
+		<div class="charts-section">
+			<div class="section-header">
+				<h2>Regional Comparison</h2>
+				<p class="text-slate-600">Performance metrics across all regional hubs</p>
+			</div>
+
+			<!-- Efficiency Comparison -->
+			<div class="chart-container">
+				<h3 class="text-base font-semibold text-slate-800">Efficiency Comparison</h3>
+				{#each Object.values($regionalDataStore) as data}
+					{@const maxEfficiency = Math.max(...Object.values($regionalDataStore).map(d => d.efficiency))}
+					{@const percentage = (data.efficiency / maxEfficiency) * 100}
+					<div class="chart-bar">
+						<span class="chart-label">{data.name}</span>
+						<div class="chart-bar-container">
+							<div 
+								class="chart-bar-fill" 
+								style="width: {percentage}%; background: {getPerformanceBarColor(data.efficiency, 'efficiency')};"
+							>
+								<span class="chart-value-inside">{data.efficiency}%</span>
+							</div>
+							{#if needsAttention(data.efficiency, 'efficiency')}
+								<span class="attention-icon">⚠️</span>
+							{/if}
 						</div>
-						<div class="region-metrics">
-							<div class="metric-row">
-								<span class="text-slate-600">Fleet Size:</span>
-								<span class="metric-value font-mono font-semibold text-slate-800">{data.fleetSize}</span>
+					</div>
+				{/each}
+			</div>
+
+			<!-- Daily Units Production Comparison -->
+			<div class="chart-container">
+				<h3 class="text-base font-semibold text-slate-800">Daily Units Production</h3>
+				{#each Object.values($regionalDataStore) as data}
+					{@const maxDailyUnits = Math.max(...Object.values($regionalDataStore).map(d => d.dailyUnits))}
+					{@const percentage = (data.dailyUnits / maxDailyUnits) * 100}
+					<div class="chart-bar">
+						<span class="chart-label">{data.name}</span>
+						<div class="chart-bar-container">
+							<div 
+								class="chart-bar-fill" 
+								style="width: {percentage}%; background: {getPerformanceBarColor(data.dailyUnits, 'dailyUnits')};"
+							>
+								<span class="chart-value-inside">{data.dailyUnits.toLocaleString()}</span>
 							</div>
-							<div class="metric-row">
-								<span class="text-slate-600">Total BPD:</span>
-								<span class="metric-value font-mono font-semibold text-slate-800">{data.totalBPD.toLocaleString()}</span>
-							</div>
-							<div class="metric-row">
-								<span class="text-slate-600">Efficiency:</span>
-								<span class="metric-value font-mono font-semibold {data.efficiency >= 93 ? 'text-green-600' : data.efficiency >= 90 ? 'text-slate-800' : 'text-red-600'}">{data.efficiency}%</span>
-							</div>
+							{#if needsAttention(data.dailyUnits, 'dailyUnits')}
+								<span class="attention-icon">⚠️</span>
+							{/if}
 						</div>
-						<button 
-							class="compare-btn border border-slate-400 text-slate-700 bg-transparent hover:bg-slate-100 px-4 py-2 rounded text-sm font-medium transition-colors"
-							on:click={() => handleYardComparison(regionName)}
-						>
-							Compare Yards →
-						</button>
 					</div>
 				{/each}
 			</div>
 		</div>
 
-		<!-- Visual Comparison Charts -->
-		<div class="content-section">
-			<div class="section-header">
-				<h2 class="text-xl font-semibold text-slate-800">Regional Performance Comparison Charts</h2>
-				<p class="text-slate-600">Visual analysis of key operational metrics across all regions</p>
-			</div>
-			
-			<div class="charts-grid chart-card-container">
-				<!-- Fleet Size Comparison -->
-				<div class="chart-card">
-					<div class="chart-header">
-						<h3 class="text-base font-semibold text-slate-800">Fleet Size Distribution</h3>
-						<span class="chart-subtitle text-sm text-slate-600">Total trucks by region</span>
-					</div>
-					<div class="chart-content">
-						<div class="bar-chart">
-							{#each Object.entries(regionalData) as [regionName, data]}
-								{@const maxFleet = Math.max(...Object.values(regionalData).map(d => d.fleetSize))}
-								{@const percentage = (data.fleetSize / maxFleet) * 100}
-								<div class="chart-row">
-									<div class="chart-label text-slate-700">{regionName}</div>
-									<div class="chart-bar-container">
-										<div 
-											class="chart-bar chart-bar-with-value"
-											style="width: {percentage}%; background: {getPerformanceBarColor(data.fleetSize, 'fleet')};"
-										>
-											<span class="chart-value-inside">{data.fleetSize}</span>
-											{#if needsAttention(data.fleetSize, 'fleet')}
-												<span class="alert-icon">❗</span>
-											{/if}
-										</div>
-									</div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				</div>
-
-				<!-- BPD Production Comparison -->
-				<div class="chart-card">
-					<div class="chart-header">
-						<h3 class="text-base font-semibold text-slate-800">Total BPD Production</h3>
-						<span class="chart-subtitle text-sm text-slate-600">Daily units produced</span>
-					</div>
-					<div class="chart-content">
-						<div class="bar-chart">
-							{#each Object.entries(regionalData) as [regionName, data]}
-								{@const maxBPD = Math.max(...Object.values(regionalData).map(d => d.totalBPD))}
-								{@const percentage = (data.totalBPD / maxBPD) * 100}
-								<div class="chart-row">
-									<div class="chart-label text-slate-700">{regionName}</div>
-									<div class="chart-bar-container">
-										<div 
-											class="chart-bar chart-bar-with-value"
-											style="width: {percentage}%; background: {getPerformanceBarColor(data.totalBPD, 'bpd')};"
-										>
-											<span class="chart-value-inside">{data.totalBPD.toLocaleString()}</span>
-											{#if needsAttention(data.totalBPD, 'bpd')}
-												<span class="alert-icon">❗</span>
-											{/if}
-										</div>
-									</div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				</div>
-			</div>
+		<!-- Quick Actions -->
+		<div class="actions-section">
+			<button class="action-btn primary" on:click={() => handleYardComparison('current')}>
+				📊 View Yard Comparison
+			</button>
+			<button class="action-btn secondary">
+				📈 Generate Report
+			</button>
+			<button class="action-btn secondary">
+				⚙️ Configure Alerts
+			</button>
 		</div>
 	</div>
-
-	<!-- Yard Comparison Modal -->
-	{#if $showYardComparison}
-		<RegionalYardComparison 
-			visible={true}
-			regionName={$selectedRegion}
-			regionData={[]}
-			on:close={handleCloseYardComparison}
-		/>
-	{/if}
-</div>
+{/if}
 
 <style>
 	.regional-dashboard {
 		min-height: 100vh;
-		background: white;
+		background: #f8fafc;
+		padding: 2rem;
 	}
 
-	.main-content {
-		background: white;
-	}
-
-	.content-section {
-		padding: 2rem 3rem;
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-
-	.section-header {
+	.dashboard-header {
+		text-align: center;
 		margin-bottom: 2rem;
 	}
 
-	.comparison-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 1.5rem;
-	}
-
-	.region-summary-card {
-		background: white;
-		border: 2px solid #e2e8f0;
-		border-radius: 0.75rem;
-		padding: 1.5rem;
-		transition: all 0.2s;
-	}
-
-	.region-summary-card.active {
-		border-color: var(--region-color);
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-	}
-
-	.region-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 1rem;
-	}
-
-	.region-status {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-	}
-
-	.region-metrics {
-		margin-bottom: 1.5rem;
-	}
-
-	.metric-row {
-		display: flex;
-		justify-content: space-between;
+	.dashboard-title {
+		font-size: 2.5rem;
+		font-weight: 700;
+		color: #1e293b;
 		margin-bottom: 0.5rem;
 	}
 
-	.compare-btn {
-		width: 100%;
+	.dashboard-subtitle {
+		color: #64748b;
+		font-size: 1.1rem;
 	}
 
-	.charts-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-		gap: 2rem;
-		margin-top: 2rem;
+	.region-selector {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: center;
+		margin-bottom: 2rem;
+		flex-wrap: wrap;
 	}
 
-	.chart-card {
-		background: white;
+	.region-btn {
+		padding: 0.75rem 1.5rem;
 		border: 1px solid #e2e8f0;
-		border-radius: 0.75rem;
-		padding: 1.5rem;
+		background: white;
+		border-radius: 0.5rem;
+		cursor: pointer;
+		transition: all 0.2s;
+		font-weight: 500;
 	}
 
-	.chart-header {
+	.region-btn.active {
+		background: #3b82f6;
+		color: white;
+		border-color: #3b82f6;
+	}
+
+	.region-btn:hover:not(.active) {
+		border-color: #3b82f6;
+		background: #f1f5f9;
+	}
+
+	.performance-section {
+		margin-bottom: 3rem;
+	}
+
+	.charts-section {
+		margin-bottom: 3rem;
+	}
+
+	.section-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		margin-bottom: 1.5rem;
 	}
 
-	.chart-subtitle {
-		opacity: 0.8;
+	.section-header h2 {
+		font-size: 1.5rem;
+		font-weight: 600;
+		color: #1e293b;
 	}
 
-	.bar-chart {
+	.quick-stats {
 		display: flex;
-		flex-direction: column;
 		gap: 1rem;
+		align-items: center;
+		font-size: 0.875rem;
 	}
 
-	.chart-row {
+	.chart-container {
+		background: white;
+		padding: 1.5rem;
+		border-radius: 0.75rem;
+		border: 1px solid #e2e8f0;
+		margin-bottom: 1.5rem;
+	}
+
+	.chart-bar {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
+		margin-bottom: 0.75rem;
 	}
 
 	.chart-label {
 		min-width: 120px;
 		font-size: 0.875rem;
-		font-weight: 500;
+		color: #64748b;
 	}
 
 	.chart-bar-container {
 		flex: 1;
-		height: 32px;
+		position: relative;
+		height: 2rem;
 		background: #f1f5f9;
 		border-radius: 0.25rem;
-		position: relative;
 		overflow: hidden;
 	}
 
-	.chart-bar {
+	.chart-bar-fill {
 		height: 100%;
-		border-radius: 0.25rem;
 		display: flex;
 		align-items: center;
-		justify-content: flex-end;
-		padding-right: 0.5rem;
-		position: relative;
-		transition: width 0.8s ease;
-	}
-
-	.chart-value-inside {
+		justify-content: center;
 		color: white;
-		font-size: 0.75rem;
 		font-weight: 600;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+		font-size: 0.75rem;
+		min-width: 60px;
 	}
 
-	.alert-icon {
-		margin-left: 0.25rem;
-		font-size: 0.75rem;
+	.actions-section {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.action-btn {
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.5rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s;
+		border: none;
+	}
+
+	.action-btn.primary {
+		background: #3b82f6;
+		color: white;
+	}
+
+	.action-btn.secondary {
+		background: white;
+		color: #64748b;
+		border: 1px solid #e2e8f0;
+	}
+
+	.action-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	}
 </style> 

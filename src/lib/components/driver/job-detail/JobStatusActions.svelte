@@ -6,8 +6,8 @@
 -->
 <script lang="ts">
 	import { Clock, CheckCircle, AlertCircle, User, Phone } from 'lucide-svelte';
-	import { formatTime, getTimeUntilJob, isJobReady } from '../utils/job-calculations.js';
-	import type { ScheduledJob, JobDetailActions } from '../types/job-detail.types.js';
+	import { formatTime, getTimeUntilJob, isJobReady } from './utils/job-calculations.js';
+	import type { ScheduledJob, JobDetailActions } from './types/job-detail.types.js';
 	
 	// Props
 	export let job: ScheduledJob;

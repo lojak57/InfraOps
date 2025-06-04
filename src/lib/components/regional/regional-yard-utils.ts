@@ -1,5 +1,5 @@
 import { Award, Target, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-svelte';
-import type { YardData, StatusInfo, RegionalAverage, PerformanceMetric } from './regional-yard.types';
+import type { YardData, StatusInfo, RegionalAverage, PerformanceMetric, RegionalYardSummary } from './regional-yard.types';
 
 // Get status color and icon
 export function getStatusInfo(status: string): StatusInfo {
@@ -35,17 +35,35 @@ export function getTrendColor(trend: string): string {
 
 // Performance color coding
 export function getPerformanceColor(value: number, metric: PerformanceMetric): string {
+  let threshold: number;
+  
   switch (metric) {
     case 'efficiency':
-      return value >= 95 ? 'text-emerald-600' : value >= 90 ? 'text-blue-600' : value >= 85 ? 'text-yellow-600' : 'text-red-600';
+      if (value >= 95) return 'excellent';
+      if (value >= 85) return 'good';
+      if (value >= 75) return 'warning';
+      return 'poor';
+    
     case 'utilization':
-      return value >= 85 ? 'text-emerald-600' : value >= 80 ? 'text-blue-600' : value >= 75 ? 'text-yellow-600' : 'text-red-600';
-    case 'bpd':
-      return value >= 2800 ? 'text-emerald-600' : value >= 2400 ? 'text-blue-600' : value >= 2000 ? 'text-yellow-600' : 'text-red-600';
+      if (value >= 90) return 'excellent';
+      if (value >= 80) return 'good';
+      if (value >= 70) return 'warning';
+      return 'poor';
+    
+    case 'dailyUnits':
+      if (value >= 3000) return 'excellent';
+      if (value >= 2500) return 'good';
+      if (value >= 2000) return 'warning';
+      return 'poor';
+    
     case 'bph':
-      return value >= 180 ? 'text-emerald-600' : value >= 160 ? 'text-blue-600' : value >= 140 ? 'text-yellow-600' : 'text-red-600';
+      if (value >= 180) return 'excellent';
+      if (value >= 150) return 'good';
+      if (value >= 120) return 'warning';
+      return 'poor';
+    
     default:
-      return 'text-gray-900';
+      return 'good';
   }
 }
 
@@ -79,30 +97,31 @@ export function generateSparklineSVG(data: number[]): string {
 }
 
 // Sorting function
-export function sortYardData(data: YardData[], column: keyof YardData, direction: 'asc' | 'desc'): YardData[] {
-  return data.sort((a, b) => {
-    let aVal = a[column];
-    let bVal = b[column];
-
+export function sortYardData(data: YardData[], sortBy: keyof YardData, direction: 'asc' | 'desc'): YardData[] {
+  return [...data].sort((a, b) => {
+    const aVal = a[sortBy];
+    const bVal = b[sortBy];
+    
+    if (typeof aVal === 'number' && typeof bVal === 'number') {
+      return direction === 'asc' ? aVal - bVal : bVal - aVal;
+    }
+    
     if (typeof aVal === 'string' && typeof bVal === 'string') {
-      aVal = aVal.toLowerCase();
-      bVal = bVal.toLowerCase();
+      return direction === 'asc' 
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
     }
-
-    if (direction === 'asc') {
-      return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-    } else {
-      return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
-    }
+    
+    return 0;
   });
 }
 
 // Calculate regional averages
 export function calculateRegionalAverage(yardData: YardData[]): RegionalAverage {
   return {
-    totalBPD: Math.round(yardData.reduce((sum, yard) => sum + yard.totalBPD, 0) / yardData.length),
+    dailyUnits: Math.round(yardData.reduce((sum, yard) => sum + yard.dailyUnits, 0) / yardData.length),
     efficiency: Math.round((yardData.reduce((sum, yard) => sum + yard.efficiency, 0) / yardData.length) * 10) / 10,
-    utilization: Math.round((yardData.reduce((sum, yard) => sum + yard.utilizationRate, 0) / yardData.length) * 10) / 10,
+    utilizationRate: Math.round((yardData.reduce((sum, yard) => sum + yard.utilizationRate, 0) / yardData.length) * 10) / 10,
     avgDriveTime: Math.round((yardData.reduce((sum, yard) => sum + yard.avgDriveTime, 0) / yardData.length) * 10) / 10
   };
 }
@@ -115,4 +134,52 @@ export function getBestPerformer(yardData: YardData[]): YardData | null {
 // Get improvement opportunity
 export function getImprovementOpportunity(yardData: YardData[]): YardData | null {
   return yardData.find(yard => yard.status === 'attention') || null;
+}
+
+export function needsAttention(value: number, metric: PerformanceMetric): boolean {
+  let threshold: number;
+  
+  switch (metric) {
+    case 'efficiency': threshold = 85; break;
+    case 'utilization': threshold = 80; break;
+    case 'dailyUnits': threshold = 2500; break;
+    case 'bph': threshold = 150; break;
+    default: return false;
+  }
+  
+  return value < threshold;
+}
+
+export function getPerformanceBarColor(value: number, metric: PerformanceMetric): string {
+  const performanceLevel = getPerformanceColor(value, metric);
+  
+  switch (performanceLevel) {
+    case 'excellent': return '#10b981'; // Green
+    case 'good': return '#3b82f6';      // Blue
+    case 'warning': return '#f59e0b';   // Yellow
+    case 'poor': return '#ef4444';      // Red
+    default: return '#6b7280';          // Gray
+  }
+}
+
+export function calculateRegionalSummary(yardData: YardData[]): RegionalYardSummary {
+  if (yardData.length === 0) {
+    return {
+      totalYards: 0,
+      totalTrucks: 0,
+      activeTrucks: 0,
+      avgEfficiency: 0,
+      dailyUnits: 0,
+      alerts: []
+    };
+  }
+
+  return {
+    totalYards: yardData.length,
+    totalTrucks: yardData.reduce((sum, yard) => sum + yard.fleetSize, 0),
+    activeTrucks: yardData.reduce((sum, yard) => sum + yard.activeTrucks, 0),
+    avgEfficiency: Math.round(yardData.reduce((sum, yard) => sum + yard.efficiency, 0) / yardData.length),
+    dailyUnits: Math.round(yardData.reduce((sum, yard) => sum + yard.dailyUnits, 0) / yardData.length),
+    alerts: []
+  };
 } 

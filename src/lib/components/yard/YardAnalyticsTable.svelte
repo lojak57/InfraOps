@@ -1,194 +1,51 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { ChevronDown, ChevronUp, TrendingUp, TrendingDown } from 'lucide-svelte';
+	import { ChevronDown, ChevronUp } from 'lucide-svelte';
+	import { yardAnalyticsData, yardAnalyticsSummary } from './data/yardAnalyticsData';
+	import { 
+		sortAnalyticsData,
+		formatDate, 
+		formatNumber, 
+		formatPercentage, 
+		formatDecimal,
+		getTrendIcon, 
+		getTrendColor, 
+		getPerformanceColor,
+		generateSparklineSVG,
+		calculateAverages,
+		countExternalFactorDays,
+		type SortColumn,
+		type SortDirection
+	} from './utils/yardAnalyticsUtils';
 
 	const dispatch = createEventDispatcher();
 
 	// Props
 	export let visible = false;
 
-	// Time filter options
+	// State
 	let selectedTimeframe = 'Last 7 Days';
+	let sortColumn: SortColumn = 'date';
+	let sortDirection: SortDirection = 'desc';
+	let data = yardAnalyticsData;
+
+	// Options
 	const timeframeOptions = ['Last 7 Days', 'Last 30 Days', 'Custom'];
 
-	// Sort state
-	let sortColumn = 'date';
-	let sortDirection: 'asc' | 'desc' = 'desc';
+	// Computed values
+	$: sortedData = sortAnalyticsData(data, sortColumn, sortDirection);
+	$: averages = calculateAverages(sortedData);
+	$: externalFactorDays = countExternalFactorDays(sortedData);
 
-	// Mock analytics data that tells the "ops story"
-	let yardAnalytics = [
-		{
-			date: '2024-01-15',
-			dailyThroughput: 2847,
-			unitsPerDriveHour: 185.3,
-			activeTrucksPercent: 75.3,
-			driversEnRoutePercent: 68.2,
-			loadEfficiencyIndex: 4.2,
-			notes: 'Peak day - all systems optimal',
-			trend: 'up',
-			sparklineData: [2650, 2720, 2780, 2810, 2847, 2890, 2920]
-		},
-		{
-			date: '2024-01-14',
-			dailyThroughput: 2720,
-			unitsPerDriveHour: 178.9,
-			activeTrucksPercent: 71.8,
-			driversEnRoutePercent: 65.4,
-			loadEfficiencyIndex: 3.9,
-			notes: 'Slight weather delays morning',
-			trend: 'up',
-			sparklineData: [2580, 2620, 2670, 2690, 2720, 2750, 2780]
-		},
-		{
-			date: '2024-01-13',
-			dailyThroughput: 2535,
-			unitsPerDriveHour: 165.2,
-			activeTrucksPercent: 67.4,
-			driversEnRoutePercent: 62.1,
-			loadEfficiencyIndex: 3.6,
-			notes: 'Equipment maintenance - 3 trucks down',
-			trend: 'down',
-			sparklineData: [2620, 2590, 2570, 2550, 2535, 2520, 2510]
-		},
-		{
-			date: '2024-01-12',
-			dailyThroughput: 2892,
-			unitsPerDriveHour: 192.7,
-			activeTrucksPercent: 82.1,
-			driversEnRoutePercent: 74.5,
-			loadEfficiencyIndex: 4.8,
-			notes: 'High demand day - extra shifts',
-			trend: 'up',
-			sparklineData: [2750, 2800, 2830, 2860, 2892, 2910, 2920]
-		},
-		{
-			date: '2024-01-11',
-			dailyThroughput: 2674,
-			unitsPerDriveHour: 174.8,
-			activeTrucksPercent: 73.6,
-			driversEnRoutePercent: 67.8,
-			loadEfficiencyIndex: 4.1,
-			notes: 'Normal operations',
-			trend: 'stable',
-			sparklineData: [2650, 2660, 2670, 2674, 2680, 2675, 2670]
-		},
-		{
-			date: '2024-01-10',
-			dailyThroughput: 2456,
-			unitsPerDriveHour: 158.9,
-			activeTrucksPercent: 65.2,
-			driversEnRoutePercent: 58.7,
-			loadEfficiencyIndex: 3.4,
-			notes: 'Customer pipeline maintenance',
-			trend: 'down',
-			sparklineData: [2580, 2550, 2520, 2490, 2456, 2440, 2430]
-		},
-		{
-			date: '2024-01-09',
-			dailyThroughput: 2789,
-			unitsPerDriveHour: 183.4,
-			activeTrucksPercent: 76.8,
-			driversEnRoutePercent: 71.2,
-			loadEfficiencyIndex: 4.4,
-			notes: 'Strong performance - no issues',
-			trend: 'up',
-			sparklineData: [2700, 2730, 2760, 2780, 2789, 2800, 2810]
-		}
-	];
-
-	// Sorting function
-	function sortData(column: keyof typeof yardAnalytics[0]) {
+	function handleSort(column: SortColumn) {
 		if (sortColumn === column) {
 			sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
 		} else {
 			sortColumn = column;
 			sortDirection = 'desc';
 		}
-
-		yardAnalytics = yardAnalytics.sort((a, b) => {
-			let aVal = a[column];
-			let bVal = b[column];
-
-			// Handle date sorting
-			if (column === 'date') {
-				aVal = new Date(aVal as string).getTime();
-				bVal = new Date(bVal as string).getTime();
-			}
-
-			if (sortDirection === 'asc') {
-				return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-			} else {
-				return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
-			}
-		});
 	}
 
-	// Format date for display
-	function formatDate(dateString: string) {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', { 
-			weekday: 'short', 
-			month: 'short', 
-			day: 'numeric' 
-		});
-	}
-
-	// Get trend icon
-	function getTrendIcon(trend: string) {
-		switch (trend) {
-			case 'up': return TrendingUp;
-			case 'down': return TrendingDown;
-			default: return null;
-		}
-	}
-
-	// Get trend color
-	function getTrendColor(trend: string) {
-		switch (trend) {
-			case 'up': return 'text-emerald-600';
-			case 'down': return 'text-red-600';
-			default: return 'text-gray-600';
-		}
-	}
-
-	// Performance color coding
-	function getPerformanceColor(value: number, metric: string) {
-		switch (metric) {
-			case 'throughput':
-				return value >= 2800 ? 'text-emerald-600' : value >= 2600 ? 'text-yellow-600' : 'text-red-600';
-			case 'unitsPerHour':
-				return value >= 180 ? 'text-emerald-600' : value >= 160 ? 'text-yellow-600' : 'text-red-600';
-			case 'activeTrucks':
-				return value >= 75 ? 'text-emerald-600' : value >= 65 ? 'text-yellow-600' : 'text-red-600';
-			case 'driversEnRoute':
-				return value >= 70 ? 'text-emerald-600' : value >= 60 ? 'text-yellow-600' : 'text-red-600';
-			case 'loadEfficiency':
-				return value >= 4.0 ? 'text-emerald-600' : value >= 3.5 ? 'text-yellow-600' : 'text-red-600';
-			default:
-				return 'text-gray-900';
-		}
-	}
-
-	// Simple sparkline component
-	function generateSparklineSVG(data: number[]) {
-		const width = 80;
-		const height = 24;
-		const max = Math.max(...data);
-		const min = Math.min(...data);
-		const range = max - min || 1;
-		
-		const points = data.map((value, index) => {
-			const x = (index / (data.length - 1)) * width;
-			const y = height - ((value - min) / range) * height;
-			return `${x},${y}`;
-		}).join(' ');
-
-		return `<svg width="${width}" height="${height}" class="sparkline">
-			<polyline fill="none" stroke="currentColor" stroke-width="1.5" points="${points}"/>
-		</svg>`;
-	}
-
-	// Close analytics table
 	function closeAnalytics() {
 		visible = false;
 		dispatch('close');
@@ -218,7 +75,7 @@
 			<div class="key-insights">
 				<div class="insight-card">
 					<h4>Performance Summary</h4>
-					<p>Averaged <strong>2,701 units/day</strong> with <strong>92.3% operational efficiency</strong> despite planned maintenance affecting 3 trucks on Jan 13</p>
+					<p>Averaged <strong>{yardAnalyticsSummary.averageThroughput} units/day</strong> with <strong>{yardAnalyticsSummary.operationalEfficiency}% operational efficiency</strong> despite planned maintenance affecting 3 trucks on Jan 13</p>
 				</div>
 				<div class="insight-card">
 					<h4>Context Matters</h4>
@@ -232,7 +89,7 @@
 					<thead>
 						<tr>
 							<th>
-								<button on:click={() => sortData('date')} class="sort-button">
+								<button on:click={() => handleSort('date')} class="sort-button">
 									Date
 									{#if sortColumn === 'date'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
@@ -240,67 +97,56 @@
 								</button>
 							</th>
 							<th>
-								<button on:click={() => sortData('dailyThroughput')} class="sort-button">
-									Daily Throughput (units)
+								<button on:click={() => handleSort('dailyThroughput')} class="sort-button">
+									Daily Throughput
 									{#if sortColumn === 'dailyThroughput'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
 							</th>
 							<th>
-								<button on:click={() => sortData('unitsPerDriveHour')} class="sort-button">
-									units/Drive Hour
+								<button on:click={() => handleSort('unitsPerDriveHour')} class="sort-button">
+									Units/Hour
 									{#if sortColumn === 'unitsPerDriveHour'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
 							</th>
 							<th>
-								<button on:click={() => sortData('activeTrucksPercent')} class="sort-button">
-									% Active Trucks
+								<button on:click={() => handleSort('activeTrucksPercent')} class="sort-button">
+									Active Trucks
 									{#if sortColumn === 'activeTrucksPercent'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
 							</th>
 							<th>
-								<button on:click={() => sortData('driversEnRoutePercent')} class="sort-button">
-									% Drivers En Route
-									{#if sortColumn === 'driversEnRoutePercent'}
-										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
-									{/if}
-								</button>
-							</th>
-							<th>
-								<button on:click={() => sortData('loadEfficiencyIndex')} class="sort-button">
-									Load Efficiency Index
+								<button on:click={() => handleSort('loadEfficiencyIndex')} class="sort-button">
+									Efficiency
 									{#if sortColumn === 'loadEfficiencyIndex'}
 										{#if sortDirection === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
 									{/if}
 								</button>
 							</th>
 							<th>Trend</th>
-							<th>Operational Notes</th>
+							<th>Notes</th>
 						</tr>
 					</thead>
 					<tbody>
-						{#each yardAnalytics as row}
+						{#each sortedData as row}
 							<tr>
 								<td class="date-cell">{formatDate(row.date)}</td>
 								<td class="metric-cell {getPerformanceColor(row.dailyThroughput, 'throughput')}">
-									{row.dailyThroughput.toLocaleString()}
+									{formatNumber(row.dailyThroughput)}
 								</td>
 								<td class="metric-cell {getPerformanceColor(row.unitsPerDriveHour, 'unitsPerHour')}">
-									{row.unitsPerDriveHour}
+									{formatDecimal(row.unitsPerDriveHour)}
 								</td>
 								<td class="metric-cell {getPerformanceColor(row.activeTrucksPercent, 'activeTrucks')}">
-									{row.activeTrucksPercent}%
-								</td>
-								<td class="metric-cell {getPerformanceColor(row.driversEnRoutePercent, 'driversEnRoute')}">
-									{row.driversEnRoutePercent}%
+									{formatPercentage(row.activeTrucksPercent)}
 								</td>
 								<td class="metric-cell {getPerformanceColor(row.loadEfficiencyIndex, 'loadEfficiency')}">
-									{row.loadEfficiencyIndex}
+									{formatDecimal(row.loadEfficiencyIndex)}
 								</td>
 								<td class="trend-cell">
 									<div class="trend-container {getTrendColor(row.trend)}">
@@ -322,10 +168,10 @@
 			<!-- Footer Insights -->
 			<div class="footer-insights">
 				<div class="insight-stat">
-					<strong>Average Performance:</strong> 2,701 units/day | 174.2 units/hr | 73.5% utilization
+					<strong>Average Performance:</strong> {averages?.averageThroughput} units/day | {averages?.averageUnitsPerHour} units/hr | {averages?.averageActiveTrucks}% utilization
 				</div>
 				<div class="insight-stat">
-					<strong>External Factors:</strong> 2 days impacted by factors outside yard control (weather, customer maintenance)
+					<strong>External Factors:</strong> {externalFactorDays} days impacted by factors outside yard control
 				</div>
 			</div>
 		</div>
@@ -372,7 +218,6 @@
 		font-weight: 700;
 		color: #1e293b;
 		margin: 0 0 8px 0;
-		font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
 	}
 
 	.header-content p {
@@ -476,10 +321,6 @@
 		font-size: 14px;
 	}
 
-	.sort-button:hover {
-		color: #475569;
-	}
-
 	.analytics-table td {
 		padding: 16px 12px;
 		border-bottom: 1px solid #f1f5f9;
@@ -500,23 +341,20 @@
 	}
 
 	.trend-cell {
-		padding: 16px 12px;
+		text-align: center;
 	}
 
 	.trend-container {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-	}
-
-	.sparkline-container {
-		opacity: 0.7;
+		justify-content: center;
 	}
 
 	.notes-cell {
-		font-style: italic;
-		color: #6b7280;
 		max-width: 200px;
+		font-size: 13px;
+		line-height: 1.4;
 	}
 
 	.footer-insights {
@@ -528,53 +366,6 @@
 	.insight-stat {
 		margin-bottom: 8px;
 		font-size: 14px;
-		color: #374151;
-	}
-
-	.insight-stat:last-child {
-		margin-bottom: 0;
-	}
-
-	/* Mobile responsiveness */
-	@media (max-width: 768px) {
-		.analytics-container {
-			max-width: 100vw;
-			max-height: 100vh;
-			border-radius: 0;
-		}
-
-		.analytics-header {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 16px;
-			padding: 20px;
-		}
-
-		.header-controls {
-			width: 100%;
-			justify-content: space-between;
-		}
-
-		.key-insights {
-			grid-template-columns: 1fr;
-			padding: 20px;
-		}
-
-		.table-container {
-			padding: 0 20px;
-		}
-
-		.analytics-table {
-			font-size: 12px;
-		}
-
-		.analytics-table th,
-		.analytics-table td {
-			padding: 12px 8px;
-		}
-
-		.footer-insights {
-			padding: 20px;
-		}
+		color: #475569;
 	}
 </style> 

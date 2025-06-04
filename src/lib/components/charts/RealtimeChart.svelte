@@ -2,40 +2,101 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 	import Chart from '$lib/components/charts/Chart.svelte';
-
-	export let title: string = 'Real-time Data';
-	export let color: string = '#004E89';
-	export let height: number = 200;
-	export let unit: string = '';
-	export let animated: boolean = true;
-	export let showGrid: boolean = true;
-	export let maxDataPoints: number = 20;
-	export let updateInterval: number = 4000; // milliseconds
 	
-	// External positioning controls
-	export let paddingLeft: number = 15;
-	export let paddingRight: number = 15;
-	export let paddingTop: number = 15;
-	export let paddingBottom: number = 50;
+	// Modular component imports
+	import ChartHeader from './components/ChartHeader.svelte';
+	import ChartLoadingState from './components/ChartLoadingState.svelte';
+	
+	// Utility imports
+	import { 
+		generateRealisticData,
+		generateNewDataPoint,
+		updateDataArrays,
+		createChartData,
+		type ChartData
+	} from './utils/realtime-chart-data';
+	import {
+		createChartOptions,
+		getResponsivePadding,
+		DEFAULT_PADDING,
+		type ChartPadding,
+		type ChartOptions
+	} from './utils/realtime-chart-config';
+	import {
+		createAutoCleanupUpdateManager,
+		LiveUpdateState,
+		DEFAULT_UPDATE_INTERVAL
+	} from './utils/realtime-chart-updates';
 
-	let chartData: any = null;
-	let chartOptions: any = null;
+	// ================================
+	// Props
+	// ================================
+
+	interface Props {
+		title?: string;
+		color?: string;
+		height?: number;
+		unit?: string;
+		animated?: boolean;
+		showGrid?: boolean;
+		maxDataPoints?: number;
+		updateInterval?: number;
+		paddingLeft?: number;
+		paddingRight?: number;
+		paddingTop?: number;
+		paddingBottom?: number;
+	}
+
+	let { 
+		title = 'Real-time Data',
+		color = '#004E89',
+		height = 200,
+		unit = '',
+		animated = true,
+		showGrid = true,
+		maxDataPoints = 20,
+		updateInterval = DEFAULT_UPDATE_INTERVAL,
+		paddingLeft = DEFAULT_PADDING.left,
+		paddingRight = DEFAULT_PADDING.right,
+		paddingTop = DEFAULT_PADDING.top,
+		paddingBottom = DEFAULT_PADDING.bottom
+	}: Props = $props();
+
+	// ================================
+	// State Management
+	// ================================
+
+	let chartData: ChartData | null = null;
+	let chartOptions: ChartOptions | null = null;
 	let dataPoints: number[] = [];
 	let labels: string[] = [];
-	let updateTimer: number;
-	let isLive = false;
+	let screenWidth = 1024; // SSR-safe default
+	let liveState = new LiveUpdateState();
 
-	// Responsive settings with SSR-safe defaults
-	let screenWidth = 1024; // Default fallback for SSR
+	// Reactive padding calculation
+	const padding = $derived<ChartPadding>({
+		left: paddingLeft,
+		right: paddingRight,
+		top: paddingTop,
+		bottom: paddingBottom
+	});
+
+	const responsivePadding = $derived(
+		browser ? getResponsivePadding(screenWidth, padding) : padding
+	);
+
+	// ================================
+	// Lifecycle Management
+	// ================================
 
 	onMount(() => {
 		if (browser) {
 			screenWidth = window.innerWidth;
 			
-			// Update screen width on resize
+			// Handle window resize
 			const handleResize = () => {
 				screenWidth = window.innerWidth;
-				chartOptions = createChartOptions(); // Recreate options with new screen width
+				updateChartOptions();
 			};
 			window.addEventListener('resize', handleResize);
 			
@@ -48,242 +109,87 @@
 		}
 	});
 
-	onDestroy(() => {
-		if (updateTimer) {
-			clearInterval(updateTimer);
-		}
-	});
+	// ================================
+	// Chart Management
+	// ================================
 
 	function initializeChart() {
 		// Generate initial data
-		generateRealisticData();
+		const initialData = generateRealisticData(title, maxDataPoints, updateInterval);
+		dataPoints = initialData.dataPoints;
+		labels = initialData.labels;
 		
-		// Create chart options
-		chartOptions = createChartOptions();
-		
-		// Setup chart data
-		setupChartData();
+		// Setup chart
+		updateChartOptions();
+		updateChartData();
 		
 		// Start live updates
 		startLiveUpdates();
 	}
 
-	function generateRealisticData() {
-		// Clear existing data
-		dataPoints = [];
-		labels = [];
-		
-		// Generate realistic logistics data based on chart title
-		const baseValue = getBaseValueFromTitle(title);
-		const variance = baseValue * 0.1; // 10% variance
-		
-		// Initialize with historical data points
-		for (let i = 0; i < maxDataPoints; i++) {
-			const timestamp = new Date(Date.now() - (maxDataPoints - i) * updateInterval);
-			const value = baseValue + (Math.random() - 0.5) * variance;
-			
-			dataPoints.push(Math.max(0, value));
-			labels.push(timestamp.toLocaleTimeString([], { 
-				hour: '2-digit', 
-				minute: '2-digit',
-				second: '2-digit'
-			}));
-		}
+	function updateChartOptions() {
+		chartOptions = createChartOptions(
+			color,
+			unit,
+			showGrid,
+			animated,
+			screenWidth,
+			responsivePadding
+		);
 	}
 
-	function getBaseValueFromTitle(title: string): number {
-		const titleLower = title.toLowerCase();
-		
-		// Return realistic values based on common logistics metrics
-		if (titleLower.includes('temperature')) return 85; // °F
-		if (titleLower.includes('pressure')) return 120; // PSI
-		if (titleLower.includes('flow')) return 450; // rate
-		if (titleLower.includes('volume')) return 2500; // units
-		if (titleLower.includes('h2s') || titleLower.includes('safety')) return 0.5; // PPM
-		if (titleLower.includes('network') || titleLower.includes('health')) return 97; // %
-		if (titleLower.includes('efficiency')) return 94; // %
-		
-		return 75; // Default fallback
-	}
-
-	function setupChartData() {
-		chartData = {
-			labels: labels,
-			datasets: [{
-				label: title,
-				data: dataPoints,
-				borderColor: color,
-				backgroundColor: `${color}20`,
-				borderWidth: 2,
-				fill: true,
-				tension: 0.4,
-				pointRadius: 0,
-				pointHoverRadius: 4,
-				pointHoverBackgroundColor: color,
-				pointHoverBorderColor: '#ffffff',
-				pointHoverBorderWidth: 2
-			}]
-		};
-	}
-
-	function startLiveUpdates() {
-		if (!browser) return;
-		
-		isLive = true;
-		updateTimer = setInterval(() => {
-			addNewDataPoint();
-			setupChartData();
-		}, updateInterval);
+	function updateChartData() {
+		chartData = createChartData(title, dataPoints, labels, color);
 	}
 
 	function addNewDataPoint() {
-		const baseValue = getBaseValueFromTitle(title);
-		const variance = baseValue * 0.08; // Slightly smaller variance for more realistic data
+		const lastValue = dataPoints[dataPoints.length - 1];
+		const newPoint = generateNewDataPoint(title, lastValue);
 		
-		// Add some trending behavior
-		const lastValue = dataPoints[dataPoints.length - 1] || baseValue;
-		const trend = (Math.random() - 0.5) * 0.3; // Small trend component
-		const noise = (Math.random() - 0.5) * variance; // Random noise
+		const updated = updateDataArrays(
+			dataPoints,
+			labels,
+			newPoint.value,
+			newPoint.timestamp,
+			maxDataPoints
+		);
 		
-		const newValue = Math.max(0, lastValue + trend + noise);
-		const newTimestamp = new Date().toLocaleTimeString([], { 
-			hour: '2-digit', 
-			minute: '2-digit',
-			second: '2-digit'
-		});
+		dataPoints = updated.dataPoints;
+		labels = updated.labels;
 		
-		// Add new point and remove old one if we're at max capacity
-		dataPoints.push(newValue);
-		labels.push(newTimestamp);
-		
-		if (dataPoints.length > maxDataPoints) {
-			dataPoints.shift();
-			labels.shift();
-		}
+		updateChartData();
+		liveState.recordUpdate();
 	}
 
-	function createChartOptions() {
-		return {
-			responsive: true,
-			maintainAspectRatio: false,
-			layout: {
-				padding: {
-					left: paddingLeft,
-					right: paddingRight,
-					top: paddingTop,
-					bottom: paddingBottom
-				}
-			},
-			plugins: {
-				legend: {
-					display: false
-				},
-				tooltip: {
-					mode: 'index',
-					intersect: false,
-					backgroundColor: 'rgba(0, 0, 0, 0.8)',
-					titleColor: '#ffffff',
-					bodyColor: '#ffffff',
-					borderColor: color,
-					borderWidth: 1,
-					cornerRadius: 8,
-					displayColors: false,
-					callbacks: {
-						label: function(context: any) {
-							return `${context.parsed.y.toFixed(1)}${unit}`;
-						}
-					}
-				}
-			},
-			scales: {
-				x: {
-					display: true, // Force display
-					position: 'bottom',
-					grid: {
-						display: showGrid,
-						color: 'rgba(0, 0, 0, 0.1)',
-						lineWidth: 1
-					},
-					ticks: {
-						display: true, // Force display
-						maxTicksLimit: screenWidth > 768 ? 5 : 3,
-						color: '#374151',
-						font: {
-							size: 12,
-							weight: 500,
-							family: 'SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif'
-						},
-						padding: 10, // More padding
-						maxRotation: 0,
-						minRotation: 0
-					},
-					border: {
-						display: true,
-						color: '#d1d5db'
-					}
-				},
-				y: {
-					display: showGrid,
-					position: 'left',
-					grid: {
-						display: showGrid,
-						color: 'rgba(0, 0, 0, 0.1)',
-						lineWidth: 1
-					},
-					ticks: {
-						display: true,
-						maxTicksLimit: 5,
-						color: '#374151',
-						font: {
-							size: 12,
-							weight: 500,
-							family: 'SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif'
-						},
-						callback: function(value: any) {
-							return `${value}${unit}`;
-						},
-						padding: 10
-					},
-					border: {
-						display: true,
-						color: '#d1d5db'
-					}
-				}
-			},
-			interaction: {
-				intersect: false,
-				mode: 'index'
-			},
-			animation: animated ? {
-				duration: 750,
-				easing: 'easeInOutQuart'
-			} : false,
-			elements: {
-				line: {
-					tension: 0.4
-				},
-				point: {
-					radius: 0,
-					hoverRadius: 4
-				}
-			}
-		};
+	// ================================
+	// Live Updates
+	// ================================
+
+	const updateManager = createAutoCleanupUpdateManager(
+		addNewDataPoint,
+		updateInterval,
+		onDestroy
+	);
+
+	function startLiveUpdates() {
+		liveState.start();
+		updateManager.start();
 	}
+
+	// Update interval reactively
+	$effect(() => {
+		updateManager.setInterval(updateInterval);
+	});
 </script>
 
 <div class="realtime-chart-container" style="height: {height}px;">
-	<div class="chart-header">
-		<div class="chart-title-container">
-			<h3 class="chart-title">{title}</h3>
-			{#if isLive}
-				<div class="live-indicator">
-					<div class="live-dot"></div>
-					<span class="live-text">LIVE</span>
-				</div>
-			{/if}
-		</div>
-	</div>
+	<!-- Modular Header Component -->
+	<ChartHeader 
+		{title}
+		isLive={liveState.isLive}
+	/>
 	
+	<!-- Chart Content -->
 	<div class="chart-wrapper">
 		{#if chartData && chartOptions}
 			<Chart 
@@ -293,10 +199,8 @@
 				height={Math.max(height - 80, 320)}
 			/>
 		{:else}
-			<div class="chart-pickup">
-				<div class="pickup-spinner"></div>
-				<span>Loading chart data...</span>
-			</div>
+			<!-- Modular Loading Component -->
+			<ChartLoadingState />
 		{/if}
 	</div>
 </div>
@@ -324,104 +228,17 @@
 			inset 0 1px 0 rgba(255, 255, 255, 0.9);
 	}
 
-	.chart-header {
-		margin-bottom: 12px;
-	}
-
-	.chart-title-container {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-	}
-
-	.chart-title {
-		font-size: 16px;
-		font-weight: 600;
-		color: #ffffff;
-		margin: 0;
-		line-height: 1.2;
-	}
-
-	.live-indicator {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		padding: 4px 8px;
-		background: rgba(16, 185, 129, 0.1);
-		border: 1px solid rgba(16, 185, 129, 0.2);
-		border-radius: 12px;
-	}
-
-	.live-dot {
-		width: 6px;
-		height: 6px;
-		background: #10b981;
-		border-radius: 50%;
-		animation: livePulse 2s infinite;
-	}
-
-	@keyframes livePulse {
-		0%, 100% {
-			opacity: 1;
-			transform: scale(1);
-		}
-		50% {
-			opacity: 0.5;
-			transform: scale(1.2);
-		}
-	}
-
-	.live-text {
-		font-size: 10px;
-		font-weight: 600;
-		color: #10b981;
-		letter-spacing: 0.5px;
-	}
-
 	.chart-wrapper {
-		height: calc(100% - 45px); /* More space for chart */
+		height: calc(100% - 45px);
 		position: relative;
-		min-height: 450px; /* Increased from 420px to match safety modal container */
-		overflow: visible; /* Ensure labels aren't clipped */
-	}
-
-	.chart-pickup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		color: #6b7280;
-		gap: 12px;
-	}
-
-	.pickup-spinner {
-		width: 24px;
-		height: 24px;
-		border: 2px solid #e5e7eb;
-		border-top: 2px solid #7CB342;
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-	}
-
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		min-height: 450px;
+		overflow: visible;
 	}
 
 	/* Mobile responsiveness */
 	@media (max-width: 768px) {
 		.realtime-chart-container {
 			padding: 16px;
-		}
-
-		.chart-title {
-			font-size: 14px;
-		}
-
-		.live-text {
-			font-size: 9px;
 		}
 	}
 
@@ -431,56 +248,5 @@
 			background: rgba(30, 30, 30, 0.95);
 			border-color: rgba(255, 255, 255, 0.1);
 		}
-
-		.chart-title {
-			color: #f3f4f6;
-		}
-
-		.chart-pickup {
-			color: #9ca3af;
-		}
-	}
-
-	/* Debug positioning controls */
-	.debug-controls {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.position-controls {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-	}
-
-	.horizontal-controls {
-		display: flex;
-		gap: 4px;
-	}
-
-	.pos-btn {
-		width: 24px;
-		height: 24px;
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 4px;
-		color: #ffffff;
-		font-size: 12px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.pos-btn:hover {
-		background: rgba(255, 255, 255, 0.2);
-		transform: scale(1.1);
-	}
-
-	.padding-display {
-		font-size: 10px;
-		color: rgba(255, 255, 255, 0.7);
-		font-family: monospace;
 	}
 </style> 

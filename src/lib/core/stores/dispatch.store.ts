@@ -1,5 +1,9 @@
 /**
- * DataTracker Platform - Dispatch Store
+ * DataTracker Platform - Dispatch Store (Modular)
+ * 
+ * This file has been refactored into modular components for better maintainability:
+ * - Types: ./types/dispatch.types.ts
+ * - Actions: ./actions/dispatch.actions.ts
  * 
  * State management for dispatch operations including fleet oversight,
  * route planning, and real-time job coordination.
@@ -7,203 +11,23 @@
 
 import { writable, derived, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import type { BaseEntity, GeoLocation } from '../types/common.types';
 
-// ================================
-// Dispatch Domain Types
-// ================================
-
-export interface DispatchState {
-  activeJobs: Job[];
-  availableDrivers: Driver[];
-  availableTrucks: Truck[];
-  fleetStatus: FleetStatus;
-  routeAssignments: RouteAssignment[];
-  alerts: DispatchAlert[];
-  isLoading: boolean;
-}
-
-export interface Job extends BaseEntity {
-  truckId: string;
-  driverId: string;
-  origin: Location;
-  destination: Location;
-  status: JobStatus;
-  priority: JobPriority;
-  estimatedDuration: number; // minutes
-  actualDuration?: number; // minutes
-  currentLocation?: GeoLocation;
-  progress: number; // 0-100%
-  cargo: CargoInfo;
-  telemetry: TelemetrySnapshot;
-}
-
-export type JobStatus = 
-  | 'pending'
-  | 'assigned'
-  | 'en_route_pickup'
-  | 'pickup'
-  | 'en_route_delivery'
-  | 'offpickup'
-  | 'completed'
-  | 'cancelled';
-
-export type JobPriority = 'low' | 'normal' | 'high' | 'urgent';
-
-export interface CargoInfo {
-  type: CargoType;
-  volume: number; // gallons/units
-  temperature: number; // fahrenheit
-  pressure: number; // PSI
-  hazmatClass?: string;
-}
-
-export type CargoType = 'liquid_product' | 'processed_product' | 'natural_gas' | 'water' | 'chemicals';
-
-export interface Location extends BaseEntity {
-  name: string;
-  address: string;
-  coordinates: GeoLocation;
-  type: 'pickup' | 'delivery' | 'staging';
-  operationalStatus: 'active' | 'maintenance' | 'offline';
-}
-
-export interface Driver extends BaseEntity {
-  employeeId: string;
-  firstName: string;
-  lastName: string;
-  status: DriverStatus;
-  currentLocation?: GeoLocation;
-  assignedTruckId?: string;
-  certifications: Certification[];
-  performanceRating: number; // 1-5
-  hoursWorked: number; // current shift
-  maxHours: number; // DOT limits
-}
-
-export type DriverStatus = 
-  | 'available'
-  | 'on_duty'
-  | 'driving'
-  | 'pickup'
-  | 'unpickup'
-  | 'break'
-  | 'off_duty'
-  | 'unavailable';
-
-export interface Certification {
-  type: CertificationType;
-  number: string;
-  expirationDate: Date;
-  isValid: boolean;
-}
-
-export type CertificationType = 'cdl' | 'hazmat' | 'dot_medical' | 'safety_training';
-
-export interface Truck extends BaseEntity {
-  fleetNumber: string;
-  licensePlate: string;
-  make: string;
-  model: string;
-  year: number;
-  capacity: number; // gallons
-  status: TruckStatus;
-  currentLocation?: GeoLocation;
-  assignedDriverId?: string;
-  maintenanceStatus: MaintenanceStatus;
-  fuelLevel: number; // percentage
-  mileage: number;
-}
-
-export type TruckStatus = 
-  | 'available'
-  | 'in_use'
-  | 'pickup'
-  | 'unpickup'
-  | 'maintenance'
-  | 'out_of_service';
-
-export interface MaintenanceStatus {
-  lastInspection: Date;
-  nextInspection: Date;
-  issuesCount: number;
-  isOverdue: boolean;
-}
-
-export interface FleetStatus {
-  totalTrucks: number;
-  availableTrucks: number;
-  trucksInUse: number;
-  trucksInMaintenance: number;
-  totalDrivers: number;
-  availableDrivers: number;
-  driversOnDuty: number;
-  activeJobs: number;
-  completedToday: number;
-  averageUtilization: number; // percentage
-}
-
-export interface RouteAssignment extends BaseEntity {
-  jobId: string;
-  driverId: string;
-  truckId: string;
-  plannedRoute: RoutePoint[];
-  estimatedDistance: number; // miles
-  estimatedTime: number; // minutes
-  actualRoute?: RoutePoint[];
-  deviations: RouteDeviation[];
-}
-
-export interface RoutePoint {
-  coordinates: GeoLocation;
-  timestamp: Date;
-  speed?: number; // mph
-  heading?: number; // degrees
-}
-
-export interface RouteDeviation {
-  timestamp: Date;
-  reason: string;
-  impact: 'minor' | 'moderate' | 'major';
-  delayMinutes: number;
-}
-
-export interface DispatchAlert extends BaseEntity {
-  type: AlertType;
-  severity: AlertSeverity;
-  title: string;
-  description: string;
-  jobId?: string;
-  driverId?: string;
-  truckId?: string;
-  isRead: boolean;
-  isResolved: boolean;
-  resolvedBy?: string;
-  resolvedAt?: Date;
-}
-
-export type AlertType = 
-  | 'route_deviation'
-  | 'delay'
-  | 'mechanical_issue'
-  | 'safety_violation'
-  | 'fuel_low'
-  | 'driver_overtime'
-  | 'maintenance_due'
-  | 'weather_warning';
-
-export type AlertSeverity = 'info' | 'warning' | 'critical';
-
-export interface TelemetrySnapshot {
-  timestamp: Date;
-  speed: number; // mph
-  fuelLevel: number; // percentage
-  engineTemp: number; // fahrenheit
-  fluidPressure: number; // PSI
-  cargoTemp: number; // fahrenheit
-  cargoPressure: number; // PSI
-  location: GeoLocation;
-}
+// Module imports
+import type { 
+  DispatchState,
+  JobStatus,
+  DispatchAlert
+} from './types/dispatch.types';
+import { 
+  loadDispatchData,
+  assignJobAction,
+  updateJobStatusAction,
+  addAlertAction,
+  resolveAlertAction,
+  setLoadingAction,
+  resetDispatchStateAction,
+  validateJobAssignment
+} from './actions/dispatch.actions';
 
 // ================================
 // Store Implementation
@@ -275,27 +99,25 @@ export const overdueJobs = derived(
 );
 
 // ================================
-// Actions
+// Public API Functions
 // ================================
 
 /**
  * Load dispatch data from API
  */
-export async function loadDispatchData(): Promise<void> {
-  dispatchState.update(state => ({ ...state, isLoading: true }));
+export async function loadDispatchDataStore(): Promise<void> {
+  dispatchState.update(state => setLoadingAction(state, true));
   
   try {
-    // TODO: Replace with actual API calls
-    const mockData = await loadMockDispatchData();
+    const data = await loadDispatchData();
     
     dispatchState.update(state => ({
-      ...state,
-      ...mockData,
-      isLoading: false
+      ...setLoadingAction(state, false),
+      ...data
     }));
   } catch (error) {
     console.error('Failed to load dispatch data:', error);
-    dispatchState.update(state => ({ ...state, isLoading: false }));
+    dispatchState.update(state => setLoadingAction(state, false));
   }
 }
 
@@ -308,37 +130,13 @@ export function assignJob(
   truckId: string
 ): void {
   dispatchState.update(state => {
-    const jobIndex = state.activeJobs.findIndex(h => h.id === jobId);
-    if (jobIndex >= 0) {
-      state.activeJobs[jobIndex] = {
-        ...state.activeJobs[jobIndex],
-        driverId,
-        truckId,
-        status: 'assigned'
-      };
+    const validation = validateJobAssignment(state, jobId, driverId, truckId);
+    if (!validation.isValid) {
+      console.error('Job assignment validation failed:', validation.errors);
+      return state;
     }
     
-    // Update driver status
-    const driverIndex = state.availableDrivers.findIndex(d => d.id === driverId);
-    if (driverIndex >= 0) {
-      state.availableDrivers[driverIndex] = {
-        ...state.availableDrivers[driverIndex],
-        status: 'on_duty',
-        assignedTruckId: truckId
-      };
-    }
-    
-    // Update truck status
-    const truckIndex = state.availableTrucks.findIndex(t => t.id === truckId);
-    if (truckIndex >= 0) {
-      state.availableTrucks[truckIndex] = {
-        ...state.availableTrucks[truckIndex],
-        status: 'in_use',
-        assignedDriverId: driverId
-      };
-    }
-    
-    return state;
+    return assignJobAction(state, jobId, driverId, truckId);
   });
 }
 
@@ -346,133 +144,113 @@ export function assignJob(
  * Update job status
  */
 export function updateJobStatus(jobId: string, status: JobStatus): void {
-  dispatchState.update(state => {
-    const jobIndex = state.activeJobs.findIndex(h => h.id === jobId);
-    if (jobIndex >= 0) {
-      state.activeJobs[jobIndex] = {
-        ...state.activeJobs[jobIndex],
-        status,
-        updatedAt: new Date()
-      };
-    }
-    return state;
-  });
+  dispatchState.update(state => updateJobStatusAction(state, jobId, status));
 }
 
 /**
  * Add new alert
  */
 export function addAlert(alert: Omit<DispatchAlert, 'id' | 'createdAt' | 'updatedAt' | 'organizationId'>): void {
-  dispatchState.update(state => {
-    const newAlert: DispatchAlert = {
-      ...alert,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      organizationId: 'default' // TODO: Get from auth context
-    };
-    
-    state.alerts.unshift(newAlert);
-    return state;
-  });
+  dispatchState.update(state => addAlertAction(state, alert));
 }
 
 /**
  * Mark alert as resolved
  */
 export function resolveAlert(alertId: string, resolvedBy: string): void {
-  dispatchState.update(state => {
-    const alertIndex = state.alerts.findIndex(a => a.id === alertId);
-    if (alertIndex >= 0) {
-      state.alerts[alertIndex] = {
-        ...state.alerts[alertIndex],
-        isResolved: true,
-        resolvedBy,
-        resolvedAt: new Date(),
-        updatedAt: new Date()
-      };
-    }
-    return state;
-  });
+  dispatchState.update(state => resolveAlertAction(state, alertId, resolvedBy));
+}
+
+/**
+ * Reset dispatch state
+ */
+export function resetDispatchState(): void {
+  dispatchState.set(resetDispatchStateAction());
 }
 
 // ================================
-// Mock Data (Temporary)
+// Type Re-exports for Compatibility
 // ================================
 
-async function loadMockDispatchData(): Promise<Partial<DispatchState>> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return {
-    activeJobs: [
-      {
-        id: 'job-001',
-        truckId: 'truck-001',
-        driverId: 'driver-001',
-        origin: {
-          id: 'loc-001',
-          name: 'Permian Basin Terminal',
-          address: '123 Logistics Rd, Midland, TX',
-          coordinates: { lat: 31.8457, lng: -102.3676 },
-          type: 'pickup',
-          operationalStatus: 'active',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          organizationId: 'default'
-        },
-        destination: {
-          id: 'loc-002',
-          name: 'Houston Processing Facility',
-          address: '456 Processing Facility Ave, Houston, TX',
-          coordinates: { lat: 29.7604, lng: -95.3698 },
-          type: 'delivery',
-          operationalStatus: 'active',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          organizationId: 'default'
-        },
-        status: 'en_route_delivery',
-        priority: 'normal',
-        estimatedDuration: 240,
-        progress: 67,
-        cargo: {
-          type: 'liquid_product',
-          volume: 8000,
-          temperature: 76,
-          pressure: 145
-        },
-        telemetry: {
-          timestamp: new Date(),
-          speed: 65,
-          fuelLevel: 78,
-          engineTemp: 195,
-          fluidPressure: 35,
-          cargoTemp: 76,
-          cargoPressure: 145,
-          location: { lat: 30.5, lng: -99.2 }
-        },
-        createdAt: new Date(Date.now() - 3600000), // 1 hour ago
-        updatedAt: new Date(),
-        organizationId: 'default'
-      }
-    ],
-    fleetStatus: {
-      totalTrucks: 12,
-      availableTrucks: 8,
-      trucksInUse: 3,
-      trucksInMaintenance: 1,
-      totalDrivers: 15,
-      availableDrivers: 10,
-      driversOnDuty: 5,
-      activeJobs: 3,
-      completedToday: 8,
-      averageUtilization: 72.5
-    }
-  };
-}
+export type {
+  DispatchState,
+  Job,
+  JobStatus,
+  JobPriority,
+  Driver,
+  DriverStatus,
+  Truck,
+  TruckStatus,
+  FleetStatus,
+  DispatchAlert,
+  AlertType,
+  AlertSeverity,
+  CargoInfo,
+  CargoType,
+  Location,
+  RouteAssignment,
+  RoutePoint,
+  RouteDeviation,
+  TelemetrySnapshot,
+  Certification,
+  CertificationType,
+  MaintenanceStatus
+} from './types/dispatch.types';
+
+// ================================
+// Auto-initialization
+// ================================
 
 // Auto-initialize if in browser
 if (browser) {
-  loadDispatchData();
-} 
+  loadDispatchDataStore();
+}
+
+// Mock dispatch data with anonymized information
+const MOCK_DRIVERS = [
+	{
+		id: 'D001',
+		name: 'Driver Alpha-1',
+		status: 'available',
+		location: 'Metro Hub Alpha',
+		hoursRemaining: 8.5,
+		currentTruck: 'FL-001'
+	},
+	{
+		id: 'D002', 
+		name: 'Driver Alpha-2',
+		status: 'busy',
+		location: 'Processing Terminal Beta',
+		hoursRemaining: 6.2,
+		currentTruck: 'FL-002'
+	},
+	{
+		id: 'D003',
+		name: 'Driver Beta-1', 
+		status: 'available',
+		location: 'Metro Hub Beta',
+		hoursRemaining: 4.8,
+		currentTruck: 'FL-003'
+	}
+];
+
+const MOCK_ROUTES = [
+	{
+		id: 'R001',
+		driver: 'Driver Alpha-1',
+		truck: 'FL-001',
+		origin: 'Production Site Alpha',
+		destination: 'Processing Terminal Beta',
+		status: 'in-progress',
+		eta: '14:30'
+	},
+	{
+		id: 'R002',
+		driver: 'Driver Beta-1', 
+		truck: 'FL-003',
+		origin: 'Collection Hub Gamma',
+		destination: 'Distribution Center Delta',
+		status: 'scheduled',
+		eta: '16:45'
+	}
+]; 

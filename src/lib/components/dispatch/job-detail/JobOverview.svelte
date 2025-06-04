@@ -141,7 +141,7 @@
 					
 					<div class="jobs-grid">
 						{#each jobs.slice(0, 6) as job (job.id)}
-							<DemoJobCard {job} />
+							<DemoJobCard job={job as any} />
 						{/each}
 					</div>
 					
@@ -260,7 +260,7 @@
 	}
 
 	.status-header {
-		@apply flex items-center gap-2 text-md font-medium text-gray-700 dark:text-gray-300;
+		@apply flex items-center gap-2 text-base font-medium text-gray-700 dark:text-gray-300;
 	}
 
 	.job-count {

@@ -69,25 +69,17 @@
           </button>
         </th>
         <th>
-          <button on:click={() => handleSort('totalBPD')} class="sort-button">
-            Total BPD
-            {#if sortState.column === 'totalBPD'}
+          <button on:click={() => handleSort('dailyUnits')} class="sort-button">
+            Daily Units
+            {#if sortState.column === 'dailyUnits'}
               {#if sortState.direction === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
             {/if}
           </button>
         </th>
         <th>
-          <button on:click={() => handleSort('avgDriveTime')} class="sort-button">
-            Avg Drive Time
-            {#if sortState.column === 'avgDriveTime'}
-              {#if sortState.direction === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
-            {/if}
-          </button>
-        </th>
-        <th>
-          <button on:click={() => handleSort('unitsPerHour')} class="sort-button">
-            Units per Hour
-            {#if sortState.column === 'unitsPerHour'}
+          <button on:click={() => handleSort('utilizationRate')} class="sort-button">
+            Utilization
+            {#if sortState.column === 'utilizationRate'}
               {#if sortState.direction === 'asc'}<ChevronUp size={16} />{:else}<ChevronDown size={16} />{/if}
             {/if}
           </button>
@@ -116,14 +108,11 @@
             {yard.activeTrucks}
           </td>
           <td class="metric-cell">{yard.driversAssigned}</td>
-          <td class="metric-cell {getPerformanceColor(yard.totalBPD, 'bpd')}">
-            {yard.totalBPD.toLocaleString()}
+          <td class="metric-cell {getPerformanceColor(yard.dailyUnits, 'dailyUnits')}">
+            {yard.dailyUnits.toLocaleString()}
           </td>
-          <td class="metric-cell">
-            {yard.avgDriveTime}h
-          </td>
-          <td class="metric-cell {getPerformanceColor(yard.unitsPerHour, 'bph')}">
-            {yard.unitsPerHour}
+          <td class="metric-cell {getPerformanceColor(yard.utilizationRate, 'utilization')}">
+            {yard.utilizationRate}%
           </td>
           <td class="status-cell">
             <div class="status-container {getStatusInfo(yard.status).bgColor}">

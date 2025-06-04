@@ -58,10 +58,10 @@
       <div class="route-overview">
         <div class="route-card">
           <h3>📍 Pickup Location</h3>
-          <p><strong>Johnson Tank Battery #3</strong></p>
-          <p>2847 County Road 1250, Midland, TX 79701</p>
+          <p><strong>Production Site Alpha</strong></p>
+          <p>123 Industrial Blvd, Metro City, ST 12345</p>
           <p>Tank: #A-15 | Expected Volume: 120 units</p>
-          <p>Contact: (432) 555-0157</p>
+          <p>Contact: (XXX) XXX-3001</p>
         </div>
         
         <div class="route-details">

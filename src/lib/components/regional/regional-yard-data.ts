@@ -2,12 +2,12 @@ import type { YardData } from './regional-yard.types';
 
 export const mockYardComparison: YardData[] = [
   {
-    yardName: 'North Texas Hub',
-    location: 'Dallas, TX',
+    yardName: 'Metro Hub Beta',
+    location: 'Central Region',
     fleetSize: 28,
     activeTrucks: 24,
     driversAssigned: 42,
-    totalBPD: 2847,
+    dailyUnits: 2847,
     avgDriveTime: 3.2,
     unitsPerHour: 185.3,
     utilizationRate: 85.7,
@@ -19,12 +19,12 @@ export const mockYardComparison: YardData[] = [
     sparklineData: [2650, 2720, 2780, 2810, 2847, 2890, 2920]
   },
   {
-    yardName: 'Oklahoma Central',
-    location: 'Oklahoma City, OK',
+    yardName: 'Metro Hub Gamma',
+    location: 'Northern Region',
     fleetSize: 22,
     activeTrucks: 18,
     driversAssigned: 34,
-    totalBPD: 2456,
+    dailyUnits: 2456,
     avgDriveTime: 3.8,
     unitsPerHour: 165.2,
     utilizationRate: 81.8,
@@ -36,12 +36,12 @@ export const mockYardComparison: YardData[] = [
     sparklineData: [2320, 2380, 2420, 2440, 2456, 2470, 2480]
   },
   {
-    yardName: 'Louisiana East',
-    location: 'Baton Rouge, LA',
+    yardName: 'Metro Hub Alpha',
+    location: 'Eastern Region',
     fleetSize: 35,
     activeTrucks: 31,
     driversAssigned: 58,
-    totalBPD: 3124,
+    dailyUnits: 3124,
     avgDriveTime: 2.9,
     unitsPerHour: 198.7,
     utilizationRate: 88.6,
@@ -53,12 +53,12 @@ export const mockYardComparison: YardData[] = [
     sparklineData: [2950, 3020, 3080, 3100, 3124, 3150, 3180]
   },
   {
-    yardName: 'Kansas West',
-    location: 'Wichita, KS',
+    yardName: 'Metro Hub Delta',
+    location: 'Western Region',
     fleetSize: 19,
     activeTrucks: 15,
     driversAssigned: 28,
-    totalBPD: 1987,
+    dailyUnits: 1987,
     avgDriveTime: 4.2,
     unitsPerHour: 142.8,
     utilizationRate: 78.9,
@@ -69,4 +69,52 @@ export const mockYardComparison: YardData[] = [
     notes: 'Needs operational review',
     sparklineData: [2150, 2100, 2050, 2020, 1987, 1960, 1940]
   }
+];
+
+// Regional Yard Analytics - Anonymized Demo Data
+export const REGIONAL_YARDS = [
+	{
+		id: 'alpha-yard',
+		name: 'Metro Hub Alpha',
+		region: 'Central Region',
+		coordinates: { lat: 35.0000, lng: -98.0000 },
+		totalTrucks: 23,
+		activeTrucks: 21,
+		efficiency: 94.2,
+		avgVolumeLoss: 1.8,
+		status: 'excellent',
+		monthlyRevenue: 847000,
+		alerts: []
+	},
+	{
+		id: 'beta-yard',
+		name: 'Metro Hub Beta', 
+		region: 'Northern Region',
+		coordinates: { lat: 36.0000, lng: -96.0000 },
+		totalTrucks: 19,
+		activeTrucks: 17,
+		efficiency: 91.7,
+		avgVolumeLoss: 2.1,
+		status: 'good',
+		monthlyRevenue: 723000,
+		alerts: [
+			{ type: 'efficiency', severity: 'medium', message: 'Efficiency below target' }
+		]
+	},
+	{
+		id: 'gamma-yard',
+		name: 'Metro Hub Gamma',
+		region: 'Southern Region', 
+		coordinates: { lat: 34.0000, lng: -97.0000 },
+		totalTrucks: 15,
+		activeTrucks: 13,
+		efficiency: 88.9,
+		avgVolumeLoss: 2.4,
+		status: 'attention',
+		monthlyRevenue: 634000,
+		alerts: [
+			{ type: 'maintenance', severity: 'high', message: 'Truck FL-205 requires service' },
+			{ type: 'volume_loss', severity: 'medium', message: 'Above average volume loss detected' }
+		]
+	}
 ]; 

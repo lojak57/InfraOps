@@ -6,8 +6,8 @@
 -->
 <script lang="ts">
 	import { MapPin, Truck } from 'lucide-svelte';
-	import { formatTime, formatDuration } from '../utils/job-calculations.js';
-	import type { ScheduledJob, Location } from '../types/job-detail.types.js';
+	import { formatTime, formatDuration } from './utils/job-calculations.js';
+	import type { ScheduledJob, Location } from './types/job-detail.types.js';
 	
 	// Props
 	export let job: ScheduledJob;

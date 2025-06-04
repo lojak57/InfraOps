@@ -4,7 +4,7 @@ export interface YardData {
   fleetSize: number;
   activeTrucks: number;
   driversAssigned: number;
-  totalBPD: number;
+  dailyUnits: number;
   avgDriveTime: number;
   unitsPerHour: number;
   utilizationRate: number;
@@ -16,10 +16,35 @@ export interface YardData {
   sparklineData: number[];
 }
 
+export interface YardAlert {
+  id: string;
+  yardId: string;
+  type: 'maintenance' | 'efficiency' | 'safety' | 'volume_loss';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  timestamp: Date;
+  resolved: boolean;
+}
+
+export interface RegionalYardSummary {
+  totalYards: number;
+  totalTrucks: number;
+  activeTrucks: number;
+  avgEfficiency: number;
+  dailyUnits: number;
+  alerts: YardAlert[];
+}
+
+export interface YardPerformanceRange {
+  min: number;
+  max: number;
+  average: number;
+}
+
 export interface RegionalAverage {
-  totalBPD: number;
+  dailyUnits: number;
   efficiency: number;
-  utilization: number;
+  utilizationRate: number;
   avgDriveTime: number;
 }
 
@@ -36,7 +61,7 @@ export interface SortState {
 
 export type TimeframeOption = 'Last 7 Days' | 'Last 30 Days' | 'Custom';
 
-export type PerformanceMetric = 'efficiency' | 'utilization' | 'bpd' | 'bph';
+export type PerformanceMetric = 'efficiency' | 'utilization' | 'dailyUnits' | 'bph';
 
 export interface RegionalYardComparisonEvents {
   close: void;

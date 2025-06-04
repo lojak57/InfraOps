@@ -26,10 +26,10 @@
 	export let isOpen = false;
 
 	// Current location mock - would come from GPS in production
-	let currentLocation: Location = {
-		lat: 29.7604,
-		lng: -95.3698,
-		address: 'Houston Dispatch Yard'
+	const currentLocation = {
+		lat: 35.0000,
+		lng: -98.0000,
+		address: 'Metro Dispatch Hub'
 	};
 
 	// Reactive calculations

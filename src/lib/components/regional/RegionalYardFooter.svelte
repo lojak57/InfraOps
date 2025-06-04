@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { YardData } from './regional-yard.types';
-  import { getBestPerformer, getImprovementOpportunity } from './regional-yard-utils';
+  import type { YardData } from './regional-yard.types.js';
+  import { getBestPerformer, getImprovementOpportunity } from './regional-yard-utils.js';
 
   export let yardData: YardData[];
 
@@ -8,39 +8,53 @@
   $: improvementOpportunity = getImprovementOpportunity(yardData);
 </script>
 
-<div class="footer-actions">
+<div class="yard-footer">
   {#if bestPerformer}
-    <div class="action-stat">
-      <strong>Best Performer:</strong> {bestPerformer.yardName} ({bestPerformer.efficiency}% efficiency, {bestPerformer.totalBPD.toLocaleString()} BPD)
+    <div class="insight positive">
+      <strong>Best Performer:</strong> {bestPerformer.yardName} ({bestPerformer.efficiency}% efficiency, {bestPerformer.dailyUnits.toLocaleString()} Daily Units)
     </div>
   {/if}
   {#if improvementOpportunity}
-    <div class="action-stat">
-      <strong>Improvement Opportunity:</strong> {improvementOpportunity.yardName} could increase BPD by 15% with operational optimization
+    <div class="insight attention">
+      <strong>Improvement Opportunity:</strong> {improvementOpportunity.yardName} could increase Daily Units by 15% with operational optimization
     </div>
   {/if}
 </div>
 
 <style>
-  .footer-actions {
-    padding: 24px 32px;
+  .yard-footer {
+    padding: 1.5rem;
     background: #f8fafc;
     border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 0.75rem 0.75rem;
   }
 
-  .action-stat {
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #374151;
+  .insight {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
   }
 
-  .action-stat:last-child {
+  .insight:last-child {
     margin-bottom: 0;
+  }
+
+  .insight.positive {
+    background: #dcfce7;
+    color: #166534;
+    border-left: 4px solid #10b981;
+  }
+
+  .insight.attention {
+    background: #fef3c7;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
   }
 
   /* Mobile responsiveness */
   @media (max-width: 768px) {
-    .footer-actions {
+    .yard-footer {
       padding: 20px;
     }
   }

@@ -16,8 +16,8 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
           <div class="pdf-section">
             <h3>Carrier Information</h3>
             <div class="info-grid">
-              <div><strong>Carrier Name:</strong> Apex Oil Transport LLC</div>
-              <div><strong>IFTA Account:</strong> TX-123456789</div>
+              <div><strong>Carrier Name:</strong> Fleet Transport LLC</div>
+              <div><strong>IFTA Account:</strong> ST-123456789</div>
               <div><strong>Report Period:</strong> October 1 - December 31, 2024</div>
               <div><strong>Due Date:</strong> January 31, 2025</div>
             </div>
@@ -38,7 +38,7 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
               </thead>
               <tbody>
                 <tr>
-                  <td>Texas</td>
+                  <td>ST-Alpha</td>
                   <td>12,450</td>
                   <td>2,100</td>
                   <td>1,867</td>
@@ -46,7 +46,7 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
                   <td>$373.40</td>
                 </tr>
                 <tr>
-                  <td>Oklahoma</td>
+                  <td>ST-Beta</td>
                   <td>8,230</td>
                   <td>1,200</td>
                   <td>1,234</td>
@@ -54,7 +54,7 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
                   <td>$234.46</td>
                 </tr>
                 <tr>
-                  <td>Louisiana</td>
+                  <td>ST-Gamma</td>
                   <td>6,890</td>
                   <td>950</td>
                   <td>1,033</td>
@@ -67,10 +67,8 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
           
           <div class="pdf-footer">
             <div class="signature-section">
-              <div class="signature-line">
-                <div>Authorized Signature: _________________________</div>
-                <div>Date: ${new Date().toLocaleDateString()}</div>
-              </div>
+              <div>Authorized Signature: _________________________</div>
+              <div>Date: ${new Date().toLocaleDateString()}</div>
             </div>
           </div>
         </div>
@@ -87,8 +85,8 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
           <div class="pdf-section">
             <h3>Policy Holder Information</h3>
             <div class="info-grid">
-              <div><strong>Insured:</strong> Apex Oil Transport LLC</div>
-              <div><strong>Address:</strong> 1234 Industrial Blvd, Houston, TX 77001</div>
+              <div><strong>Insured:</strong> Fleet Transport LLC</div>
+              <div><strong>Address:</strong> 123 Industrial Blvd, Metro City, ST 12345</div>
               <div><strong>Policy Period:</strong> January 1, 2024 - December 31, 2024</div>
               <div><strong>Premium:</strong> $45,000 annually</div>
             </div>
@@ -158,7 +156,7 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
             <h3>Vehicle Information</h3>
             <div class="info-grid">
               <div><strong>Vehicle ID:</strong> Unit #002</div>
-              <div><strong>Driver:</strong> John Smith</div>
+              <div><strong>Driver:</strong> Driver Alpha-1</div>
               <div><strong>Odometer:</strong> 245,678 miles</div>
               <div><strong>Inspection Time:</strong> 06:30 AM</div>
             </div>
@@ -202,7 +200,7 @@ export const generateMockPDFContent = (doc: CustomerDocument): string => {
           
           <div class="pdf-footer">
             <div class="signature-section">
-              <div>Driver Signature: John Smith</div>
+              <div>Driver Signature: Driver Alpha-1</div>
               <div>Date: ${new Date().toLocaleDateString()}</div>
               <div>Status: PASSED - Vehicle Safe for Operation</div>
             </div>
@@ -327,4 +325,48 @@ export const getMockDocumentContent = (doc: CustomerDocument): DocumentContent =
         icon: File
       };
   }
-}; 
+};
+
+export function generateRegionalComplianceCert(): string {
+  return `
+    <div class="document-content compliance-cert">
+      <h2>Regional Fleet Compliance Certification</h2>
+      <div class="cert-body">
+        <table class="compliance-table">
+          <tr>
+            <td><strong>State:</strong></td>
+            <td>ST</td>
+            <td><strong>Compliance Rate:</strong></td>
+            <td>98.7%</td>
+          </tr>
+          <tr>
+            <td><strong>State:</strong></td>
+            <td>ST</td>
+            <td><strong>Compliance Rate:</strong></td>
+            <td>97.2%</td>
+          </tr>
+          <tr>
+            <td><strong>State:</strong></td>
+            <td>ST</td>
+            <td><strong>Compliance Rate:</strong></td>
+            <td>99.1%</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+export function generateEquipmentInspectionReport(): string {
+  return `
+    <div class="document-content inspection-report">
+      <h2>Equipment Inspection Report</h2>
+      <div class="report-meta">
+        <div><strong>Facility:</strong> Metro Processing Facility</div>
+        <div><strong>Address:</strong> 123 Industrial Blvd, Metro City, ST 12345</div>
+        <div><strong>Inspector:</strong> Inspector Alpha-1</div>
+        <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+      </div>
+    </div>
+  `;
+} 

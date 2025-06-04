@@ -1,199 +1,94 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { CheckCircle, AlertTriangle, XCircle, Camera, FileText, Wrench, Cog, Settings, Shield, Truck, Beaker } from 'lucide-svelte';
+	
+	import type { InspectionItem, InspectionProgress, InspectionState, InspectionData, CategoryGroup } from './pre-trip-inspection/types/inspection.types';
+	import { 
+		getInitialInspectionItems,
+		groupItemsByCategory,
+		calculateInspectionProgress,
+		updateItemStatus,
+		addNotesToItem,
+		markPhotoTaken,
+		getCategoryIcon,
+		getCategoryDescription,
+		getCategoryStatus,
+		shouldShowPhotoButton
+	} from './pre-trip-inspection/utils/inspection-utils';
+	
+	// Import orchestrator components
+	import InspectionHeader from './pre-trip-inspection/InspectionHeader.svelte';
 
 	const dispatch = createEventDispatcher();
 
-	// Pre-trip inspection data structure
-	interface InspectionItem {
-		id: string;
-		category: string;
-		description: string;
-		status: 'pending' | 'pass' | 'fail' | 'defect';
-		notes?: string;
-		photoRequired?: boolean;
-		photoTaken?: boolean;
-		critical?: boolean;
+	// Initialize inspection state
+	let inspectionItems: InspectionItem[] = getInitialInspectionItems();
+	let inspectionState: InspectionState = {
+		currentDate: new Date(),
+		driverName: "Mike Johnson",
+		truckId: "892",
+		trailerNumber: "445",
+		currentStep: 'inspection',
+		defectNotes: '',
+		generalNotes: '',
+		showPhotoModal: false,
+		selectedItemForPhoto: null
+	};
+
+	// Reactive calculations
+	$: groupedItems = groupItemsByCategory(inspectionItems);
+	$: progress = calculateInspectionProgress(inspectionItems);
+
+	// Event handlers
+	function handleItemStatusUpdate(itemId: string, status: InspectionItem['status']) {
+		inspectionItems = updateItemStatus(inspectionItems, itemId, status);
 	}
 
-	// Pre-trip checklist items based on DOT requirements
-	let inspectionItems: InspectionItem[] = [
-		// Vehicle Exterior
-		{ id: 'tires', category: 'Exterior', description: 'Tires (tread depth, air pressure, damage)', status: 'pass', critical: true },
-		{ id: 'wheels', category: 'Exterior', description: 'Wheels and rims (cracks, loose lugs)', status: 'pending', critical: true },
-		{ id: 'lights', category: 'Exterior', description: 'All lights and reflectors working', status: 'pass', critical: true },
-		{ id: 'mirrors', category: 'Exterior', description: 'Mirrors clean and properly adjusted', status: 'pass' },
-		{ id: 'windshield', category: 'Exterior', description: 'Windshield and windows (cracks, chips)', status: 'pending' },
-		{ id: 'hood', category: 'Exterior', description: 'Hood latched securely', status: 'pass' },
-		
-		// Engine Compartment
-		{ id: 'fluid-level', category: 'Engine', description: 'Engine fluid level and condition', status: 'pass', critical: true },
-		{ id: 'coolant', category: 'Engine', description: 'Coolant level and condition', status: 'pending', critical: true },
-		{ id: 'belts', category: 'Engine', description: 'Drive belts (wear, tension)', status: 'pass' },
-		{ id: 'hoses', category: 'Engine', description: 'Hoses and connections', status: 'pass' },
-		{ id: 'battery', category: 'Engine', description: 'Battery secured and terminals clean', status: 'pending' },
-		
-		// Cab Interior
-		{ id: 'seat-belts', category: 'Interior', description: 'Seat belts functional', status: 'pass', critical: true },
-		{ id: 'horn', category: 'Interior', description: 'Horn working', status: 'pending' },
-		{ id: 'gauges', category: 'Interior', description: 'All gauges and warning lights', status: 'pass', critical: true },
-		{ id: 'wipers', category: 'Interior', description: 'Windshield wipers and washers', status: 'pass' },
-		{ id: 'heater-defrost', category: 'Interior', description: 'Heater and defroster working', status: 'pass' },
-		
-		// Braking System
-		{ id: 'brake-pedal', category: 'Brakes', description: 'Brake pedal feel and travel', status: 'pass', critical: true },
-		{ id: 'parking-brake', category: 'Brakes', description: 'Parking brake operation', status: 'pending', critical: true },
-		{ id: 'air-pressure', category: 'Brakes', description: 'Air pressure build-up and leaks', status: 'pass', critical: true },
-		
-		// Trailer/Tank Specific
-		{ id: 'coupling', category: 'Coupling', description: 'Fifth wheel and kingpin secure', status: 'pass', critical: true },
-		{ id: 'air-lines', category: 'Coupling', description: 'Air lines connected and secure', status: 'pending', critical: true },
-		{ id: 'electrical', category: 'Coupling', description: 'Electrical connections working', status: 'pass' },
-		{ id: 'tank-valves', category: 'Tank', description: 'Tank valves closed and secure', status: 'pass', critical: true },
-		{ id: 'emergency-kit', category: 'Safety', description: 'Emergency kit and spill response', status: 'pass', critical: true },
-		{ id: 'placards', category: 'Safety', description: 'Proper placards displayed', status: 'pending', critical: true }
-	];
+	function handleAddNotes(itemId: string, notes: string) {
+		inspectionItems = addNotesToItem(inspectionItems, itemId, notes);
+	}
 
-	// Group items by category
-	$: groupedItems = inspectionItems.reduce((groups, item) => {
-		if (!groups[item.category]) {
-			groups[item.category] = [];
+	function handleTakePhoto(item: InspectionItem) {
+		inspectionState.selectedItemForPhoto = item;
+		inspectionState.showPhotoModal = true;
+	}
+
+	function handleCompletePhotoCapture() {
+		if (inspectionState.selectedItemForPhoto) {
+			inspectionItems = markPhotoTaken(inspectionItems, inspectionState.selectedItemForPhoto.id);
 		}
-		groups[item.category].push(item);
-		return groups;
-	}, {} as Record<string, InspectionItem[]>);
-
-	// Calculate inspection status
-	$: totalItems = inspectionItems.length;
-	$: completedItems = inspectionItems.filter(item => item.status !== 'pending').length;
-	$: failedItems = inspectionItems.filter(item => item.status === 'fail' || item.status === 'defect').length;
-	$: criticalFailures = inspectionItems.filter(item => item.critical && (item.status === 'fail' || item.status === 'defect')).length;
-	$: completionPercent = Math.round((completedItems / totalItems) * 100);
-	$: canComplete = completedItems === totalItems && criticalFailures === 0;
-
-	// Current inspection state
-	let currentDate = new Date();
-	let driverName = "Mike Johnson"; // This would come from auth store
-	let truckId = "892"; // Updated per Kevin's feedback
-	let trailerNumber = "445"; // Updated per Kevin's feedback
-	let currentStep = 'inspection'; // 'inspection' | 'review' | 'complete'
-	let defectNotes = '';
-	let generalNotes = ''; // Static notes that always appear
-	let showPhotoModal = false;
-	let selectedItemForPhoto: InspectionItem | null = null;
-
-	function updateItemStatus(itemId: string, status: InspectionItem['status']) {
-		console.log('Updating item status:', itemId, status); // Debug log
-		inspectionItems = inspectionItems.map(item => 
-			item.id === itemId ? { ...item, status } : item
-		);
-		// Force reactivity update
-		inspectionItems = [...inspectionItems];
+		inspectionState.showPhotoModal = false;
+		inspectionState.selectedItemForPhoto = null;
 	}
 
-	function addNotes(itemId: string, notes: string) {
-		console.log('Adding notes:', itemId, notes); // Debug log
-		inspectionItems = inspectionItems.map(item => 
-			item.id === itemId ? { ...item, notes } : item
-		);
-		// Force reactivity update
-		inspectionItems = [...inspectionItems];
-	}
-
-	function takePhoto(item: InspectionItem) {
-		console.log('Taking photo for:', item.id); // Debug log
-		selectedItemForPhoto = item;
-		showPhotoModal = true;
-	}
-
-	function completePhotoCapture() {
-		if (selectedItemForPhoto) {
-			inspectionItems = inspectionItems.map(item => 
-				item.id === selectedItemForPhoto?.id ? { ...item, photoTaken: true } : item
-			);
+	function handleCompleteInspection() {
+		if (progress.canComplete) {
+			const inspectionData: InspectionData = {
+				date: inspectionState.currentDate,
+				driver: inspectionState.driverName,
+				truck: inspectionState.truckId,
+				trailer: inspectionState.trailerNumber,
+				items: inspectionItems,
+				status: progress.failedItems > 0 ? 'defects-noted' : 'passed',
+				defectNotes: inspectionState.defectNotes,
+				generalNotes: inspectionState.generalNotes,
+				completedAt: new Date()
+			};
+			
+			dispatch('inspection-complete', { inspectionData });
 		}
-		showPhotoModal = false;
-		selectedItemForPhoto = null;
-	}
-
-	function completeInspection() {
-		if (canComplete) {
-			dispatch('inspection-complete', {
-				inspectionData: {
-					date: currentDate,
-					driver: driverName,
-					truck: truckId,
-					trailer: trailerNumber,
-					items: inspectionItems,
-					status: failedItems > 0 ? 'defects-noted' : 'passed',
-					defectNotes,
-					generalNotes,
-					completedAt: new Date()
-				}
-			});
-		}
-	}
-
-	function getStatusIcon(status: InspectionItem['status']) {
-		switch (status) {
-			case 'pass': return { component: CheckCircle, color: 'text-emerald-600' };
-			case 'fail': 
-			case 'defect': return { component: XCircle, color: 'text-red-600' };
-			default: return { component: AlertTriangle, color: 'text-gray-400' };
-		}
-	}
-
-	function getCategoryIcon(category: string) {
-		const icons: Record<string, any> = {
-			'Exterior': Truck,
-			'Engine': Cog,
-			'Interior': Settings,
-			'Brakes': Shield,
-			'Coupling': Wrench,
-			'Tank': Beaker,
-			'Safety': Shield
-		};
-		return icons[category] || Shield;
 	}
 </script>
 
 <div class="pre-trip-inspection font-sans text-sm text-slate-800">
-	<!-- Header -->
-	<div class="inspection-header bg-white border-b border-slate-200 p-4 sticky top-0 z-20">
-		<div class="header-content max-w-4xl mx-auto flex justify-between items-center">
-			<div class="truck-info flex-1">
-				<h1 class="text-xl font-semibold text-slate-800">Pre-Trip Inspection</h1>
-				<div class="vehicle-details flex items-center gap-2 text-sm text-slate-600">
-					<span class="font-mono font-semibold text-slate-800">{truckId}</span>
-					<span>•</span>
-					<span class="font-mono font-semibold text-slate-800">{trailerNumber}</span>
-				</div>
-				<div class="inspection-meta flex items-center gap-2 text-xs text-slate-500">
-					<span>{driverName}</span>
-					<span>•</span>
-					<span>{currentDate.toLocaleDateString()}</span>
-				</div>
-			</div>
-			<div class="progress-indicator flex flex-col items-center gap-2">
-				<div class="progress-circle relative w-16 h-16">
-					<svg class="progress-ring w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
-						<circle class="progress-ring-background" cx="32" cy="32" r="28" 
-							fill="none" stroke="#e5e7eb" stroke-width="4" />
-						<circle class="progress-ring-progress" cx="32" cy="32" r="28"
-							fill="none" stroke="#059669" stroke-width="4" stroke-linecap="round"
-							style="stroke-dasharray: {176}; stroke-dashoffset: {176 - (176 * completionPercent / 100)}; transition: stroke-dashoffset 0.3s ease" />
-					</svg>
-					<span class="absolute inset-0 flex items-center justify-center text-sm font-semibold text-slate-800">{completionPercent}%</span>
-				</div>
-				<div class="progress-stats text-center text-xs">
-					<span class="text-green-600 font-semibold">{completedItems}/{totalItems}</span>
-					{#if failedItems > 0}
-						<div class="text-red-500 font-semibold">{failedItems} defects</div>
-					{/if}
-				</div>
-			</div>
-		</div>
-	</div>
+	<!-- Header with Progress -->
+	<InspectionHeader 
+		driverName={inspectionState.driverName}
+		truckId={inspectionState.truckId}
+		trailerNumber={inspectionState.trailerNumber}
+		currentDate={inspectionState.currentDate}
+		{progress}
+	/>
 
 	<!-- Page Break Separator -->
 	<div class="page-break-separator border-t-2 border-slate-300 mt-6 pt-6 bg-slate-100">
@@ -221,35 +116,13 @@
 								{items.filter(item => item.status !== 'pending').length}/{items.length}
 							</span>
 							<span class="text-slate-600 font-medium">
-								{#if items.every(item => item.status === 'pass')}
-									✅ Complete
-								{:else if items.some(item => item.status === 'fail' || item.status === 'defect')}
-									⚠️ Issues Found
-								{:else if items.some(item => item.status !== 'pending')}
-									🔄 In Progress
-								{:else}
-									⏳ Pending
-								{/if}
+								{getCategoryStatus(items)}
 							</span>
 						</div>
 					</div>
 					
 					<div class="category-description mb-4 p-3 bg-slate-50 rounded border-l-3 border-blue-300">
-						{#if category === 'Exterior'}
-							<p class="text-sm text-slate-600 italic">Inspect vehicle exterior components including tires, lights, and body condition</p>
-						{:else if category === 'Engine'}
-							<p class="text-sm text-slate-600 italic">Check engine compartment fluids, belts, and mechanical components</p>
-						{:else if category === 'Interior'}
-							<p class="text-sm text-slate-600 italic">Verify cab safety equipment and operational controls</p>
-						{:else if category === 'Brakes'}
-							<p class="text-sm text-slate-600 italic">Test braking system components and air pressure systems</p>
-						{:else if category === 'Coupling'}
-							<p class="text-sm text-slate-600 italic">Inspect trailer connection points and electrical systems</p>
-						{:else if category === 'Tank'}
-							<p class="text-sm text-slate-600 italic">Verify tank integrity and valve operation for safe transport</p>
-						{:else if category === 'Safety'}
-							<p class="text-sm text-slate-600 italic">Confirm emergency equipment and regulatory compliance</p>
-						{/if}
+						<p class="text-sm text-slate-600 italic">{getCategoryDescription(category)}</p>
 					</div>
 
 					<div class="category-items grid grid-cols-2 gap-3">
@@ -265,10 +138,10 @@
 										{/if}
 									</div>
 									<div class="item-actions flex-shrink-0">
-										{#if item.photoRequired || item.status === 'fail' || item.status === 'defect'}
+										{#if shouldShowPhotoButton(item)}
 											<button 
 												class="photo-btn border border-blue-300 text-blue-600 bg-blue-50 hover:bg-blue-100 p-1.5 rounded flex items-center gap-1 transition-colors {item.photoTaken ? 'border-green-300 text-green-600 bg-green-50' : ''}"
-												on:click={() => takePhoto(item)}
+												on:click={() => handleTakePhoto(item)}
 											>
 												<Camera size={14} />
 												{#if item.photoTaken}
@@ -286,7 +159,7 @@
 											? 'border-2 border-green-500 text-white bg-green-500 shadow-md transform scale-105' 
 											: 'border-2 border-gray-300 text-gray-600 bg-white hover:border-green-400 hover:bg-green-50 hover:text-green-600'}"
 										type="button"
-										on:click={() => updateItemStatus(item.id, 'pass')}
+										on:click={() => handleItemStatusUpdate(item.id, 'pass')}
 									>
 										<CheckCircle size={14} />
 										<span>Pass</span>
@@ -297,7 +170,7 @@
 											? 'border-2 border-red-500 text-white bg-red-500 shadow-md transform scale-105' 
 											: 'border-2 border-gray-300 text-gray-600 bg-white hover:border-red-400 hover:bg-red-50 hover:text-red-600'}"
 										type="button"
-										on:click={() => updateItemStatus(item.id, 'fail')}
+										on:click={() => handleItemStatusUpdate(item.id, 'fail')}
 									>
 										<XCircle size={14} />
 										<span>Fail</span>
@@ -308,7 +181,7 @@
 											? 'border-2 border-orange-500 text-white bg-orange-500 shadow-md transform scale-105' 
 											: 'border-2 border-gray-300 text-gray-600 bg-white hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'}"
 										type="button"
-										on:click={() => updateItemStatus(item.id, 'defect')}
+										on:click={() => handleItemStatusUpdate(item.id, 'defect')}
 									>
 										<AlertTriangle size={14} />
 										<span>Defect</span>
@@ -321,7 +194,7 @@
 											class="notes-input w-full min-h-[60px] border border-slate-300 rounded p-2 text-sm resize-vertical"
 											placeholder="Describe the issue (required for failures/defects)..."
 											value={item.notes || ''}
-											on:input={(e) => addNotes(item.id, (e.target as HTMLTextAreaElement)?.value || '')}
+											on:input={(e) => handleAddNotes(item.id, (e.target as HTMLTextAreaElement)?.value || '')}
 										></textarea>
 									</div>
 								{/if}
@@ -345,37 +218,37 @@
 		<textarea 
 			class="general-notes-input w-full min-h-[100px] p-3 border border-slate-300 rounded text-sm leading-relaxed text-slate-700 bg-slate-50 resize-vertical transition-colors focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
 			placeholder="Enter any general observations, maintenance notes, or recommendations..."
-			bind:value={generalNotes}
+			bind:value={inspectionState.generalNotes}
 			rows="4"
 		></textarea>
 	</div>
 
 	<!-- Completion Section -->
 	<div class="completion-section max-w-4xl mx-auto p-4 bg-white border-t border-slate-200">
-		{#if failedItems > 0}
+		{#if progress.failedItems > 0}
 			<div class="defect-summary mb-4">
 				<h3 class="text-base font-semibold text-red-600 mb-2">Defects Summary</h3>
 				<textarea 
 					class="defect-notes w-full min-h-[80px] p-3 border border-slate-300 rounded text-sm resize-vertical"
 					placeholder="Additional notes about defects and corrective actions taken..."
-					bind:value={defectNotes}
+					bind:value={inspectionState.defectNotes}
 				></textarea>
 			</div>
 		{/if}
 
 		<div class="completion-actions flex flex-col gap-3">
 			<div class="completion-status flex items-center gap-2 p-3 rounded border">
-				{#if criticalFailures > 0}
+				{#if progress.criticalFailures > 0}
 					<div class="status-warning bg-red-50 border-red-200 text-red-700 flex items-center gap-2">
 						<AlertTriangle size={20} />
 						<span class="text-sm font-medium">Vehicle cannot operate with critical defects</span>
 					</div>
-				{:else if failedItems > 0}
+				{:else if progress.failedItems > 0}
 					<div class="status-defects bg-yellow-50 border-yellow-200 text-yellow-700 flex items-center gap-2">
 						<FileText size={20} />
 						<span class="text-sm font-medium">Defects noted - maintenance required</span>
 					</div>
-				{:else if canComplete}
+				{:else if progress.canComplete}
 					<div class="status-ready bg-green-50 border-green-200 text-green-700 flex items-center gap-2">
 						<CheckCircle size={20} />
 						<span class="text-sm font-medium">Vehicle ready for operation</span>
@@ -389,11 +262,11 @@
 			</div>
 
 			<button 
-				class="complete-btn w-full p-4 rounded-lg text-base font-semibold border transition-all flex items-center justify-center gap-2 {canComplete ? 'border-green-500 text-green-700 bg-green-50 hover:bg-green-100' : 'border-slate-300 text-slate-400 bg-slate-50 cursor-not-allowed'}"
-				disabled={!canComplete}
-				on:click={completeInspection}
+				class="complete-btn w-full p-4 rounded-lg text-base font-semibold border transition-all flex items-center justify-center gap-2 {progress.canComplete ? 'border-green-500 text-green-700 bg-green-50 hover:bg-green-100' : 'border-slate-300 text-slate-400 bg-slate-50 cursor-not-allowed'}"
+				disabled={!progress.canComplete}
+				on:click={handleCompleteInspection}
 			>
-				{#if criticalFailures > 0}
+				{#if progress.criticalFailures > 0}
 					Submit Defect Report
 				{:else}
 					Complete Inspection
@@ -404,15 +277,15 @@
 </div>
 
 <!-- Photo Modal -->
-{#if showPhotoModal && selectedItemForPhoto}
+{#if inspectionState.showPhotoModal && inspectionState.selectedItemForPhoto}
 	<div class="photo-modal-overlay fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
 		<div class="photo-modal bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
 			<div class="modal-header flex justify-between items-center p-4 border-b border-slate-200">
 				<h3 class="text-lg font-semibold text-slate-800">Photo Documentation</h3>
-				<button class="close-btn text-slate-600 hover:text-slate-800 text-2xl w-8 h-8 flex items-center justify-center" on:click={() => showPhotoModal = false}>×</button>
+				<button class="close-btn text-slate-600 hover:text-slate-800 text-2xl w-8 h-8 flex items-center justify-center" on:click={() => inspectionState.showPhotoModal = false}>×</button>
 			</div>
 			<div class="modal-content p-4 flex-1">
-				<p class="photo-instruction text-sm text-slate-700 mb-4">Take a photo of: {selectedItemForPhoto.description}</p>
+				<p class="photo-instruction text-sm text-slate-700 mb-4">Take a photo of: {inspectionState.selectedItemForPhoto.description}</p>
 				<div class="camera-placeholder bg-slate-100 border-2 border-dashed border-slate-300 rounded p-8 text-center text-slate-600">
 					<Camera size={48} class="mx-auto mb-2" />
 					<p>Camera interface would appear here</p>
@@ -420,10 +293,10 @@
 				</div>
 			</div>
 			<div class="modal-actions flex gap-3 p-4 border-t border-slate-200">
-				<button class="cancel-btn flex-1 border border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100 py-3 rounded font-medium transition-colors" on:click={() => showPhotoModal = false}>
+				<button class="cancel-btn flex-1 border border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100 py-3 rounded font-medium transition-colors" on:click={() => inspectionState.showPhotoModal = false}>
 					Cancel
 				</button>
-				<button class="capture-btn flex-1 border border-blue-500 text-blue-700 bg-blue-50 hover:bg-blue-100 py-3 rounded font-medium transition-colors" on:click={completePhotoCapture}>
+				<button class="capture-btn flex-1 border border-blue-500 text-blue-700 bg-blue-50 hover:bg-blue-100 py-3 rounded font-medium transition-colors" on:click={handleCompletePhotoCapture}>
 					Capture Photo
 				</button>
 			</div>
@@ -432,20 +305,9 @@
 {/if}
 
 <style>
-	/* Mobile responsiveness for inspection grid */
 	@media (max-width: 768px) {
 		.category-items {
 			grid-template-columns: 1fr;
-		}
-		
-		.header-content {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 12px;
-		}
-
-		.progress-indicator {
-			align-self: flex-end;
 		}
 
 		.status-controls {
@@ -464,7 +326,6 @@
 		}
 	}
 
-	/* Enhanced button styling for better interactivity */
 	:global(.status-btn) {
 		position: relative;
 		z-index: 1;
@@ -477,33 +338,11 @@
 		transform: scale(0.98) !important;
 	}
 
-	:global(.inspection-item) {
-		position: relative;
-		z-index: 0;
-	}
-
-	/* Ensure photo buttons are also clickable */
 	:global(.photo-btn) {
 		position: relative;
 		z-index: 1;
 		cursor: pointer;
 		user-select: none;
 		-webkit-tap-highlight-color: transparent;
-	}
-
-	/* Add visual feedback for pending items */
-	:global(.inspection-item:has(.status-btn[class*="border-gray-300"])) {
-		background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
-		border-left: 4px solid #f59e0b;
-		animation: pulse-pending 2s ease-in-out infinite;
-	}
-
-	@keyframes pulse-pending {
-		0%, 100% {
-			box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
-		}
-		50% {
-			box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.1);
-		}
 	}
 </style> 
